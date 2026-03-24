@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rarity Monitor</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--tg-theme-bg-color, #1a1a2e);
+  color: var(--tg-theme-text-color, #eee);
+  padding: 16px;
+  min-height: 100vh;
+}
+h2 { font-size: 18px; margin-bottom: 16px; text-align: center; }
+.section { margin-bottom: 12px; }
+
+.gift-label {
+  font-size: 12px; font-weight: 600;
+  color: var(--tg-theme-hint-color, #888);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.gift-search-wrap { position: relative; }
+.gift-search-input {
+  width: 100%; padding: 10px 12px 10px 36px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.07);
+  color: inherit; font-size: 15px; outline: none;
+}
+.gift-search-input::placeholder { color: var(--tg-theme-hint-color, #666); }
+.gift-search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 14px; opacity: 0.45; pointer-events: none;
+}
+.gift-dropdown {
+  display: none; position: absolute; left: 0; right: 0; z-index: 100;
+  background: #1e1e35; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px; max-height: 220px; overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45); margin-top: 4px;
+}
+.gift-dropdown.open { display: block; }
+.gift-option {
+  padding: 10px 14px; font-size: 14px; cursor: pointer;
+  transition: background 0.1s; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.gift-option:last-child { border-bottom: none; }
+.gift-option:hover, .gift-option:active { background: rgba(91,95,207,0.25); }
+.gift-option.selected { color: var(--tg-theme-button-color, #5b5fcf); font-weight: 600; }
+.gift-empty { padding: 12px 14px; font-size: 13px; color: var(--tg-theme-hint-color, #888); text-align: center; }
+
+.collapsible {
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; overflow: hidden; margin-bottom: 12px;
+}
+.collapsible-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; cursor: pointer;
+  background: rgba(255,255,255,0.04);
+  user-select: none; transition: background 0.15s;
+}
+.collapsible-header:active { background: rgba(255,255,255,0.08); }
+.collapsible-header .title {
+  font-size: 12px; font-weight: 600;
+  color: var(--tg-theme-hint-color, #888);
+  flex: 1; margin-right: 8px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.collapsible-header .right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.collapsible-header .badge-count {
+  font-size: 12px; font-weight: 700;
+  color: var(--tg-theme-button-color, #5b5fcf);
+  background: rgba(91,95,207,0.15);
+  border-radius: 20px; padding: 2px 8px;
+}
+.collapsible-header .arrow {
+  font-size: 10px; color: var(--tg-theme-hint-color, #666);
+  transition: transform 0.2s;
+}
+.collapsible-header.open .arrow { transform: rotate(180deg); }
+.collapsible-body {
+  display: none; padding: 10px 12px 12px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.collapsible-body.open { display: block; }
+
+.search-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.search-input {
+  flex: 1; padding: 8px 12px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
+  color: inherit; font-size: 13px; outline: none;
+}
+.search-input::placeholder { color: var(--tg-theme-hint-color, #666); }
+.select-all {
+  font-size: 12px; color: var(--tg-theme-button-color, #5b5fcf);
+  cursor: pointer; user-select: none; white-space: nowrap;
+}
+
+.chips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.chip {
+  padding: 8px 10px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  font-size: 13px; cursor: pointer;
+  text-align: center; transition: all 0.15s; user-select: none;
+}
+.chip:active { opacity: 0.7; }
+.chip.selected {
+  background: var(--tg-theme-button-color, #5b5fcf);
+  border-color: transparent;
+  color: var(--tg-theme-button-text-color, #fff);
+}
+.chip.hidden { display: none; }
+.chip-rarity { display: block; font-size: 10px; opacity: 0.65; margin-top: 2px; }
+.chip.selected .chip-rarity { opacity: 0.85; }
+.empty-hint { text-align: center; font-size: 13px; color: var(--tg-theme-hint-color, #888); padding: 10px 0; }
+
+.btn {
+  width: 100%; padding: 14px; border-radius: 12px;
+  border: none; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.btn:active { opacity: 0.75; }
+.btn-start { background: var(--tg-theme-button-color, #5b5fcf); color: var(--tg-theme-button-text-color, #fff); }
+.btn-stop  { background: #c0392b; color: #fff; margin-top: 8px; display: none; }
+.status-bar {
+  text-align: left; font-size: 13px;
+  color: var(--tg-theme-hint-color, #888);
+  margin-top: 12px; min-height: 20px;
+  white-space: pre-line; line-height: 1.6;
+}
+.status-bar.active { color: #2ecc71; }
+.status-bar.error  { color: #e74c3c; }
+
+.found-list { margin-top: 20px; }
+.found-item {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 10px 14px;
+  margin-bottom: 8px; font-size: 13px; line-height: 1.6;
+}
+.found-item .source { font-weight: 700; color: var(--tg-theme-button-color, #5b5fcf); }
+.found-item .price  { font-weight: 700; font-size: 15px; }
+.found-item a { color: #3498db; text-decoration: none; }
+.badge { display: inline-block; background: rgba(255,255,255,0.1); border-radius: 5px; padding: 1px 6px; font-size: 11px; margin-left: 4px; }
+.empty { text-align: center; color: var(--tg-theme-hint-color, #888); padding: 20px 0; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<h2>🔍 Rarity Monitor</h2>
+
+<div class="section">
+  <div class="gift-label">Подарок</div>
+  <div class="gift-search-wrap" id="giftSearchWrap">
+    <span class="gift-search-icon">🎁</span>
+    <input class="gift-search-input" id="giftSearchInput" type="text"
+           placeholder="Загрузка..." autocomplete="off"
+           oninput="filterGifts(this.value)"
+           onfocus="openGiftDropdown()"
+           onblur="closeGiftDropdown()">
+    <div class="gift-dropdown" id="giftDropdown"></div>
+  </div>
+</div>
+
+<div class="collapsible" id="modelsCollapsible">
+  <div class="collapsible-header" onclick="toggleCollapsible('models')">
+    <span class="title" id="modelsTitle">Модели</span>
+    <div class="right">
+      <span class="badge-count" id="selectedCount">0</span>
+      <span class="arrow">▼</span>
+    </div>
+  </div>
+  <div class="collapsible-body" id="modelsBody">
+    <div class="search-row">
+      <input class="search-input" id="modelsSearch" type="text"
+             placeholder="Поиск модели..." oninput="filterChips('modelsGrid', this.value)">
+      <span class="select-all" onclick="selectAll('modelsGrid', selectedModels, 'selectedCount')">Все</span>
+      <span class="select-all" style="color:#e74c3c" onclick="clearAll('modelsGrid', selectedModels, 'selectedCount')">Сброс</span>
+    </div>
+    <div class="chips-grid" id="modelsGrid"></div>
+  </div>
+</div>
+
+<div class="collapsible" id="backdropsCollapsible">
+  <div class="collapsible-header" onclick="toggleCollapsible('backdrops')">
+    <span class="title" id="backdropsTitle">Фоны</span>
+    <div class="right">
+      <span class="badge-count" id="selectedBackdropCount">0</span>
+      <span class="arrow">▼</span>
+    </div>
+  </div>
+  <div class="collapsible-body" id="backdropsBody">
+    <div class="search-row">
+      <input class="search-input" id="backdropsSearch" type="text"
+             placeholder="Поиск фона..." oninput="filterChips('backdropsGrid', this.value)">
+      <span class="select-all" onclick="selectAll('backdropsGrid', selectedBackdrops, 'selectedBackdropCount')">Все</span>
+      <span class="select-all" style="color:#e74c3c" onclick="clearAll('backdropsGrid', selectedBackdrops, 'selectedBackdropCount')">Сброс</span>
+    </div>
+    <div class="chips-grid" id="backdropsGrid"></div>
+  </div>
+</div>
+
+<button class="btn btn-start" id="btnStart" onclick="startMonitor()">▶ Запустить</button>
+<button class="btn btn-stop"  id="btnStop"  onclick="stopMonitor()">⏹ Остановить</button>
+<div class="status-bar" id="statusBar">Настройте параметры и нажмите Запустить</div>
+<div class="found-list" id="foundList"></div>
+
+<script>
+const API    = 'https://unperforated-levi-supernumerous.ngrok-free.dev';
+const tg     = window.Telegram?.WebApp;
+const USERID = tg?.initDataUnsafe?.user?.id || 999;
+
+let gifts             = [];
+let selectedModels    = new Set();
+let selectedBackdrops = new Set();
+let _rarityMax        = 3.0;
+let _selectedGift     = '';
+let pollTimer         = null;
+
+tg?.expand();
+tg?.setHeaderColor?.('#1a1a2e');
+
+function toggleCollapsible(key) {
+  const body   = document.getElementById(`${key}Body`);
+  const header = body.previousElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    const inp = document.getElementById(`${key}Search`);
+    if (inp) { inp.value = ''; filterChips(`${key}Grid`, ''); }
+  }
+}
+
+async function loadGifts() {
+  try {
+    const r = await fetch(`${API}/gifts`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+    gifts   = await r.json();
+    document.getElementById('giftSearchInput').placeholder = 'Поиск подарка...';
+    if (gifts.length) renderGiftDropdown(gifts);
+  } catch(e) {
+    setStatus('Ошибка загрузки подарков', 'error');
+  }
+}
+
+function renderGiftDropdown(list) {
+  const dd = document.getElementById('giftDropdown');
+  if (!list.length) {
+    dd.innerHTML = '<div class="gift-empty">Ничего не найдено</div>';
+    return;
+  }
+  dd.innerHTML = list.map(g => {
+    const sel  = g.name === _selectedGift ? ' selected' : '';
+    const safe = g.name.replace(/\\\\\\\\/g,'\\\\\\\\\\\\\\\\').replace(/'/g,"\\\\\\\\'");
+    return `<div class="gift-option${sel}" data-name="${g.name.replace(/"/g,'&quot;')}"
+      onmousedown="selectGiftOption('${safe}')">${g.name}</div>`;
+  }).join('');
+}
+
+function filterGifts(q) {
+  const list = q.trim() ? gifts.filter(g => g.name.toLowerCase().includes(q.toLowerCase())) : gifts;
+  renderGiftDropdown(list);
+  document.getElementById('giftDropdown').classList.add('open');
+}
+
+function selectGiftOption(name) {
+  _selectedGift = name;
+  document.getElementById('giftSearchInput').value = name;
+  document.getElementById('giftDropdown').classList.remove('open');
+  onGiftChange();
+}
+
+function openGiftDropdown() {
+  const q    = document.getElementById('giftSearchInput').value.trim();
+  const list = q ? gifts.filter(g => g.name.toLowerCase().includes(q.toLowerCase())) : gifts;
+  renderGiftDropdown(list);
+  document.getElementById('giftDropdown').classList.add('open');
+}
+
+function closeGiftDropdown() {
+  setTimeout(() => {
+    document.getElementById('giftDropdown').classList.remove('open');
+    if (!document.getElementById('giftSearchInput').value.trim() && _selectedGift)
+      document.getElementById('giftSearchInput').value = _selectedGift;
+  }, 150);
+}
+
+function onGiftChange() {
+  selectedModels.clear();
+  selectedBackdrops.clear();
+
+  ['models', 'backdrops'].forEach(key => {
+    document.getElementById(`${key}Body`).classList.remove('open');
+    document.getElementById(`${key}Body`).previousElementSibling.classList.remove('open');
+    const inp = document.getElementById(`${key}Search`);
+    if (inp) inp.value = '';
+  });
+
+  document.getElementById('modelsTitle').textContent    = 'Модели';
+  document.getElementById('backdropsTitle').textContent = 'Фоны';
+
+  const gift = gifts.find(g => g.name === _selectedGift);
+  if (!gift) return;
+
+  _rarityMax = gift.rarity_max ?? gift.raritymax ?? 3.0;
+
+  const rareModSet = new Set(gift.rare_models    ?? gift.raremodels    ?? []);
+  const rareBdSet  = new Set(gift.rare_backdrops ?? gift.rarebackdrops ?? []);
+
+  const allModels    = gift.all_models    ?? (gift.rare_models    ?? gift.raremodels    ?? []).map(n => ({name: n, rarity: null}));
+  const allBackdrops = gift.all_backdrops ?? (gift.rare_backdrops ?? gift.rarebackdrops ?? []).map(n => ({name: n, rarity: null}));
+
+  renderChips('modelsGrid',    allModels,    selectedModels,    'selectedCount',         rareModSet);
+  renderChips('backdropsGrid', allBackdrops, selectedBackdrops, 'selectedBackdropCount', rareBdSet);
+}
+
+function renderChips(gridId, items, set, countId, rareSet = new Set()) {
+  const grid = document.getElementById(gridId);
+  if (!items.length) {
+    grid.innerHTML = '<div class="empty-hint">Нет вариантов</div>';
+    updateCount(countId, set);
+    return;
+  }
+  const toggleFn = gridId === 'modelsGrid' ? 'toggleModel' : 'toggleBackdrop';
+  const norm = items.map(i => typeof i === 'string' ? {name: i, rarity: null} : i);
+  norm.sort((a, b) => {
+    if (a.rarity == null && b.rarity == null) {
+      const ar = rareSet.has(a.name) ? 0 : 1, br = rareSet.has(b.name) ? 0 : 1;
+      return ar !== br ? ar - br : a.name.localeCompare(b.name);
+    }
+    if (a.rarity == null) return 1;
+    if (b.rarity == null) return -1;
+    return a.rarity - b.rarity;
+  });
+  grid.innerHTML = norm.map(({name, rarity}) => {
+    const safe   = name.replace(/\\\\\\\\/g, '\\\\\\\\\\\\\\\\').replace(/'/g, "\\\\\\\\'");
+    const isRare = rareSet.has(name);
+    const rLabel = rarity != null
+      ? `<span class="chip-rarity">${rarity}%</span>`
+      : (isRare ? `<span class="chip-rarity" style="color:#f0a500">&#9733; rare</span>` : '');
+    const sel = set.has(name) ? ' selected' : '';
+    return `<div class="chip${sel}" data-name="${name.replace(/"/g,'&quot;')}" onclick="${toggleFn}(this,'${safe}')">${name}${rLabel}</div>`;
+  }).join('');
+  updateCount(countId, set);
+}
+
+function filterChips(gridId, query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll(`#${gridId} .chip`).forEach(el => {
+    el.classList.toggle('hidden', !el.dataset.name.toLowerCase().includes(q));
+  });
+}
+
+function toggleModel(el, name) {
+  selectedModels.has(name) ? selectedModels.delete(name) : selectedModels.add(name);
+  el.classList.toggle('selected');
+  updateCount('selectedCount', selectedModels);
+}
+function toggleBackdrop(el, name) {
+  selectedBackdrops.has(name) ? selectedBackdrops.delete(name) : selectedBackdrops.add(name);
+  el.classList.toggle('selected');
+  updateCount('selectedBackdropCount', selectedBackdrops);
+}
+function selectAll(gridId, set, countId) {
+  document.querySelectorAll(`#${gridId} .chip:not(.hidden)`).forEach(el => {
+    set.add(el.dataset.name); el.classList.add('selected');
+  });
+  updateCount(countId, set);
+}
+function clearAll(gridId, set, countId) {
+  document.querySelectorAll(`#${gridId} .chip`).forEach(el => {
+    set.delete(el.dataset.name); el.classList.remove('selected');
+  });
+  updateCount(countId, set);
+}
+
+function updateCount(spanId, set) {
+  document.getElementById(spanId).textContent = set.size;
+  if (spanId === 'selectedCount') {
+    document.getElementById('modelsTitle').textContent = set.size === 0
+      ? 'Модели'
+      : 'Выбранные модели: ' + [...set].join(', ');
+  } else if (spanId === 'selectedBackdropCount') {
+    document.getElementById('backdropsTitle').textContent = set.size === 0
+      ? 'Фоны'
+      : 'Выбранные фоны: ' + [...set].join(', ');
+  }
+}
+
+async function startMonitor() {
+  if (!_selectedGift) return;
+  const giftCfg = gifts.find(g => g.name === _selectedGift);
+  const allModelNames = (giftCfg?.all_models ?? []).map(m => m.name ?? m);
+  const models    = selectedModels.size    ? [...selectedModels]    : (allModelNames.length ? allModelNames : (giftCfg?.rare_models ?? []));
+  const backdrops = selectedBackdrops.size ? [...selectedBackdrops] : [];
+
+  try {
+    const r = await fetch(`${API}/monitor/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+      body: JSON.stringify({
+        user_id: USERID, gift_name: _selectedGift,
+        models, backdrops, rarity_max: _rarityMax, notify_user: 'me',
+      }),
+    });
+    const data = await r.json();
+    if (r.ok) {
+      const modelsText    = selectedModels.size    ? [...selectedModels].join(', ')    : 'все';
+      const backdropsText = selectedBackdrops.size ? [...selectedBackdrops].join(', ') : 'все';
+      setStatus(
+        `✅ Поиск запущен: ${_selectedGift}\nМодели: ${modelsText}\nФоны: ${backdropsText}`,
+        'active'
+      );
+      document.getElementById('btnStart').style.display = 'none';
+      document.getElementById('btnStop').style.display  = 'block';
+      document.getElementById('foundList').innerHTML = '<div class="empty">Ожидание новых лотов...</div>';
+      startPolling();
+    } else {
+      setStatus(data.detail ?? 'Ошибка', 'error');
+    }
+  } catch(e) { setStatus('Ошибка запуска', 'error'); }
+}
+
+async function stopMonitor() {
+  clearInterval(pollTimer);
+  try {
+    await fetch(`${API}/monitor/stop`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+      body: JSON.stringify({ user_id: USERID }),
+    });
+  } catch(e) {}
+  setStatus('');
+  document.getElementById('btnStart').style.display = 'block';
+  document.getElementById('btnStop').style.display  = 'none';
+}
+
+function startPolling() {
+  clearInterval(pollTimer);
+  pollTimer = setInterval(fetchFound, 5000);
+}
+async function fetchFound() {
+  try {
+    const r    = await fetch(`${API}/monitor/found/${USERID}`, { headers: { 'ngrok-skip-browser-warning': 'true' }});
+    const data = await r.json();
+    renderFound(data);
+  } catch(e) {}
+}
+function renderFound(items) {
+  const list = document.getElementById('foundList');
+  if (!items?.length) { list.innerHTML = '<div class="empty">Ожидание новых лотов...</div>'; return; }
+  list.innerHTML = [...items].reverse().map(item => `
+    <div class="found-item">
+      <div><span class="source">${item.source}</span><span class="badge">${item.model_rarity}%</span></div>
+      <div style="margin:4px 0">${item.model}${item.backdrop ? ` &nbsp;${item.backdrop}` : ''}</div>
+      <div class="price">${item.price_ton} TON</div>
+      <div style="margin-top:4px"><a href="${item.url}" target="_blank">${item.slug}</a></div>
+    </div>`).join('');
+}
+
+function setStatus(msg, cls = '') {
+  const el = document.getElementById('statusBar');
+  el.textContent = msg; el.className = 'status-bar ' + cls;
+}
+
+loadGifts();
+</script>
+</body>
+</html>
