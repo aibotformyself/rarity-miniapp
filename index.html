@@ -17,14 +17,14 @@
         h2 { font-size: 20px; margin-bottom: 20px; text-align: center; font-weight: 700; }
 
         .section { margin-bottom: 12px; }
-        .gift-label {
+        .field-label {
             font-size: 11px; font-weight: 700;
             color: var(--tg-theme-hint-color, #888);
             text-transform: uppercase; letter-spacing: 0.8px;
             margin-bottom: 8px;
         }
 
-        /* Поле поиска подарка */
+        /* Поиск подарка */
         .gift-search-wrap { position: relative; }
         .gift-search-input {
             width: 100%; padding: 12px 12px 12px 40px; border-radius: 12px;
@@ -38,8 +38,6 @@
             position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
             font-size: 16px; opacity: 0.6; pointer-events: none;
         }
-
-        /* Выпадающий список */
         .gift-dropdown {
             display: none; position: absolute; left: 0; right: 0; z-index: 1000;
             background: #1e1e35; border: 1px solid rgba(255,255,255,0.15);
@@ -53,7 +51,7 @@
         }
         .gift-option:active { background: rgba(91,95,207,0.3); }
 
-        /* Аккордеоны */
+        /* Аккордеон */
         .collapsible {
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px; overflow: hidden; margin-bottom: 12px;
@@ -61,58 +59,65 @@
         }
         .collapsible-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 14px; cursor: pointer; user-select: none;
+            padding: 13px 14px; cursor: pointer; user-select: none;
         }
         .collapsible-header .title {
-            font-size: 13px; font-weight: 700;
+            font-size: 12px; font-weight: 700;
             color: var(--tg-theme-hint-color, #aaa);
-            text-transform: uppercase; letter-spacing: 0.6px;
+            text-transform: uppercase; letter-spacing: 0.7px;
         }
         .badge-count {
-            font-size: 12px; font-weight: 700;
-            color: #fff; background: var(--tg-theme-button-color, #5b5fcf);
-            border-radius: 8px; padding: 2px 8px; margin-right: 8px;
+            font-size: 12px; font-weight: 700; color: #fff;
+            background: var(--tg-theme-button-color, #5b5fcf);
+            border-radius: 8px; padding: 2px 8px; margin-right: 6px;
         }
-        .collapsible-arrow { transition: transform 0.2s; display: inline-block; }
-        .collapsible-body { display: none; padding: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .coll-arrow { transition: transform 0.2s; display: inline-block; font-size: 12px; }
+        .collapsible-body { display: none; border-top: 1px solid rgba(255,255,255,0.05); }
         .collapsible-body.open { display: block; }
-        .collapsible-body.open + .collapsible-header .collapsible-arrow,
-        .arrow-open { transform: rotate(180deg); }
 
-        /* Сетка чипсов */
-        .chips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        /* Поиск внутри аккордеона */
+        .chips-search {
+            width: 100%; padding: 9px 12px; border: none; outline: none;
+            background: rgba(255,255,255,0.05); color: inherit; font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .chips-search::placeholder { color: #666; }
+
+        /* Чипсы */
+        .chips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 10px; }
         .chip {
-            padding: 10px; border-radius: 10px;
+            padding: 9px 8px; border-radius: 10px;
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.05);
-            font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s;
+            font-size: 12px; cursor: pointer; text-align: center; transition: all 0.15s;
             line-height: 1.3;
         }
         .chip.selected {
             background: var(--tg-theme-button-color, #5b5fcf);
             border-color: transparent; color: #fff;
         }
-        .chip-rarity { display: block; font-size: 10px; opacity: 0.7; margin-top: 2px; }
+        .chip.hidden-chip { display: none; }
+        .chip-rarity { display: block; font-size: 10px; opacity: 0.65; margin-top: 2px; }
 
         /* Кнопки */
         .btn {
-            width: 100%; padding: 16px; border-radius: 14px;
+            width: 100%; padding: 15px; border-radius: 14px;
             border: none; font-size: 16px; font-weight: 700;
             cursor: pointer; transition: transform 0.1s, opacity 0.2s;
         }
-        .btn:active { transform: scale(0.98); opacity: 0.9; }
+        .btn:active { transform: scale(0.98); }
         .btn-start { background: var(--tg-theme-button-color, #5b5fcf); color: #fff; }
-        .btn-stop { background: #e74c3c; color: #fff; display: none; margin-top: 8px; }
+        .btn-stop  { background: #e74c3c; color: #fff; display: none; margin-top: 8px; }
 
         .status-bar {
-            text-align: center; font-size: 13px; margin-top: 12px;
-            padding: 10px; border-radius: 10px; min-height: 40px;
+            text-align: center; font-size: 13px; margin-top: 10px;
+            padding: 10px; border-radius: 10px;
             background: rgba(255,255,255,0.03); color: var(--tg-theme-hint-color, #888);
         }
-        .status-bar.active { color: #2ecc71; background: rgba(46,204,113,0.1); }
-        .status-bar.error  { color: #e74c3c; background: rgba(231,76,60,0.1); }
+        .status-bar.active { color: #2ecc71; background: rgba(46,204,113,0.08); }
+        .status-bar.error  { color: #e74c3c; background: rgba(231,76,60,0.08); }
 
-        /* Список находок */
+        /* Найденные лоты */
         .found-list { margin-top: 20px; }
         .found-header {
             font-size: 11px; font-weight: 700;
@@ -121,51 +126,120 @@
             margin-bottom: 10px;
         }
 
+        /* Карточка — стиль как в Portals */
         .found-item {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px; padding: 14px; margin-bottom: 10px;
+            border-radius: 14px; margin-bottom: 10px;
+            overflow: hidden; cursor: pointer;
             animation: fadeIn 0.3s ease-out;
+            transition: border-color 0.2s;
         }
+        .found-item:active { border-color: rgba(91,95,207,0.5); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Шапка карточки: маркет + цена */
-        .item-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 10px;
+        .item-img-wrap {
+            position: relative; width: 100%;
+            padding-top: 75%; background: rgba(255,255,255,0.04); overflow: hidden;
         }
-        .source-tag {
-            display: flex; align-items: center; gap: 5px;
-            font-size: 11px; font-weight: 800; text-transform: uppercase;
-            color: #a2a5ff; background: rgba(91,95,207,0.15);
-            padding: 3px 8px; border-radius: 6px;
+        .item-img-wrap img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; border-radius: 0;
         }
-        .price-val { font-size: 18px; font-weight: 800; color: #2ecc71; }
-
-        /* Модель */
-        .model-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-
-        /* Редкость */
-        .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-        .badge {
-            display: flex; align-items: center; gap: 4px;
-            padding: 3px 8px; border-radius: 6px; font-size: 12px;
+        .item-img-placeholder {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 48px;
         }
-        .badge-model { background: rgba(91,95,207,0.2); color: #a2a5ff; }
-        .badge-backdrop { background: rgba(52,152,219,0.15); color: #74b9ff; }
-        .badge-label { opacity: 0.7; font-size: 10px; }
+        .source-tag-img {
+            position: absolute; top: 8px; left: 8px;
+            font-size: 10px; font-weight: 800; text-transform: uppercase;
+            color: #a2a5ff; background: rgba(20,20,40,0.8);
+            padding: 3px 7px; border-radius: 6px; backdrop-filter: blur(4px);
+        }
 
-        .buy-btn {
-            display: block; width: 100%; text-align: center;
-            background: rgba(52,152,219,0.12); color: #3498db;
-            border: 1px solid rgba(52,152,219,0.35);
-            padding: 10px; border-radius: 10px; text-decoration: none;
-            font-weight: 600; font-size: 14px;
+        .item-body { padding: 12px 14px 14px; }
+        .item-name-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: 8px;
+        }
+        .item-name { font-size: 15px; font-weight: 700; }
+        .item-num  { font-size: 12px; color: #666; }
+
+        .item-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+        .ibadge {
+            font-size: 11px; padding: 3px 7px; border-radius: 5px; font-weight: 600;
+        }
+        .ibadge-model    { background: rgba(91,95,207,0.2);  color: #a2a5ff; }
+        .ibadge-backdrop { background: rgba(52,152,219,0.15); color: #74b9ff; }
+
+        .price-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 11px; border-radius: 10px;
+            background: rgba(91,95,207,0.15); border: 1px solid rgba(91,95,207,0.3);
+            color: #a2a5ff; font-size: 15px; font-weight: 700; text-decoration: none;
             transition: background 0.2s;
         }
-        .buy-btn:active { background: rgba(52,152,219,0.25); }
+        .price-btn:active { background: rgba(91,95,207,0.3); }
+        .price-icon { font-size: 14px; }
 
         .empty { text-align: center; color: #555; padding: 40px 0; font-size: 14px; }
+
+        /* Модал */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 2000;
+            background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+            align-items: flex-end; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-sheet {
+            background: #1e1e35; border-radius: 20px 20px 0 0;
+            width: 100%; max-height: 90vh; overflow-y: auto;
+            padding: 0 0 32px; animation: slideUp 0.25s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-handle {
+            width: 36px; height: 4px; background: rgba(255,255,255,0.2);
+            border-radius: 2px; margin: 12px auto 0;
+        }
+        .modal-img-wrap {
+            width: 100%; padding-top: 70%; position: relative;
+            background: rgba(255,255,255,0.04); overflow: hidden;
+        }
+        .modal-img-wrap img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .modal-img-placeholder {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center; font-size: 72px;
+        }
+        .modal-body { padding: 18px 20px 0; }
+        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+        .modal-num   { font-size: 13px; color: #666; margin-bottom: 16px; }
+
+        .modal-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .modal-row:last-of-type { border-bottom: none; }
+        .modal-row-label { font-size: 13px; color: #888; }
+        .modal-row-val   { font-size: 14px; font-weight: 700; }
+        .modal-row-rarity { font-size: 12px; color: #a2a5ff; background: rgba(91,95,207,0.15); padding: 2px 7px; border-radius: 6px; }
+
+        .modal-price-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin: 20px 20px 0; padding: 15px; border-radius: 14px;
+            background: var(--tg-theme-button-color, #5b5fcf); color: #fff;
+            font-size: 16px; font-weight: 700; text-decoration: none;
+        }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px; width: 30px; height: 30px;
+            background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
+            color: #fff; font-size: 16px; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .modal-sheet { position: relative; }
     </style>
 </head>
 <body>
@@ -174,7 +248,7 @@
 
 <!-- Подарок -->
 <div class="section">
-    <div class="gift-label">Подарок</div>
+    <div class="field-label">Подарок</div>
     <div class="gift-search-wrap" id="giftSearchWrap">
         <span class="gift-search-icon">🎁</span>
         <input class="gift-search-input" id="giftSearchInput" type="text" placeholder="Загрузка..." autocomplete="off">
@@ -183,33 +257,35 @@
 </div>
 
 <!-- Модели -->
-<div class="collapsible" id="modelsCollapsible">
+<div class="collapsible">
     <div class="collapsible-header" onclick="toggleCollapsible('models')">
         <span class="title">Модели</span>
         <div style="display:flex;align-items:center;">
             <span class="badge-count" id="modelsCount">0</span>
-            <span class="collapsible-arrow" id="modelsArrow">▼</span>
+            <span class="coll-arrow" id="modelsArrow">▼</span>
         </div>
     </div>
     <div class="collapsible-body" id="modelsBody">
+        <input class="chips-search" id="modelsSearch" placeholder="Поиск модели..." oninput="filterChips('models',this.value)">
         <div class="chips-grid" id="modelsGrid">
-            <div class="empty" style="grid-column:1/-1;padding:16px 0;">Сначала выберите подарок</div>
+            <div class="empty" style="grid-column:1/-1;padding:16px 0;font-size:13px;">Сначала выберите подарок</div>
         </div>
     </div>
 </div>
 
 <!-- Фоны -->
-<div class="collapsible" id="backdropsCollapsible">
+<div class="collapsible">
     <div class="collapsible-header" onclick="toggleCollapsible('backdrops')">
         <span class="title">Фоны</span>
         <div style="display:flex;align-items:center;">
             <span class="badge-count" id="backdropsCount">0</span>
-            <span class="collapsible-arrow" id="backdropsArrow">▼</span>
+            <span class="coll-arrow" id="backdropsArrow">▼</span>
         </div>
     </div>
     <div class="collapsible-body" id="backdropsBody">
+        <input class="chips-search" id="backdropsSearch" placeholder="Поиск фона..." oninput="filterChips('backdrops',this.value)">
         <div class="chips-grid" id="backdropsGrid">
-            <div class="empty" style="grid-column:1/-1;padding:16px 0;">Сначала выберите подарок</div>
+            <div class="empty" style="grid-column:1/-1;padding:16px 0;font-size:13px;">Сначала выберите подарок</div>
         </div>
     </div>
 </div>
@@ -217,26 +293,44 @@
 <!-- Кнопки -->
 <button class="btn btn-start" id="btnStart" onclick="startMonitor()">▶ Запустить мониторинг</button>
 <button class="btn btn-stop"  id="btnStop"  onclick="stopMonitor()">⏹ Остановить</button>
-
 <div class="status-bar" id="statusBar">Настройте параметры и нажмите Запустить</div>
 
-<!-- Найденные лоты -->
+<!-- Найденные -->
 <div class="found-list" id="foundList"></div>
+
+<!-- Модал -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-sheet" id="modalSheet">
+        <div class="modal-handle"></div>
+        <button class="modal-close" onclick="closeModalDirect()">✕</button>
+        <div class="modal-img-wrap" id="modalImg"></div>
+        <div class="modal-body">
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-num"   id="modalNum"></div>
+            <div id="modalRows"></div>
+        </div>
+        <a href="#" id="modalPriceBtn" target="_blank" class="modal-price-btn">
+            <span class="price-icon">▽</span>
+            <span id="modalPriceTxt"></span>
+        </a>
+    </div>
+</div>
 
 <script>
     const API    = 'https://unperforated-levi-supernumerous.ngrok-free.dev';
     const tg     = window.Telegram?.WebApp;
     const USERID = tg?.initDataUnsafe?.user?.id || 6525022620;
 
-    let gifts          = [];
-    let selectedModels   = new Set();
+    let gifts             = [];
+    let selectedModels    = new Set();
     let selectedBackdrops = new Set();
-    let _selectedGift  = '';
-    let pollTimer      = null;
+    let _selectedGift     = '';
+    let pollTimer         = null;
+    let lastItems         = [];
 
     tg?.expand();
 
-    /* ── Загрузка подарков ─────────────────────────────── */
+    /* ── Загрузка подарков ─────────────────────── */
     async function loadGifts() {
         try {
             const r = await fetch(`${API}/gifts`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
@@ -244,16 +338,13 @@
             document.getElementById('giftSearchInput').placeholder = 'Поиск подарка...';
             renderGiftDropdown(gifts);
             checkInitialStatus();
-        } catch(e) {
-            setStatus('Ошибка связи с бэкендом', 'error');
-        }
+        } catch(e) { setStatus('Ошибка связи с сервером', 'error'); }
     }
 
     function renderGiftDropdown(list) {
-        const dd = document.getElementById('giftDropdown');
-        dd.innerHTML = list.map(g =>
-            `<div class="gift-option" onclick="selectGift('${g.name.replace(/'/g,"\\'")}')">${g.name}</div>`
-        ).join('');
+        document.getElementById('giftDropdown').innerHTML = list.map(g =>
+            `<div class="gift-option" onclick="selectGift('${g.name.replace(/'/g,"\\'")}')">🎁 ${g.name}</div>`
+        ).join('') || '<div class="gift-option" style="color:#666;">Ничего не найдено</div>';
     }
 
     window.selectGift = (name) => {
@@ -269,45 +360,67 @@
     document.getElementById('giftSearchInput').oninput = (e) => {
         const q = e.target.value.toLowerCase();
         renderGiftDropdown(gifts.filter(g => g.name.toLowerCase().includes(q)));
+        if (!e.target.value) _selectedGift = '';
     };
 
-    /* ── При выборе подарка ────────────────────────────── */
+    /* ── Смена подарка ─────────────────────────── */
     function onGiftChange() {
         const gift = gifts.find(g => g.name === _selectedGift);
         if (!gift) return;
 
         selectedModels.clear();
         selectedBackdrops.clear();
+        document.getElementById('modelsSearch').value   = '';
+        document.getElementById('backdropsSearch').value = '';
 
-        renderChips('modelsGrid',   gift.all_models    || [], selectedModels,    'modelsCount');
-        renderChips('backdropsGrid', gift.all_backdrops || [], selectedBackdrops, 'backdropsCount');
+        buildChips('modelsGrid',   gift.all_models    || [], selectedModels,    'modelsCount');
+        buildChips('backdropsGrid', gift.all_backdrops || [], selectedBackdrops, 'backdropsCount');
+
+        // Очищаем найденные при смене подарка
+        lastItems = [];
+        document.getElementById('foundList').innerHTML = '';
     }
 
-    function renderChips(gridId, items, set, countId) {
+    function buildChips(gridId, items, set, countId) {
         const grid = document.getElementById(gridId);
         if (!items.length) {
-            grid.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:12px 0;">Нет данных</div>';
+            grid.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:12px 0;font-size:13px;">Нет данных</div>';
             return;
         }
         grid.innerHTML = items.map(m => {
-            const rarity = m.rarity_per_mille ?? m.rarity ?? '';
-            return `
-                <div class="chip" data-name="${m.name}" data-grid="${gridId}" onclick="toggleChip(this,'${m.name}','${gridId}','${countId}')">
-                    ${m.name}
-                    ${rarity !== '' ? `<span class="chip-rarity">${rarity}‰</span>` : ''}
-                </div>`;
+            // rarity_per_mille → делим на 10 чтобы получить %
+            const raw    = m.rarity_per_mille ?? m.rarity ?? '';
+            const pct    = raw !== '' ? (raw / 10).toFixed(2) + '%' : '';
+            return `<div class="chip" data-name="${m.name}" data-grid="${gridId}" data-count="${countId}"
+                        onclick="toggleChip(this)">
+                        ${m.name}
+                        ${pct ? `<span class="chip-rarity">${pct}</span>` : ''}
+                    </div>`;
         }).join('');
         document.getElementById(countId).textContent = 0;
     }
 
-    window.toggleChip = (el, name, gridId, countId) => {
-        const set = gridId === 'modelsGrid' ? selectedModels : selectedBackdrops;
+    window.toggleChip = (el) => {
+        const name     = el.dataset.name;
+        const gridId   = el.dataset.grid;
+        const countId  = el.dataset.count;
+        const set      = gridId === 'modelsGrid' ? selectedModels : selectedBackdrops;
         el.classList.toggle('selected');
         set.has(name) ? set.delete(name) : set.add(name);
         document.getElementById(countId).textContent = set.size;
     };
 
-    /* ── Аккордеон ─────────────────────────────────────── */
+    /* ── Поиск в чипсах ────────────────────────── */
+    window.filterChips = (section, query) => {
+        const gridId = section + 'Grid';
+        const q      = query.toLowerCase();
+        document.querySelectorAll(`#${gridId} .chip`).forEach(chip => {
+            const match = chip.dataset.name.toLowerCase().includes(q);
+            chip.classList.toggle('hidden-chip', !match);
+        });
+    };
+
+    /* ── Аккордеон ─────────────────────────────── */
     function toggleCollapsible(id) {
         const body  = document.getElementById(id + 'Body');
         const arrow = document.getElementById(id + 'Arrow');
@@ -315,23 +428,27 @@
         arrow.style.transform = open ? 'rotate(180deg)' : '';
     }
 
-    /* ── Мониторинг ────────────────────────────────────── */
+    /* ── Мониторинг ────────────────────────────── */
     async function startMonitor() {
         if (!_selectedGift) return setStatus('Выберите подарок!', 'error');
 
+        // Очищаем старые находки
+        lastItems = [];
+        document.getElementById('foundList').innerHTML = '';
+
         const payload = {
-            user_id:   USERID,
-            gift_name: _selectedGift,
-            models:    [...selectedModels],
-            backdrops: [...selectedBackdrops],
+            user_id:    USERID,
+            gift_name:  _selectedGift,
+            models:     [...selectedModels],
+            backdrops:  [...selectedBackdrops],
             rarity_max: 100.0
         };
 
         try {
             const r = await fetch(`${API}/monitor/start`, {
-                method: 'POST',
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-                body: JSON.stringify(payload)
+                body:    JSON.stringify(payload)
             });
             if (r.ok) {
                 setStatus('✅ Мониторинг запущен', 'active');
@@ -346,9 +463,9 @@
         clearInterval(pollTimer);
         try {
             await fetch(`${API}/monitor/stop`, {
-                method: 'POST',
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-                body: JSON.stringify({ user_id: USERID })
+                body:    JSON.stringify({ user_id: USERID })
             });
         } catch(e) {}
         document.getElementById('btnStart').style.display = 'block';
@@ -356,7 +473,7 @@
         setStatus('Монитор остановлен');
     }
 
-    /* ── Polling ───────────────────────────────────────── */
+    /* ── Polling ───────────────────────────────── */
     function startPolling() {
         clearInterval(pollTimer);
         fetchFound();
@@ -369,12 +486,25 @@
                 headers: { 'ngrok-skip-browser-warning': 'true' }
             });
             if (!r.ok) return;
-            const data = await r.json();
-            renderCards(Array.isArray(data) ? data : (data.found || []));
+            const data  = await r.json();
+            const items = Array.isArray(data) ? data : (data.found || []);
+            if (items.length !== lastItems.length) {
+                lastItems = items;
+                renderCards(items);
+            }
         } catch(e) {}
     }
 
-    /* ── Карточки ──────────────────────────────────────── */
+    /* ── Рендер карточек ───────────────────────── */
+    const SOURCE_ICON = { Portals: '🏛', Getgems: '💎', Tonnel: '🚇' };
+
+    function formatPct(val) {
+        if (!val && val !== 0) return '—';
+        // Если значение > 10 — скорее всего per mille, делим на 10
+        const pct = val > 10 ? (val / 10).toFixed(2) : parseFloat(val).toFixed(2);
+        return pct + '%';
+    }
+
     function renderCards(items) {
         const list = document.getElementById('foundList');
         if (!items || !items.length) {
@@ -382,52 +512,97 @@
             return;
         }
 
-        // Иконки маркетов
-        const sourceIcon = { Portals: '🏛', Getgems: '💎', Tonnel: '🚇' };
-
         list.innerHTML = `
             <div class="found-header">Найдено (${items.length})</div>
-            ${[...items].reverse().map(item => {
-                const icon       = sourceIcon[item.source] || '🏪';
-                const modelRar   = item.model_rarity   != null ? `${item.model_rarity}‰` : '—';
-                const backdropRar = item.backdrop_rarity != null ? `${item.backdrop_rarity}‰` : '';
+            ${[...items].reverse().map((item, i) => {
+                const icon      = SOURCE_ICON[item.source] || '🏪';
+                const imgHtml   = item.image_url
+                    ? `<img src="${item.image_url}" alt="" loading="lazy" onerror="this.style.display='none'">`
+                    : `<div class="item-img-placeholder">🎁</div>`;
+                const modelPct  = item.model_rarity    ? formatPct(item.model_rarity)    : '';
+                const backdropPct = item.backdrop_rarity ? formatPct(item.backdrop_rarity) : '';
 
                 return `
-                <div class="found-item">
-                    <div class="item-header">
-                        <span class="source-tag">${icon} ${item.source || 'Market'}</span>
-                        <span class="price-val">${item.price_ton ?? '?'} TON</span>
+                <div class="found-item" onclick="openModal(${items.length - 1 - i})">
+                    <div class="item-img-wrap">
+                        ${imgHtml}
+                        <span class="source-tag-img">${icon} ${item.source}</span>
                     </div>
-
-                    <div class="model-name">${item.model || '—'}</div>
-
-                    <div class="badges">
-                        <span class="badge badge-model">
-                            <span class="badge-label">модель</span>
-                            ${modelRar}
-                        </span>
-                        ${item.backdrop && item.backdrop !== 'Default' ? `
-                        <span class="badge badge-backdrop">
-                            <span class="badge-label">фон</span>
-                            ${item.backdrop}${backdropRar ? ' · ' + backdropRar : ''}
-                        </span>` : ''}
+                    <div class="item-body">
+                        <div class="item-name-row">
+                            <span class="item-name">${item.model}</span>
+                            ${item.number ? `<span class="item-num">#${item.number}</span>` : ''}
+                        </div>
+                        <div class="item-badges">
+                            ${modelPct   ? `<span class="ibadge ibadge-model">${item.model} · ${modelPct}</span>` : ''}
+                            ${item.backdrop && item.backdrop !== 'Default'
+                                ? `<span class="ibadge ibadge-backdrop">${item.backdrop}${backdropPct ? ' · ' + backdropPct : ''}</span>`
+                                : ''}
+                        </div>
+                        <a href="${item.url}" target="_blank" class="price-btn" onclick="event.stopPropagation()">
+                            <span class="price-icon">▽</span>
+                            <span>${item.price_ton} TON · ${item.source}</span>
+                        </a>
                     </div>
-
-                    <a href="${item.url || '#'}" target="_blank" class="buy-btn">
-                        Смотреть в ${item.source || 'Маркете'} →
-                    </a>
                 </div>`;
             }).join('')}`;
     }
 
-    /* ── Начальный статус ──────────────────────────────── */
+    /* ── Модал ─────────────────────────────────── */
+    window.openModal = (idx) => {
+        const item = [...lastItems].reverse()[idx];
+        if (!item) return;
+
+        // Изображение
+        const imgWrap = document.getElementById('modalImg');
+        imgWrap.innerHTML = item.image_url
+            ? `<img src="${item.image_url}" alt="">`
+            : `<div class="modal-img-placeholder">🎁</div>`;
+
+        document.getElementById('modalTitle').textContent = item.model || '—';
+        document.getElementById('modalNum').textContent   = item.number ? `#${item.number}` : '';
+
+        // Строки характеристик
+        const rows = [
+            { label: 'Модель',  val: item.model    || '—', rarity: item.model_rarity },
+            { label: 'Фон',     val: item.backdrop  || '—', rarity: item.backdrop_rarity },
+            { label: 'Символ',  val: item.symbol    || '—', rarity: item.symbol_rarity },
+            { label: 'Маркет',  val: item.source    || '—', rarity: null },
+        ];
+
+        document.getElementById('modalRows').innerHTML = rows.map(r => `
+            <div class="modal-row">
+                <span class="modal-row-label">${r.label}</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="modal-row-val">${r.val}</span>
+                    ${r.rarity ? `<span class="modal-row-rarity">${formatPct(r.rarity)}</span>` : ''}
+                </div>
+            </div>`
+        ).join('');
+
+        document.getElementById('modalPriceTxt').textContent = `${item.price_ton} TON · Купить`;
+        document.getElementById('modalPriceBtn').href = item.url || '#';
+
+        document.getElementById('modalOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeModal = (e) => {
+        if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+    };
+    window.closeModalDirect = () => {
+        document.getElementById('modalOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+    };
+
+    /* ── Начальный статус ──────────────────────── */
     async function checkInitialStatus() {
         try {
             const r = await fetch(`${API}/monitor/found/${USERID}`, {
                 headers: { 'ngrok-skip-browser-warning': 'true' }
             });
             if (!r.ok) return;
-            const data = await r.json();
+            const data  = await r.json();
             const items = Array.isArray(data) ? data : (data.found || []);
             if (data.running) {
                 document.getElementById('btnStart').style.display = 'none';
@@ -435,17 +610,17 @@
                 setStatus('✅ Мониторинг активен', 'active');
                 startPolling();
             }
-            if (items.length) renderCards(items);
+            if (items.length) { lastItems = items; renderCards(items); }
         } catch(e) {}
     }
 
     function setStatus(msg, cls = '') {
-        const s = document.getElementById('statusBar');
+        const s     = document.getElementById('statusBar');
         s.textContent = msg;
         s.className   = 'status-bar ' + cls;
     }
 
-    /* ── Init ──────────────────────────────────────────── */
+    /* ── Init ──────────────────────────────────── */
     loadGifts();
 
     document.addEventListener('click', (e) => {
