@@ -24,7 +24,6 @@
             margin-bottom: 8px;
         }
 
-        /* Поиск подарка */
         .gift-search-wrap { position: relative; }
         .gift-search-input {
             width: 100%; padding: 12px 12px 12px 40px; border-radius: 12px;
@@ -51,7 +50,6 @@
         }
         .gift-option:active { background: rgba(91,95,207,0.3); }
 
-        /* Аккордеон */
         .collapsible {
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px; overflow: hidden; margin-bottom: 12px;
@@ -75,7 +73,6 @@
         .collapsible-body { display: none; border-top: 1px solid rgba(255,255,255,0.05); }
         .collapsible-body.open { display: block; }
 
-        /* Поиск внутри аккордеона */
         .chips-search {
             width: 100%; padding: 9px 12px; border: none; outline: none;
             background: rgba(255,255,255,0.05); color: inherit; font-size: 13px;
@@ -83,7 +80,6 @@
         }
         .chips-search::placeholder { color: #666; }
 
-        /* Чипсы */
         .chips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 10px; }
         .chip {
             padding: 9px 8px; border-radius: 10px;
@@ -99,7 +95,6 @@
         .chip.hidden-chip { display: none; }
         .chip-rarity { display: block; font-size: 10px; opacity: 0.65; margin-top: 2px; }
 
-        /* Кнопки */
         .btn {
             width: 100%; padding: 15px; border-radius: 14px;
             border: none; font-size: 16px; font-weight: 700;
@@ -117,22 +112,26 @@
         .status-bar.active { color: #2ecc71; background: rgba(46,204,113,0.08); }
         .status-bar.error  { color: #e74c3c; background: rgba(231,76,60,0.08); }
 
-        /* Найденные лоты */
-        .found-list { margin-top: 20px; }
+        /* Найденные — сетка 2 в строку */
+        .found-list  { margin-top: 20px; }
         .found-header {
             font-size: 11px; font-weight: 700;
             color: var(--tg-theme-hint-color, #888);
             text-transform: uppercase; letter-spacing: 0.8px;
             margin-bottom: 10px;
         }
+        .found-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
 
-        /* Карточка — стиль как в Portals */
         .found-item {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px; margin-bottom: 10px;
-            overflow: hidden; cursor: pointer;
+            border-radius: 14px; overflow: hidden; cursor: pointer;
             animation: fadeIn 0.3s ease-out;
+            display: flex; flex-direction: column;
             transition: border-color 0.2s;
         }
         .found-item:active { border-color: rgba(91,95,207,0.5); }
@@ -140,48 +139,51 @@
 
         .item-img-wrap {
             position: relative; width: 100%;
-            padding-top: 75%; background: rgba(255,255,255,0.04); overflow: hidden;
+            padding-top: 100%;
+            background: rgba(255,255,255,0.04); overflow: hidden;
         }
         .item-img-wrap img {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; border-radius: 0;
+            object-fit: cover;
         }
         .item-img-placeholder {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 48px;
+            font-size: 40px;
         }
         .source-tag-img {
-            position: absolute; top: 8px; left: 8px;
-            font-size: 10px; font-weight: 800; text-transform: uppercase;
-            color: #a2a5ff; background: rgba(20,20,40,0.8);
-            padding: 3px 7px; border-radius: 6px; backdrop-filter: blur(4px);
+            position: absolute; top: 6px; left: 6px;
+            font-size: 9px; font-weight: 800; text-transform: uppercase;
+            color: #a2a5ff; background: rgba(20,20,40,0.85);
+            padding: 2px 6px; border-radius: 5px; backdrop-filter: blur(4px);
         }
 
-        .item-body { padding: 12px 14px 14px; }
+        .item-body {
+            padding: 9px 10px 11px;
+            display: flex; flex-direction: column; flex: 1;
+        }
         .item-name-row {
             display: flex; justify-content: space-between; align-items: baseline;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
-        .item-name { font-size: 15px; font-weight: 700; }
-        .item-num  { font-size: 12px; color: #666; }
+        .item-name { font-size: 13px; font-weight: 700; line-height: 1.2; }
+        .item-num  { font-size: 10px; color: #666; white-space: nowrap; margin-left: 4px; }
 
-        .item-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+        .item-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
         .ibadge {
-            font-size: 11px; padding: 3px 7px; border-radius: 5px; font-weight: 600;
+            font-size: 10px; padding: 2px 6px; border-radius: 5px; font-weight: 600;
         }
         .ibadge-model    { background: rgba(91,95,207,0.2);  color: #a2a5ff; }
         .ibadge-backdrop { background: rgba(52,152,219,0.15); color: #74b9ff; }
 
         .price-btn {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            width: 100%; padding: 11px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            width: 100%; padding: 9px; border-radius: 9px; margin-top: auto;
             background: rgba(91,95,207,0.15); border: 1px solid rgba(91,95,207,0.3);
-            color: #a2a5ff; font-size: 15px; font-weight: 700; text-decoration: none;
+            color: #a2a5ff; font-size: 12px; font-weight: 700; text-decoration: none;
             transition: background 0.2s;
         }
         .price-btn:active { background: rgba(91,95,207,0.3); }
-        .price-icon { font-size: 14px; }
 
         .empty { text-align: center; color: #555; padding: 40px 0; font-size: 14px; }
 
@@ -193,6 +195,7 @@
         }
         .modal-overlay.open { display: flex; }
         .modal-sheet {
+            position: relative;
             background: #1e1e35; border-radius: 20px 20px 0 0;
             width: 100%; max-height: 90vh; overflow-y: auto;
             padding: 0 0 32px; animation: slideUp 0.25s ease-out;
@@ -201,6 +204,12 @@
         .modal-handle {
             width: 36px; height: 4px; background: rgba(255,255,255,0.2);
             border-radius: 2px; margin: 12px auto 0;
+        }
+        .modal-close {
+            position: absolute; top: 14px; right: 14px; width: 28px; height: 28px;
+            background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
+            color: #fff; font-size: 14px; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; z-index: 10;
         }
         .modal-img-wrap {
             width: 100%; padding-top: 70%; position: relative;
@@ -215,7 +224,7 @@
             display: flex; align-items: center; justify-content: center; font-size: 72px;
         }
         .modal-body { padding: 18px 20px 0; }
-        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
         .modal-num   { font-size: 13px; color: #666; margin-bottom: 16px; }
 
         .modal-row {
@@ -224,29 +233,24 @@
         }
         .modal-row:last-of-type { border-bottom: none; }
         .modal-row-label { font-size: 13px; color: #888; }
+        .modal-row-right { display: flex; align-items: center; gap: 8px; }
         .modal-row-val   { font-size: 14px; font-weight: 700; }
-        .modal-row-rarity { font-size: 12px; color: #a2a5ff; background: rgba(91,95,207,0.15); padding: 2px 7px; border-radius: 6px; }
-
+        .modal-row-rarity {
+            font-size: 11px; color: #a2a5ff;
+            background: rgba(91,95,207,0.15); padding: 2px 7px; border-radius: 6px;
+        }
         .modal-price-btn {
             display: flex; align-items: center; justify-content: center; gap: 8px;
             margin: 20px 20px 0; padding: 15px; border-radius: 14px;
             background: var(--tg-theme-button-color, #5b5fcf); color: #fff;
             font-size: 16px; font-weight: 700; text-decoration: none;
         }
-        .modal-close {
-            position: absolute; top: 16px; right: 16px; width: 30px; height: 30px;
-            background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
-            color: #fff; font-size: 16px; cursor: pointer; display: flex;
-            align-items: center; justify-content: center;
-        }
-        .modal-sheet { position: relative; }
     </style>
 </head>
 <body>
 
 <h2>🔍 Rarity Monitor</h2>
 
-<!-- Подарок -->
 <div class="section">
     <div class="field-label">Подарок</div>
     <div class="gift-search-wrap" id="giftSearchWrap">
@@ -256,7 +260,6 @@
     </div>
 </div>
 
-<!-- Модели -->
 <div class="collapsible">
     <div class="collapsible-header" onclick="toggleCollapsible('models')">
         <span class="title">Модели</span>
@@ -273,7 +276,6 @@
     </div>
 </div>
 
-<!-- Фоны -->
 <div class="collapsible">
     <div class="collapsible-header" onclick="toggleCollapsible('backdrops')">
         <span class="title">Фоны</span>
@@ -290,12 +292,10 @@
     </div>
 </div>
 
-<!-- Кнопки -->
 <button class="btn btn-start" id="btnStart" onclick="startMonitor()">▶ Запустить мониторинг</button>
 <button class="btn btn-stop"  id="btnStop"  onclick="stopMonitor()">⏹ Остановить</button>
 <div class="status-bar" id="statusBar">Настройте параметры и нажмите Запустить</div>
 
-<!-- Найденные -->
 <div class="found-list" id="foundList"></div>
 
 <!-- Модал -->
@@ -310,7 +310,7 @@
             <div id="modalRows"></div>
         </div>
         <a href="#" id="modalPriceBtn" target="_blank" class="modal-price-btn">
-            <span class="price-icon">▽</span>
+            <span>▽</span>
             <span id="modalPriceTxt"></span>
         </a>
     </div>
@@ -330,7 +330,7 @@
 
     tg?.expand();
 
-    /* ── Загрузка подарков ─────────────────────── */
+    /* ── Подарки ───────────────────────────────── */
     async function loadGifts() {
         try {
             const r = await fetch(`${API}/gifts`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
@@ -356,7 +356,6 @@
 
     document.getElementById('giftSearchInput').onfocus = () =>
         document.getElementById('giftDropdown').classList.add('open');
-
     document.getElementById('giftSearchInput').oninput = (e) => {
         const q = e.target.value.toLowerCase();
         renderGiftDropdown(gifts.filter(g => g.name.toLowerCase().includes(q)));
@@ -367,16 +366,12 @@
     function onGiftChange() {
         const gift = gifts.find(g => g.name === _selectedGift);
         if (!gift) return;
-
         selectedModels.clear();
         selectedBackdrops.clear();
-        document.getElementById('modelsSearch').value   = '';
+        document.getElementById('modelsSearch').value    = '';
         document.getElementById('backdropsSearch').value = '';
-
-        buildChips('modelsGrid',   gift.all_models    || [], selectedModels,    'modelsCount');
+        buildChips('modelsGrid',    gift.all_models    || [], selectedModels,    'modelsCount');
         buildChips('backdropsGrid', gift.all_backdrops || [], selectedBackdrops, 'backdropsCount');
-
-        // Очищаем найденные при смене подарка
         lastItems = [];
         document.getElementById('foundList').innerHTML = '';
     }
@@ -388,11 +383,9 @@
             return;
         }
         grid.innerHTML = items.map(m => {
-            // rarity_per_mille → делим на 10 чтобы получить %
-            const raw    = m.rarity_per_mille ?? m.rarity ?? '';
-            const pct    = raw !== '' ? (raw / 10).toFixed(2) + '%' : '';
-            return `<div class="chip" data-name="${m.name}" data-grid="${gridId}" data-count="${countId}"
-                        onclick="toggleChip(this)">
+            const raw = m.rarity_per_mille ?? m.rarity ?? '';
+            const pct = raw !== '' ? parseFloat(raw).toFixed(2) + '%' : '';
+            return `<div class="chip" data-name="${m.name}" data-grid="${gridId}" data-count="${countId}" onclick="toggleChip(this)">
                         ${m.name}
                         ${pct ? `<span class="chip-rarity">${pct}</span>` : ''}
                     </div>`;
@@ -401,26 +394,19 @@
     }
 
     window.toggleChip = (el) => {
-        const name     = el.dataset.name;
-        const gridId   = el.dataset.grid;
-        const countId  = el.dataset.count;
-        const set      = gridId === 'modelsGrid' ? selectedModels : selectedBackdrops;
+        const set = el.dataset.grid === 'modelsGrid' ? selectedModels : selectedBackdrops;
         el.classList.toggle('selected');
-        set.has(name) ? set.delete(name) : set.add(name);
-        document.getElementById(countId).textContent = set.size;
+        set.has(el.dataset.name) ? set.delete(el.dataset.name) : set.add(el.dataset.name);
+        document.getElementById(el.dataset.count).textContent = set.size;
     };
 
-    /* ── Поиск в чипсах ────────────────────────── */
     window.filterChips = (section, query) => {
-        const gridId = section + 'Grid';
-        const q      = query.toLowerCase();
-        document.querySelectorAll(`#${gridId} .chip`).forEach(chip => {
-            const match = chip.dataset.name.toLowerCase().includes(q);
-            chip.classList.toggle('hidden-chip', !match);
+        const q = query.toLowerCase();
+        document.querySelectorAll(`#${section}Grid .chip`).forEach(chip => {
+            chip.classList.toggle('hidden-chip', !chip.dataset.name.toLowerCase().includes(q));
         });
     };
 
-    /* ── Аккордеон ─────────────────────────────── */
     function toggleCollapsible(id) {
         const body  = document.getElementById(id + 'Body');
         const arrow = document.getElementById(id + 'Arrow');
@@ -432,7 +418,7 @@
     async function startMonitor() {
         if (!_selectedGift) return setStatus('Выберите подарок!', 'error');
 
-        // Очищаем старые находки
+        clearInterval(pollTimer);
         lastItems = [];
         document.getElementById('foundList').innerHTML = '';
 
@@ -488,10 +474,8 @@
             if (!r.ok) return;
             const data  = await r.json();
             const items = Array.isArray(data) ? data : (data.found || []);
-            if (items.length !== lastItems.length) {
-                lastItems = items;
-                renderCards(items);
-            }
+            lastItems = items;
+            renderCards(items);
         } catch(e) {}
     }
 
@@ -499,10 +483,8 @@
     const SOURCE_ICON = { Portals: '🏛', Getgems: '💎', Tonnel: '🚇' };
 
     function formatPct(val) {
-        if (!val && val !== 0) return '—';
-        // Если значение > 10 — скорее всего per mille, делим на 10
-        const pct = val > 10 ? (val / 10).toFixed(2) : parseFloat(val).toFixed(2);
-        return pct + '%';
+        if (val == null || val === '') return null;
+        return parseFloat(val).toFixed(2) + '%';
     }
 
     function renderCards(items) {
@@ -512,40 +494,43 @@
             return;
         }
 
+        const reversed = [...items].reverse();
         list.innerHTML = `
             <div class="found-header">Найдено (${items.length})</div>
-            ${[...items].reverse().map((item, i) => {
-                const icon      = SOURCE_ICON[item.source] || '🏪';
-                const imgHtml   = item.image_url
+            <div class="found-grid">
+            ${reversed.map((item, i) => {
+                const icon        = SOURCE_ICON[item.source] || '🏪';
+                const imgHtml     = item.image_url
                     ? `<img src="${item.image_url}" alt="" loading="lazy" onerror="this.style.display='none'">`
                     : `<div class="item-img-placeholder">🎁</div>`;
-                const modelPct  = item.model_rarity    ? formatPct(item.model_rarity)    : '';
-                const backdropPct = item.backdrop_rarity ? formatPct(item.backdrop_rarity) : '';
+                const modelPct    = formatPct(item.model_rarity);
+                const backdropPct = formatPct(item.backdrop_rarity);
 
                 return `
-                <div class="found-item" onclick="openModal(${items.length - 1 - i})">
+                <div class="found-item" onclick="openModal(${i})">
                     <div class="item-img-wrap">
                         ${imgHtml}
-                        <span class="source-tag-img">${icon} ${item.source}</span>
+                        <span class="source-tag-img">${icon} ${item.source || ''}</span>
                     </div>
                     <div class="item-body">
                         <div class="item-name-row">
-                            <span class="item-name">${item.model}</span>
+                            <span class="item-name">${item.model || '—'}</span>
                             ${item.number ? `<span class="item-num">#${item.number}</span>` : ''}
                         </div>
                         <div class="item-badges">
-                            ${modelPct   ? `<span class="ibadge ibadge-model">${item.model} · ${modelPct}</span>` : ''}
+                            ${modelPct ? `<span class="ibadge ibadge-model">${modelPct}</span>` : ''}
                             ${item.backdrop && item.backdrop !== 'Default'
                                 ? `<span class="ibadge ibadge-backdrop">${item.backdrop}${backdropPct ? ' · ' + backdropPct : ''}</span>`
                                 : ''}
                         </div>
-                        <a href="${item.url}" target="_blank" class="price-btn" onclick="event.stopPropagation()">
-                            <span class="price-icon">▽</span>
-                            <span>${item.price_ton} TON · ${item.source}</span>
+                        <a href="${item.url || '#'}" target="_blank" class="price-btn" onclick="event.stopPropagation()">
+                            <span>▽</span>
+                            <span>${item.price_ton ?? '?'} TON · ${item.source || ''}</span>
                         </a>
                     </div>
                 </div>`;
-            }).join('')}`;
+            }).join('')}
+            </div>`;
     }
 
     /* ── Модал ─────────────────────────────────── */
@@ -553,36 +538,33 @@
         const item = [...lastItems].reverse()[idx];
         if (!item) return;
 
-        // Изображение
-        const imgWrap = document.getElementById('modalImg');
-        imgWrap.innerHTML = item.image_url
+        document.getElementById('modalImg').innerHTML = item.image_url
             ? `<img src="${item.image_url}" alt="">`
             : `<div class="modal-img-placeholder">🎁</div>`;
 
         document.getElementById('modalTitle').textContent = item.model || '—';
         document.getElementById('modalNum').textContent   = item.number ? `#${item.number}` : '';
 
-        // Строки характеристик
         const rows = [
-            { label: 'Модель',  val: item.model    || '—', rarity: item.model_rarity },
+            { label: 'Модель',  val: item.model    || '—', rarity: item.model_rarity    },
             { label: 'Фон',     val: item.backdrop  || '—', rarity: item.backdrop_rarity },
-            { label: 'Символ',  val: item.symbol    || '—', rarity: item.symbol_rarity },
-            { label: 'Маркет',  val: item.source    || '—', rarity: null },
+            { label: 'Символ',  val: item.symbol    || '—', rarity: item.symbol_rarity   },
+            { label: 'Маркет',  val: item.source    || '—', rarity: null                 },
         ];
 
-        document.getElementById('modalRows').innerHTML = rows.map(r => `
-            <div class="modal-row">
+        document.getElementById('modalRows').innerHTML = rows.map(r => {
+            const pct = formatPct(r.rarity);
+            return `<div class="modal-row">
                 <span class="modal-row-label">${r.label}</span>
-                <div style="display:flex;align-items:center;gap:8px;">
+                <div class="modal-row-right">
                     <span class="modal-row-val">${r.val}</span>
-                    ${r.rarity ? `<span class="modal-row-rarity">${formatPct(r.rarity)}</span>` : ''}
+                    ${pct ? `<span class="modal-row-rarity">${pct}</span>` : ''}
                 </div>
-            </div>`
-        ).join('');
+            </div>`;
+        }).join('');
 
-        document.getElementById('modalPriceTxt').textContent = `${item.price_ton} TON · Купить`;
+        document.getElementById('modalPriceTxt').textContent = `${item.price_ton ?? '?'} TON · Купить`;
         document.getElementById('modalPriceBtn').href = item.url || '#';
-
         document.getElementById('modalOverlay').classList.add('open');
         document.body.style.overflow = 'hidden';
     };
@@ -615,12 +597,11 @@
     }
 
     function setStatus(msg, cls = '') {
-        const s     = document.getElementById('statusBar');
+        const s = document.getElementById('statusBar');
         s.textContent = msg;
         s.className   = 'status-bar ' + cls;
     }
 
-    /* ── Init ──────────────────────────────────── */
     loadGifts();
 
     document.addEventListener('click', (e) => {
