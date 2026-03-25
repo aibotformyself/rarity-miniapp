@@ -112,7 +112,6 @@
         .status-bar.active { color: #2ecc71; background: rgba(46,204,113,0.08); }
         .status-bar.error  { color: #e74c3c; background: rgba(231,76,60,0.08); }
 
-        /* Найденные — сетка 2 в строку */
         .found-list  { margin-top: 20px; }
         .found-header {
             font-size: 11px; font-weight: 700;
@@ -162,6 +161,20 @@
             padding: 9px 10px 11px;
             display: flex; flex-direction: column; flex: 1;
         }
+
+        /* ✅ Название подарка над моделью */
+        .item-gift-name {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--tg-theme-hint-color, #777);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .item-name-row {
             display: flex; justify-content: space-between; align-items: baseline;
             margin-bottom: 6px;
@@ -187,7 +200,6 @@
 
         .empty { text-align: center; color: #555; padding: 40px 0; font-size: 14px; }
 
-        /* Модал */
         .modal-overlay {
             display: none; position: fixed; inset: 0; z-index: 2000;
             background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
@@ -224,6 +236,10 @@
             display: flex; align-items: center; justify-content: center; font-size: 72px;
         }
         .modal-body { padding: 18px 20px 0; }
+        .modal-gift-name {
+            font-size: 11px; font-weight: 700; color: #777;
+            text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;
+        }
         .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
         .modal-num   { font-size: 13px; color: #666; margin-bottom: 16px; }
 
@@ -298,13 +314,13 @@
 
 <div class="found-list" id="foundList"></div>
 
-<!-- Модал -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
     <div class="modal-sheet" id="modalSheet">
         <div class="modal-handle"></div>
         <button class="modal-close" onclick="closeModalDirect()">✕</button>
         <div class="modal-img-wrap" id="modalImg"></div>
         <div class="modal-body">
+            <div class="modal-gift-name" id="modalGiftName"></div>
             <div class="modal-title" id="modalTitle"></div>
             <div class="modal-num"   id="modalNum"></div>
             <div id="modalRows"></div>
@@ -330,10 +346,12 @@
 
     tg?.expand();
 
+    const H = { 'ngrok-skip-browser-warning': 'true' };
+
     /* ── Подарки ───────────────────────────────── */
     async function loadGifts() {
         try {
-            const r = await fetch(`${API}/gifts`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+            const r = await fetch(`${API}/gifts`, { headers: H });
             gifts = await r.json();
             document.getElementById('giftSearchInput').placeholder = 'Поиск подарка...';
             renderGiftDropdown(gifts);
@@ -342,8 +360,9 @@
     }
 
     function renderGiftDropdown(list) {
+        // ✅ Исправлен escape — одиночный слэш вместо четверного
         document.getElementById('giftDropdown').innerHTML = list.map(g =>
-            `<div class="gift-option" onclick="selectGift('${g.name.replace(/'/g,"\\'")}')">🎁 ${g.name}</div>`
+            `<div class="gift-option" onclick='selectGift(${JSON.stringify(g.name)})'>🎁 ${g.name}</div>`
         ).join('') || '<div class="gift-option" style="color:#666;">Ничего не найдено</div>';
     }
 
@@ -433,7 +452,7 @@
         try {
             const r = await fetch(`${API}/monitor/start`, {
                 method:  'POST',
-                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                headers: { 'Content-Type': 'application/json', ...H },
                 body:    JSON.stringify(payload)
             });
             if (r.ok) {
@@ -441,8 +460,10 @@
                 document.getElementById('btnStart').style.display = 'none';
                 document.getElementById('btnStop').style.display  = 'block';
                 startPolling();
+            } else {
+                setStatus('Ошибка: ' + r.status, 'error');
             }
-        } catch(e) { setStatus('Ошибка старта', 'error'); }
+        } catch(e) { setStatus('Ошибка старта: ' + e.message, 'error'); }
     }
 
     async function stopMonitor() {
@@ -450,7 +471,7 @@
         try {
             await fetch(`${API}/monitor/stop`, {
                 method:  'POST',
-                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                headers: { 'Content-Type': 'application/json', ...H },
                 body:    JSON.stringify({ user_id: USERID })
             });
         } catch(e) {}
@@ -468,22 +489,23 @@
 
     async function fetchFound() {
         try {
-            const r = await fetch(`${API}/monitor/found/${USERID}`, {
-                headers: { 'ngrok-skip-browser-warning': 'true' }
-            });
+            const r = await fetch(`${API}/monitor/found/${USERID}`, { headers: H });
             if (!r.ok) return;
             const data  = await r.json();
-            const items = Array.isArray(data) ? data : (data.found || []);
+            const items = data.found || [];
+            // ✅ Всегда обновляем — не сравниваем длину
             lastItems = items;
             renderCards(items);
-        } catch(e) {}
+        } catch(e) {
+            console.error('fetchFound error:', e);
+        }
     }
 
     /* ── Рендер карточек ───────────────────────── */
     const SOURCE_ICON = { Portals: '🏛', Getgems: '💎', Tonnel: '🚇' };
 
     function formatPct(val) {
-        if (val == null || val === '') return null;
+        if (val == null || val === '' || val === 0) return null;
         return parseFloat(val).toFixed(2) + '%';
     }
 
@@ -494,11 +516,12 @@
             return;
         }
 
-        const reversed = [...items].reverse();
+        // ✅ found_items.json уже хранит новые→старые (insert(0,...))
+        // Показываем как есть (первый = самый новый)
         list.innerHTML = `
             <div class="found-header">Найдено (${items.length})</div>
             <div class="found-grid">
-            ${reversed.map((item, i) => {
+            ${items.map((item, i) => {
                 const icon        = SOURCE_ICON[item.source] || '🏪';
                 const imgHtml     = item.image_url
                     ? `<img src="${item.image_url}" alt="" loading="lazy" onerror="this.style.display='none'">`
@@ -513,6 +536,7 @@
                         <span class="source-tag-img">${icon} ${item.source || ''}</span>
                     </div>
                     <div class="item-body">
+                        ${item.gift_name ? `<div class="item-gift-name">${item.gift_name}</div>` : ''}
                         <div class="item-name-row">
                             <span class="item-name">${item.model || '—'}</span>
                             ${item.number ? `<span class="item-num">#${item.number}</span>` : ''}
@@ -535,15 +559,16 @@
 
     /* ── Модал ─────────────────────────────────── */
     window.openModal = (idx) => {
-        const item = [...lastItems].reverse()[idx];
+        const item = lastItems[idx];
         if (!item) return;
 
         document.getElementById('modalImg').innerHTML = item.image_url
             ? `<img src="${item.image_url}" alt="">`
             : `<div class="modal-img-placeholder">🎁</div>`;
 
-        document.getElementById('modalTitle').textContent = item.model || '—';
-        document.getElementById('modalNum').textContent   = item.number ? `#${item.number}` : '';
+        document.getElementById('modalGiftName').textContent = item.gift_name || '';
+        document.getElementById('modalTitle').textContent    = item.model || '—';
+        document.getElementById('modalNum').textContent      = item.number ? `#${item.number}` : '';
 
         const rows = [
             { label: 'Модель',  val: item.model    || '—', rarity: item.model_rarity    },
@@ -580,12 +605,10 @@
     /* ── Начальный статус ──────────────────────── */
     async function checkInitialStatus() {
         try {
-            const r = await fetch(`${API}/monitor/found/${USERID}`, {
-                headers: { 'ngrok-skip-browser-warning': 'true' }
-            });
+            const r = await fetch(`${API}/monitor/found/${USERID}`, { headers: H });
             if (!r.ok) return;
             const data  = await r.json();
-            const items = Array.isArray(data) ? data : (data.found || []);
+            const items = data.found || [];
             if (data.running) {
                 document.getElementById('btnStart').style.display = 'none';
                 document.getElementById('btnStop').style.display  = 'block';
