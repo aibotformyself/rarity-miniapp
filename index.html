@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Попа</title>
+    <title>Rarity Monitor</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Основные стили */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -16,8 +15,8 @@
             min-height: 100vh;
         }
         h2 { font-size: 20px; margin-bottom: 20px; text-align: center; font-weight: 700; }
-        
-        .section { margin-bottom: 16px; }
+
+        .section { margin-bottom: 12px; }
         .gift-label {
             font-size: 11px; font-weight: 700;
             color: var(--tg-theme-hint-color, #888);
@@ -53,7 +52,6 @@
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .gift-option:active { background: rgba(91,95,207,0.3); }
-        .gift-option.selected { color: var(--tg-theme-button-color, #5b5fcf); font-weight: 600; }
 
         /* Аккордеоны */
         .collapsible {
@@ -65,14 +63,21 @@
             display: flex; align-items: center; justify-content: space-between;
             padding: 14px; cursor: pointer; user-select: none;
         }
-        .collapsible-header .title { font-size: 14px; font-weight: 600; color: var(--tg-theme-hint-color, #aaa); }
+        .collapsible-header .title {
+            font-size: 13px; font-weight: 700;
+            color: var(--tg-theme-hint-color, #aaa);
+            text-transform: uppercase; letter-spacing: 0.6px;
+        }
         .badge-count {
             font-size: 12px; font-weight: 700;
             color: #fff; background: var(--tg-theme-button-color, #5b5fcf);
             border-radius: 8px; padding: 2px 8px; margin-right: 8px;
         }
+        .collapsible-arrow { transition: transform 0.2s; display: inline-block; }
         .collapsible-body { display: none; padding: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
         .collapsible-body.open { display: block; }
+        .collapsible-body.open + .collapsible-header .collapsible-arrow,
+        .arrow-open { transform: rotate(180deg); }
 
         /* Сетка чипсов */
         .chips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -81,6 +86,7 @@
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.05);
             font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s;
+            line-height: 1.3;
         }
         .chip.selected {
             background: var(--tg-theme-button-color, #5b5fcf);
@@ -99,260 +105,353 @@
         .btn-stop { background: #e74c3c; color: #fff; display: none; margin-top: 8px; }
 
         .status-bar {
-            text-align: center; font-size: 13px; margin-top: 16px;
+            text-align: center; font-size: 13px; margin-top: 12px;
             padding: 10px; border-radius: 10px; min-height: 40px;
             background: rgba(255,255,255,0.03); color: var(--tg-theme-hint-color, #888);
         }
-        .status-bar.active { color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
+        .status-bar.active { color: #2ecc71; background: rgba(46,204,113,0.1); }
+        .status-bar.error  { color: #e74c3c; background: rgba(231,76,60,0.1); }
 
         /* Список находок */
-        .found-list { margin-top: 24px; }
+        .found-list { margin-top: 20px; }
+        .found-header {
+            font-size: 11px; font-weight: 700;
+            color: var(--tg-theme-hint-color, #888);
+            text-transform: uppercase; letter-spacing: 0.8px;
+            margin-bottom: 10px;
+        }
+
         .found-item {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px; padding: 16px; margin-bottom: 12px;
+            border-radius: 14px; padding: 14px; margin-bottom: 10px;
             animation: fadeIn 0.3s ease-out;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .item-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-        .source-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #5b5fcf; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Шапка карточки: маркет + цена */
+        .item-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px;
+        }
+        .source-tag {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 11px; font-weight: 800; text-transform: uppercase;
+            color: #a2a5ff; background: rgba(91,95,207,0.15);
+            padding: 3px 8px; border-radius: 6px;
+        }
         .price-val { font-size: 18px; font-weight: 800; color: #2ecc71; }
-        .model-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-        .rarity-badge { background: rgba(91,95,207,0.2); color: #a2a5ff; padding: 2px 8px; border-radius: 6px; font-size: 12px; }
+
+        /* Модель */
+        .model-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+
+        /* Редкость */
+        .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+        .badge {
+            display: flex; align-items: center; gap: 4px;
+            padding: 3px 8px; border-radius: 6px; font-size: 12px;
+        }
+        .badge-model { background: rgba(91,95,207,0.2); color: #a2a5ff; }
+        .badge-backdrop { background: rgba(52,152,219,0.15); color: #74b9ff; }
+        .badge-label { opacity: 0.7; font-size: 10px; }
+
         .buy-btn {
             display: block; width: 100%; text-align: center;
-            background: rgba(52, 152, 219, 0.15); color: #3498db;
-            border: 1px solid rgba(52, 152, 219, 0.4);
+            background: rgba(52,152,219,0.12); color: #3498db;
+            border: 1px solid rgba(52,152,219,0.35);
             padding: 10px; border-radius: 10px; text-decoration: none;
-            font-weight: 600; margin-top: 12px;
+            font-weight: 600; font-size: 14px;
+            transition: background 0.2s;
         }
-        .empty { text-align: center; color: #666; padding: 40px 0; font-size: 14px; }
-        .hidden { display: none !important; }
+        .buy-btn:active { background: rgba(52,152,219,0.25); }
+
+        .empty { text-align: center; color: #555; padding: 40px 0; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <h2>🔍 Rarity Monitor</h2>
+<h2>🔍 Rarity Monitor</h2>
 
-    <div class="section">
-        <div class="gift-label">Выберите подарок</div>
-        <div class="gift-search-wrap" id="giftSearchWrap">
-            <span class="gift-search-icon">🎁</span>
-            <input class="gift-search-input" id="giftSearchInput" type="text" placeholder="Загрузка..." autocomplete="off">
-            <div class="gift-dropdown" id="giftDropdown"></div>
+<!-- Подарок -->
+<div class="section">
+    <div class="gift-label">Подарок</div>
+    <div class="gift-search-wrap" id="giftSearchWrap">
+        <span class="gift-search-icon">🎁</span>
+        <input class="gift-search-input" id="giftSearchInput" type="text" placeholder="Загрузка..." autocomplete="off">
+        <div class="gift-dropdown" id="giftDropdown"></div>
+    </div>
+</div>
+
+<!-- Модели -->
+<div class="collapsible" id="modelsCollapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible('models')">
+        <span class="title">Модели</span>
+        <div style="display:flex;align-items:center;">
+            <span class="badge-count" id="modelsCount">0</span>
+            <span class="collapsible-arrow" id="modelsArrow">▼</span>
         </div>
     </div>
-
-    <div class="collapsible" id="modelsCollapsible">
-        <div class="collapsible-header" onclick="toggleCollapsible('models')">
-            <span class="title" id="modelsTitle">Модели</span>
-            <div class="right" style="display: flex; align-items: center;">
-                <span class="badge-count" id="selectedCount">0</span>
-                <span>▼</span>
-            </div>
-        </div>
-        <div class="collapsible-body" id="modelsBody">
-            <div class="chips-grid" id="modelsGrid"></div>
+    <div class="collapsible-body" id="modelsBody">
+        <div class="chips-grid" id="modelsGrid">
+            <div class="empty" style="grid-column:1/-1;padding:16px 0;">Сначала выберите подарок</div>
         </div>
     </div>
+</div>
 
-    <button class="btn btn-start" id="btnStart" onclick="startMonitor()">▶ Запустить мониторинг</button>
-    <button class="btn btn-stop" id="btnStop" onclick="stopMonitor()">⏹ Остановить</button>
+<!-- Фоны -->
+<div class="collapsible" id="backdropsCollapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible('backdrops')">
+        <span class="title">Фоны</span>
+        <div style="display:flex;align-items:center;">
+            <span class="badge-count" id="backdropsCount">0</span>
+            <span class="collapsible-arrow" id="backdropsArrow">▼</span>
+        </div>
+    </div>
+    <div class="collapsible-body" id="backdropsBody">
+        <div class="chips-grid" id="backdropsGrid">
+            <div class="empty" style="grid-column:1/-1;padding:16px 0;">Сначала выберите подарок</div>
+        </div>
+    </div>
+</div>
 
-    <div class="status-bar" id="statusBar">Выберите подарок и нажмите старт</div>
+<!-- Кнопки -->
+<button class="btn btn-start" id="btnStart" onclick="startMonitor()">▶ Запустить мониторинг</button>
+<button class="btn btn-stop"  id="btnStop"  onclick="stopMonitor()">⏹ Остановить</button>
 
-    <div class="found-list" id="foundList"></div>
+<div class="status-bar" id="statusBar">Настройте параметры и нажмите Запустить</div>
 
-    <script>
-        const API = 'https://unperforated-levi-supernumerous.ngrok-free.dev';
-        const tg = window.Telegram?.WebApp;
-        
-        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: берем реальный ID или тестовый
-        const USERID = tg?.initDataUnsafe?.user?.id || 6525022620; 
+<!-- Найденные лоты -->
+<div class="found-list" id="foundList"></div>
 
-        let gifts = [];
-        let selectedModels = new Set();
-        let _selectedGift = '';
-        let pollTimer = null;
+<script>
+    const API    = 'https://unperforated-levi-supernumerous.ngrok-free.dev';
+    const tg     = window.Telegram?.WebApp;
+    const USERID = tg?.initDataUnsafe?.user?.id || 6525022620;
 
-        tg?.expand();
+    let gifts          = [];
+    let selectedModels   = new Set();
+    let selectedBackdrops = new Set();
+    let _selectedGift  = '';
+    let pollTimer      = null;
 
-        // 1. Загрузка списка подарков
-        async function loadGifts() {
-            try {
-                const r = await fetch(`${API}/gifts`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
-                gifts = await r.json();
-                document.getElementById('giftSearchInput').placeholder = 'Поиск...';
-                renderGiftDropdown(gifts);
-                
-                // После загрузки подарков проверяем статус монитора
-                checkInitialStatus();
-            } catch(e) {
-                setStatus('Ошибка связи с бэкендом', 'error');
-            }
+    tg?.expand();
+
+    /* ── Загрузка подарков ─────────────────────────────── */
+    async function loadGifts() {
+        try {
+            const r = await fetch(`${API}/gifts`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+            gifts = await r.json();
+            document.getElementById('giftSearchInput').placeholder = 'Поиск подарка...';
+            renderGiftDropdown(gifts);
+            checkInitialStatus();
+        } catch(e) {
+            setStatus('Ошибка связи с бэкендом', 'error');
         }
+    }
 
-        function renderGiftDropdown(list) {
-            const dd = document.getElementById('giftDropdown');
-            dd.innerHTML = list.map(g => `
-                <div class="gift-option" onclick="selectGift('${g.name.replace(/'/g, "\\'")}')">${g.name}</div>
-            `).join('');
+    function renderGiftDropdown(list) {
+        const dd = document.getElementById('giftDropdown');
+        dd.innerHTML = list.map(g =>
+            `<div class="gift-option" onclick="selectGift('${g.name.replace(/'/g,"\\'")}')">${g.name}</div>`
+        ).join('');
+    }
+
+    window.selectGift = (name) => {
+        _selectedGift = name;
+        document.getElementById('giftSearchInput').value = name;
+        document.getElementById('giftDropdown').classList.remove('open');
+        onGiftChange();
+    };
+
+    document.getElementById('giftSearchInput').onfocus = () =>
+        document.getElementById('giftDropdown').classList.add('open');
+
+    document.getElementById('giftSearchInput').oninput = (e) => {
+        const q = e.target.value.toLowerCase();
+        renderGiftDropdown(gifts.filter(g => g.name.toLowerCase().includes(q)));
+    };
+
+    /* ── При выборе подарка ────────────────────────────── */
+    function onGiftChange() {
+        const gift = gifts.find(g => g.name === _selectedGift);
+        if (!gift) return;
+
+        selectedModels.clear();
+        selectedBackdrops.clear();
+
+        renderChips('modelsGrid',   gift.all_models    || [], selectedModels,    'modelsCount');
+        renderChips('backdropsGrid', gift.all_backdrops || [], selectedBackdrops, 'backdropsCount');
+    }
+
+    function renderChips(gridId, items, set, countId) {
+        const grid = document.getElementById(gridId);
+        if (!items.length) {
+            grid.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:12px 0;">Нет данных</div>';
+            return;
         }
-
-        window.selectGift = (name) => {
-            _selectedGift = name;
-            document.getElementById('giftSearchInput').value = name;
-            document.getElementById('giftDropdown').classList.remove('open');
-            onGiftChange();
-        };
-
-        // Обработка поиска подарка
-        document.getElementById('giftSearchInput').onfocus = () => document.getElementById('giftDropdown').classList.add('open');
-        document.getElementById('giftSearchInput').oninput = (e) => {
-            const q = e.target.value.toLowerCase();
-            const filtered = gifts.filter(g => g.name.toLowerCase().includes(q));
-            renderGiftDropdown(filtered);
-        };
-
-        function onGiftChange() {
-            const gift = gifts.find(g => g.name === _selectedGift);
-            if (!gift) return;
-            
-            selectedModels.clear();
-            const grid = document.getElementById('modelsGrid');
-            const models = gift.all_models || [];
-            
-            grid.innerHTML = models.map(m => `
-                <div class="chip" onclick="this.classList.toggle('selected'); toggleModel('${m.name}')">
+        grid.innerHTML = items.map(m => {
+            const rarity = m.rarity_per_mille ?? m.rarity ?? '';
+            return `
+                <div class="chip" data-name="${m.name}" data-grid="${gridId}" onclick="toggleChip(this,'${m.name}','${gridId}','${countId}')">
                     ${m.name}
-                    <span class="chip-rarity">${m.rarity_per_mille || m.rarity}%</span>
-                </div>
-            `).join('');
-            updateCount();
-        }
+                    ${rarity !== '' ? `<span class="chip-rarity">${rarity}‰</span>` : ''}
+                </div>`;
+        }).join('');
+        document.getElementById(countId).textContent = 0;
+    }
 
-        function toggleModel(name) {
-            selectedModels.has(name) ? selectedModels.delete(name) : selectedModels.add(name);
-            updateCount();
-        }
+    window.toggleChip = (el, name, gridId, countId) => {
+        const set = gridId === 'modelsGrid' ? selectedModels : selectedBackdrops;
+        el.classList.toggle('selected');
+        set.has(name) ? set.delete(name) : set.add(name);
+        document.getElementById(countId).textContent = set.size;
+    };
 
-        function updateCount() {
-            document.getElementById('selectedCount').textContent = selectedModels.size;
-        }
+    /* ── Аккордеон ─────────────────────────────────────── */
+    function toggleCollapsible(id) {
+        const body  = document.getElementById(id + 'Body');
+        const arrow = document.getElementById(id + 'Arrow');
+        const open  = body.classList.toggle('open');
+        arrow.style.transform = open ? 'rotate(180deg)' : '';
+    }
 
-        function toggleCollapsible(id) {
-            document.getElementById(id + 'Body').classList.toggle('open');
-        }
+    /* ── Мониторинг ────────────────────────────────────── */
+    async function startMonitor() {
+        if (!_selectedGift) return setStatus('Выберите подарок!', 'error');
 
-        // 2. Управление мониторингом
-        async function startMonitor() {
-            if (!_selectedGift) return setStatus('Выберите подарок!', 'error');
+        const payload = {
+            user_id:   USERID,
+            gift_name: _selectedGift,
+            models:    [...selectedModels],
+            backdrops: [...selectedBackdrops],
+            rarity_max: 100.0
+        };
 
-            const payload = {
-                user_id: USERID,
-                gift_name: _selectedGift,
-                models: [...selectedModels],
-                backdrops: [],
-                rarity_max: 3.0
-            };
+        try {
+            const r = await fetch(`${API}/monitor/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                body: JSON.stringify(payload)
+            });
+            if (r.ok) {
+                setStatus('✅ Мониторинг запущен', 'active');
+                document.getElementById('btnStart').style.display = 'none';
+                document.getElementById('btnStop').style.display  = 'block';
+                startPolling();
+            }
+        } catch(e) { setStatus('Ошибка старта', 'error'); }
+    }
 
-            try {
-                const r = await fetch(`${API}/monitor/start`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (r.ok) {
-                    setStatus('✅ Мониторинг запущен', 'active');
-                    document.getElementById('btnStart').style.display = 'none';
-                    document.getElementById('btnStop').style.display = 'block';
-                    startPolling();
-                }
-            } catch (e) { setStatus('Ошибка старта', 'error'); }
-        }
-
-        async function stopMonitor() {
-            clearInterval(pollTimer);
+    async function stopMonitor() {
+        clearInterval(pollTimer);
+        try {
             await fetch(`${API}/monitor/stop`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify({ user_id: USERID })
             });
-            document.getElementById('btnStart').style.display = 'block';
-            document.getElementById('btnStop').style.display = 'none';
-            setStatus('Монитор остановлен');
+        } catch(e) {}
+        document.getElementById('btnStart').style.display = 'block';
+        document.getElementById('btnStop').style.display  = 'none';
+        setStatus('Монитор остановлен');
+    }
+
+    /* ── Polling ───────────────────────────────────────── */
+    function startPolling() {
+        clearInterval(pollTimer);
+        fetchFound();
+        pollTimer = setInterval(fetchFound, 5000);
+    }
+
+    async function fetchFound() {
+        try {
+            const r = await fetch(`${API}/monitor/found/${USERID}`, {
+                headers: { 'ngrok-skip-browser-warning': 'true' }
+            });
+            if (!r.ok) return;
+            const data = await r.json();
+            renderCards(Array.isArray(data) ? data : (data.found || []));
+        } catch(e) {}
+    }
+
+    /* ── Карточки ──────────────────────────────────────── */
+    function renderCards(items) {
+        const list = document.getElementById('foundList');
+        if (!items || !items.length) {
+            list.innerHTML = '<div class="empty">Ожидание подходящих лотов...</div>';
+            return;
         }
 
-        // 3. Получение данных (Polling)
-        function startPolling() {
-            clearInterval(pollTimer);
-            fetchFound(); // Первый запрос сразу
-            pollTimer = setInterval(fetchFound, 5000);
-        }
+        // Иконки маркетов
+        const sourceIcon = { Portals: '🏛', Getgems: '💎', Tonnel: '🚇' };
 
-        async function fetchFound() {
-            try {
-                const r = await fetch(`${API}/monitor/found/${USERID}`, { 
-                    headers: { 'ngrok-skip-browser-warning': 'true' } 
-                });
-                const data = await r.json();
-                renderCards(data.found);
-            } catch (e) { console.error("Ошибка обновления лотов"); }
-        }
+        list.innerHTML = `
+            <div class="found-header">Найдено (${items.length})</div>
+            ${[...items].reverse().map(item => {
+                const icon       = sourceIcon[item.source] || '🏪';
+                const modelRar   = item.model_rarity   != null ? `${item.model_rarity}‰` : '—';
+                const backdropRar = item.backdrop_rarity != null ? `${item.backdrop_rarity}‰` : '';
 
-        function renderCards(items) {
-            const list = document.getElementById('foundList');
-            if (!items || items.length === 0) {
-                list.innerHTML = '<div class="empty">Ожидание подходящих лотов...</div>';
-                return;
-            }
-
-            list.innerHTML = [...items].reverse().map(item => `
+                return `
                 <div class="found-item">
-                    <div class="item-row">
-                        <span class="source-tag">🏛 ${item.source}</span>
-                        <span class="price-val">${item.price_ton} TON</span>
+                    <div class="item-header">
+                        <span class="source-tag">${icon} ${item.source || 'Market'}</span>
+                        <span class="price-val">${item.price_ton ?? '?'} TON</span>
                     </div>
-                    <div class="model-name">${item.model}</div>
-                    <span class="rarity-badge">${item.model_rarity}% rarity</span>
-                    <a href="${item.url}" target="_blank" class="buy-btn">Смотреть в Маркете</a>
-                </div>
-            `).join('');
-        }
 
-        // Проверка статуса при входе
-        async function checkInitialStatus() {
-            try {
-                const r = await fetch(`${API}/monitor/found/${USERID}`, { 
-                    headers: { 'ngrok-skip-browser-warning': 'true' } 
-                });
-                const data = await r.json();
-                if (data.running) {
-                    document.getElementById('btnStart').style.display = 'none';
-                    document.getElementById('btnStop').style.display = 'block';
-                    setStatus('✅ Мониторинг активен', 'active');
-                    startPolling();
-                }
-            } catch(e) {}
-        }
+                    <div class="model-name">${item.model || '—'}</div>
 
-        function setStatus(msg, cls = '') {
-            const s = document.getElementById('statusBar');
-            s.textContent = msg;
-            s.className = 'status-bar ' + cls;
-        }
+                    <div class="badges">
+                        <span class="badge badge-model">
+                            <span class="badge-label">модель</span>
+                            ${modelRar}
+                        </span>
+                        ${item.backdrop && item.backdrop !== 'Default' ? `
+                        <span class="badge badge-backdrop">
+                            <span class="badge-label">фон</span>
+                            ${item.backdrop}${backdropRar ? ' · ' + backdropRar : ''}
+                        </span>` : ''}
+                    </div>
 
-        // Инициализация
-        loadGifts();
+                    <a href="${item.url || '#'}" target="_blank" class="buy-btn">
+                        Смотреть в ${item.source || 'Маркете'} →
+                    </a>
+                </div>`;
+            }).join('')}`;
+    }
 
-        // Закрытие списка при клике мимо
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#giftSearchWrap')) {
-                document.getElementById('giftDropdown').classList.remove('open');
+    /* ── Начальный статус ──────────────────────────────── */
+    async function checkInitialStatus() {
+        try {
+            const r = await fetch(`${API}/monitor/found/${USERID}`, {
+                headers: { 'ngrok-skip-browser-warning': 'true' }
+            });
+            if (!r.ok) return;
+            const data = await r.json();
+            const items = Array.isArray(data) ? data : (data.found || []);
+            if (data.running) {
+                document.getElementById('btnStart').style.display = 'none';
+                document.getElementById('btnStop').style.display  = 'block';
+                setStatus('✅ Мониторинг активен', 'active');
+                startPolling();
             }
-        });
-    </script>
+            if (items.length) renderCards(items);
+        } catch(e) {}
+    }
+
+    function setStatus(msg, cls = '') {
+        const s = document.getElementById('statusBar');
+        s.textContent = msg;
+        s.className   = 'status-bar ' + cls;
+    }
+
+    /* ── Init ──────────────────────────────────────────── */
+    loadGifts();
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#giftSearchWrap'))
+            document.getElementById('giftDropdown').classList.remove('open');
+    });
+</script>
 </body>
 </html>
