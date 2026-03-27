@@ -947,25 +947,7 @@
     });
 
     // Init
-   async function init() {
-       try {
-           const r = await fetch(`${API}/auth/check/${USER_ID}`, { headers: H });
-           if (!r.ok) {
-               document.body.innerHTML = `
-                   <div style="display:flex;flex-direction:column;align-items:center;
-                            justify-content:center;height:100vh;text-align:center;padding:20px;">
-                    <div style="font-size:48px;margin-bottom:16px;">🔒</div>
-                    <div style="font-size:20px;font-weight:700;margin-bottom:8px;">Нет доступа</div>
-                    <div style="color:#888;font-size:14px;">Ваш ID: ${USER_ID}<br>Обратитесь к администратору</div>
-                </div>`;
-               return;
-           }
-           loadGifts();
-       } catch(e) {
-           setStatus("Ошибка подключения", "error");
-       }
-   }
-   init();
+   loadGifts();
 </script>
 </body>
 </html>
