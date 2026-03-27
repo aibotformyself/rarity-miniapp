@@ -14,233 +14,591 @@
             padding: 16px;
             min-height: 100vh;
         }
-        h2 { font-size: 20px; margin-bottom: 20px; text-align: center; font-weight: 700; }
+        h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
 
         .section { margin-bottom: 12px; }
+
         .field-label {
-            font-size: 11px; font-weight: 700;
+            font-size: 11px;
+            font-weight: 700;
             color: var(--tg-theme-hint-color, #888);
-            text-transform: uppercase; letter-spacing: 0.8px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
             margin-bottom: 8px;
         }
 
-        /* Анимации */
         @keyframes popIn {
             0% { opacity: 0; transform: scale(0.95) translateY(5px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
+
         @keyframes slideDown {
             0% { opacity: 0; transform: translateY(-10px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
         .gift-search-wrap { position: relative; }
+
         .gift-search-input {
-            width: 100%; padding: 12px 12px 12px 40px; border-radius: 12px;
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.07);
-            color: inherit; font-size: 16px; outline: none;
+            color: inherit;
+            font-size: 16px;
+            outline: none;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .gift-search-input:focus { 
-            border-color: var(--tg-theme-button-color, #5b5fcf); 
+
+        .gift-search-input:focus {
+            border-color: var(--tg-theme-button-color, #5b5fcf);
             box-shadow: 0 0 0 3px rgba(91,95,207,0.2);
         }
+
         .gift-search-icon {
-            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-            font-size: 16px; opacity: 0.6; pointer-events: none;
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            opacity: 0.6;
+            pointer-events: none;
         }
+
         .gift-dropdown {
-            display: none; position: absolute; left: 0; right: 0; z-index: 1000;
-            background: #1e1e35; border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 12px; max-height: 250px; overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-top: 6px;
+            display: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: #1e1e35;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 6px;
             animation: slideDown 0.2s ease-out;
         }
+
         .gift-dropdown.open { display: block; }
+
         .gift-option {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 16px; font-size: 15px; cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 16px;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: inherit;
+            text-align: left;
             border-bottom: 1px solid rgba(255,255,255,0.05);
             transition: background 0.2s;
+            touch-action: manipulation;
         }
+
+        .gift-option:hover { background: rgba(255,255,255,0.05); }
         .gift-option:active { background: rgba(91,95,207,0.3); }
-        .dropdown-icon { width: 26px; height: 26px; border-radius: 6px; object-fit: cover; }
+
+        .dropdown-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex: 0 0 auto;
+        }
 
         .collapsible {
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; overflow: hidden; margin-bottom: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
             background: rgba(255,255,255,0.03);
             transition: border-color 0.3s;
         }
+
         .collapsible:hover { border-color: rgba(255,255,255,0.2); }
+
         .collapsible-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 13px 14px; cursor: pointer; user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 14px;
+            cursor: pointer;
+            user-select: none;
+            touch-action: manipulation;
         }
+
         .collapsible-header .title {
-            font-size: 12px; font-weight: 700;
+            font-size: 12px;
+            font-weight: 700;
             color: var(--tg-theme-hint-color, #aaa);
-            text-transform: uppercase; letter-spacing: 0.7px;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
         }
+
         .badge-count {
-            font-size: 12px; font-weight: 700; color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
             background: var(--tg-theme-button-color, #5b5fcf);
-            border-radius: 8px; padding: 2px 8px; margin-right: 6px;
+            border-radius: 8px;
+            padding: 2px 8px;
+            margin-right: 6px;
             transition: transform 0.2s;
         }
-        .coll-arrow { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-block; font-size: 12px; }
-        
-        .collapsible-body { 
-            max-height: 0; overflow: hidden; 
+
+        .coll-arrow {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .collapsible-body {
+            max-height: 0;
+            overflow: hidden;
             transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             border-top: 1px solid transparent;
         }
-        .collapsible-body.open { 
-            max-height: 600px; /* Достаточно большое значение */
+
+        .collapsible-body.open {
+            max-height: 600px;
             border-top: 1px solid rgba(255,255,255,0.05);
             overflow-y: auto;
         }
 
         .chips-search {
-            width: 100%; padding: 10px 12px; border: none; outline: none;
-            background: rgba(255,255,255,0.05); color: inherit; font-size: 13px;
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            outline: none;
+            background: rgba(255,255,255,0.05);
+            color: inherit;
+            font-size: 13px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .chips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
+        .chips-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 10px;
+        }
+
         .chip {
-            display: flex; align-items: center; gap: 10px;
-            padding: 8px 10px; border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.05);
-            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             animation: popIn 0.3s ease-out backwards;
+            touch-action: manipulation;
         }
+
         .chip:active { transform: scale(0.96); }
+
         .chip.selected {
             background: var(--tg-theme-button-color, #5b5fcf);
-            border-color: transparent; color: #fff;
+            border-color: transparent;
+            color: #fff;
             box-shadow: 0 4px 12px rgba(91,95,207,0.3);
         }
+
         .chip.hidden-chip { display: none; }
-        
-        .chip-icon { width: 30px; height: 30px; border-radius: 6px; object-fit: contain; }
-        .chip-info { display: flex; flex-direction: column; text-align: left; }
-        .chip-name { font-size: 13px; font-weight: 600; line-height: 1.2; }
-        .chip-rarity { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+        .chip-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            object-fit: contain;
+            flex: 0 0 auto;
+        }
+
+        .chip-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            min-width: 0;
+        }
+
+        .chip-name {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .chip-rarity {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
 
         .btn {
-            width: 100%; padding: 15px; border-radius: 14px;
-            border: none; font-size: 16px; font-weight: 700;
-            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            padding: 15px;
+            border-radius: 14px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            touch-action: manipulation;
         }
+
         .btn:active { transform: scale(0.97); }
-        .btn-start { background: var(--tg-theme-button-color, #5b5fcf); color: #fff; }
-        .btn-stop  { background: #e74c3c; color: #fff; display: none; margin-top: 8px; }
+
+        .btn-start {
+            background: var(--tg-theme-button-color, #5b5fcf);
+            color: #fff;
+        }
+
+        .btn-stop {
+            background: #e74c3c;
+            color: #fff;
+            display: none;
+            margin-top: 8px;
+        }
 
         .status-bar {
-            text-align: center; font-size: 13px; margin-top: 10px;
-            padding: 10px; border-radius: 10px;
-            background: rgba(255,255,255,0.03); color: var(--tg-theme-hint-color, #888);
+            text-align: center;
+            font-size: 13px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            color: var(--tg-theme-hint-color, #888);
             transition: all 0.3s;
         }
-        .status-bar.active { color: #2ecc71; background: rgba(46,204,113,0.08); }
-        .status-bar.error  { color: #e74c3c; background: rgba(231,76,60,0.08); }
 
-        .found-list  { margin-top: 20px; }
-        .found-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .status-bar.active {
+            color: #2ecc71;
+            background: rgba(46,204,113,0.08);
+        }
+
+        .status-bar.error {
+            color: #e74c3c;
+            background: rgba(231,76,60,0.08);
+        }
+
+        .found-list { margin-top: 20px; }
+
+        .found-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
 
         .found-item {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px; overflow: hidden; cursor: pointer;
-            display: flex; flex-direction: column;
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
             transition: all 0.2s;
             animation: popIn 0.4s ease-out backwards;
+            touch-action: manipulation;
         }
-        .found-item:active { transform: scale(0.97); border-color: rgba(91,95,207,0.5); }
+
+        .found-item:active {
+            transform: scale(0.97);
+            border-color: rgba(91,95,207,0.5);
+        }
 
         .item-img-wrap {
-            position: relative; width: 100%; padding-top: 100%;
-            background: rgba(255,255,255,0.04); overflow: hidden;
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            background: rgba(255,255,255,0.04);
+            overflow: hidden;
         }
+
         .item-img-wrap img {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+
         .source-tag-img {
-            position: absolute; top: 6px; left: 6px;
-            font-size: 9px; font-weight: 800; text-transform: uppercase;
-            color: #fff; background: rgba(0,0,0,0.6);
-            padding: 3px 6px; border-radius: 6px; backdrop-filter: blur(4px);
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #fff;
+            background: rgba(0,0,0,0.6);
+            padding: 3px 6px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
         }
 
-        .item-body { padding: 10px; display: flex; flex-direction: column; flex: 1; }
+        .item-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
         .item-gift-name {
-            font-size: 9px; font-weight: 700; color: #888; text-transform: uppercase;
-            margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            font-size: 9px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .item-name-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-        
-        /* Ссылка на модель */
-        .model-link { 
-            font-size: 13px; font-weight: 700; line-height: 1.2; 
-            color: #74b9ff; text-decoration: none; 
+        .item-name-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+            gap: 6px;
+        }
+
+        .model-link {
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #74b9ff;
+            text-decoration: none;
             border-bottom: 1px dashed rgba(116, 185, 255, 0.5);
-            padding-bottom: 1px; transition: opacity 0.2s;
+            padding-bottom: 1px;
+            transition: opacity 0.2s;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        .model-link:active { opacity: 0.6; }
-        
-        .item-num  { font-size: 10px; color: #666; white-space: nowrap; margin-left: 4px; }
 
-        .item-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
-        .ibadge { font-size: 10px; padding: 2px 6px; border-radius: 5px; font-weight: 600; }
-        .ibadge-model    { background: rgba(91,95,207,0.2);  color: #a2a5ff; }
-        .ibadge-backdrop { background: rgba(52,152,219,0.15); color: #74b9ff; }
+        .model-link:active { opacity: 0.6; }
+
+        .item-num {
+            font-size: 10px;
+            color: #666;
+            white-space: nowrap;
+            flex: 0 0 auto;
+        }
+
+        .item-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .ibadge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        .ibadge-model {
+            background: rgba(91,95,207,0.2);
+            color: #a2a5ff;
+        }
+
+        .ibadge-backdrop {
+            background: rgba(52,152,219,0.15);
+            color: #74b9ff;
+        }
 
         .price-btn {
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-            width: 100%; padding: 9px; border-radius: 9px; margin-top: auto;
-            background: rgba(91,95,207,0.15); border: 1px solid rgba(91,95,207,0.3);
-            color: #a2a5ff; font-size: 12px; font-weight: 700; text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 9px;
+            border-radius: 9px;
+            margin-top: auto;
+            background: rgba(91,95,207,0.15);
+            border: 1px solid rgba(91,95,207,0.3);
+            color: #a2a5ff;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            touch-action: manipulation;
         }
 
-        /* Остальные стили модалки... (оставил как были) */
         .modal-overlay {
-            display: none; position: fixed; inset: 0; z-index: 2000;
-            background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
-            align-items: flex-end; justify-content: center; opacity: 0;
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
             transition: opacity 0.3s;
         }
-        .modal-overlay.open { display: flex; opacity: 1; }
+
+        .modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
         .modal-sheet {
-            position: relative; background: #1e1e35; border-radius: 20px 20px 0 0;
-            width: 100%; max-height: 90vh; overflow-y: auto; padding: 0 0 32px; 
-            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: #1e1e35;
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 0 0 32px;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .modal-overlay.open .modal-sheet { transform: translateY(0); }
-        .modal-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 12px auto 0; }
+
+        .modal-overlay.open .modal-sheet {
+            transform: translateY(0);
+        }
+
+        .modal-handle {
+            width: 36px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin: 12px auto 0;
+        }
+
         .modal-close {
-            position: absolute; top: 14px; right: 14px; width: 28px; height: 28px;
-            background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
-            color: #fff; font-size: 14px; cursor: pointer; display: flex;
-            align-items: center; justify-content: center; z-index: 10;
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 28px;
+            height: 28px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            touch-action: manipulation;
         }
-        .modal-img-wrap { width: 100%; padding-top: 70%; position: relative; background: rgba(255,255,255,0.04); overflow: hidden; }
-        .modal-img-wrap img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+
+        .modal-img-wrap {
+            width: 100%;
+            padding-top: 70%;
+            position: relative;
+            background: rgba(255,255,255,0.04);
+            overflow: hidden;
+        }
+
+        .modal-img-wrap img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .modal-body { padding: 18px 20px 0; }
-        .modal-gift-name { font-size: 11px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 4px; }
-        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
-        .modal-num   { font-size: 13px; color: #666; margin-bottom: 16px; }
-        .modal-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
-        .modal-row-label { font-size: 13px; color: #888; }
-        .modal-row-right { display: flex; align-items: center; gap: 8px; }
-        .modal-row-val   { font-size: 14px; font-weight: 700; }
-        .modal-row-rarity { font-size: 11px; color: #a2a5ff; background: rgba(91,95,207,0.15); padding: 2px 7px; border-radius: 6px; }
+
+        .modal-gift-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: #777;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .modal-num {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .modal-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            gap: 10px;
+        }
+
+        .modal-row-label {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .modal-row-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .modal-row-val {
+            font-size: 14px;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .modal-row-rarity {
+            font-size: 11px;
+            color: #a2a5ff;
+            background: rgba(91,95,207,0.15);
+            padding: 2px 7px;
+            border-radius: 6px;
+            flex: 0 0 auto;
+        }
+
         .modal-price-btn {
-            display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px 20px 0; padding: 15px; border-radius: 14px;
-            background: var(--tg-theme-button-color, #5b5fcf); color: #fff; font-size: 16px; font-weight: 700; text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 20px 0;
+            padding: 15px;
+            border-radius: 14px;
+            background: var(--tg-theme-button-color, #5b5fcf);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            touch-action: manipulation;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #666;
         }
     </style>
 </head>
@@ -266,7 +624,7 @@
         </div>
     </div>
     <div class="collapsible-body" id="modelsBody">
-        <input class="chips-search" id="modelsSearch" placeholder="Поиск модели..." oninput="filterChips('models',this.value)">
+        <input class="chips-search" id="modelsSearch" placeholder="Поиск модели..." oninput="filterChips('models', this.value)">
         <div class="chips-grid" id="modelsGrid"></div>
     </div>
 </div>
@@ -280,13 +638,13 @@
         </div>
     </div>
     <div class="collapsible-body" id="backdropsBody">
-        <input class="chips-search" id="backdropsSearch" placeholder="Поиск фона..." oninput="filterChips('backdrops',this.value)">
+        <input class="chips-search" id="backdropsSearch" placeholder="Поиск фона..." oninput="filterChips('backdrops', this.value)">
         <div class="chips-grid" id="backdropsGrid"></div>
     </div>
 </div>
 
 <button class="btn btn-start" id="btnStart" onclick="startMonitor()">▶ Запустить мониторинг</button>
-<button class="btn btn-stop"  id="btnStop"  onclick="stopMonitor()">⏹ Остановить</button>
+<button class="btn btn-stop" id="btnStop" onclick="stopMonitor()">⏹ Остановить</button>
 <div class="status-bar" id="statusBar">Настройте параметры и нажмите Запустить</div>
 
 <div class="found-list" id="foundList"></div>
@@ -299,7 +657,7 @@
         <div class="modal-body">
             <div class="modal-gift-name" id="modalGiftName"></div>
             <div class="modal-title" id="modalTitle"></div>
-            <div class="modal-num"   id="modalNum"></div>
+            <div class="modal-num" id="modalNum"></div>
             <div id="modalRows"></div>
         </div>
         <a href="#" id="modalPriceBtn" target="_blank" class="modal-price-btn">
@@ -310,56 +668,97 @@
 </div>
 
 <script>
-    const API    = 'https://unperforated-levi-supernumerous.ngrok-free.dev';
-    const tg     = window.Telegram?.WebApp;
+    const API = 'https://unperforated-levi-supernumerous.ngrok-free.dev';
+    const tg = window.Telegram?.WebApp;
     const USERID = tg?.initDataUnsafe?.user?.id || 6525022620;
-
-    let gifts             = [];
-    let selectedModels    = new Set();
-    let selectedBackdrops = new Set();
-    let _selectedGift     = '';
-    let pollTimer         = null;
-    let lastItems         = [];
-
-    tg?.expand();
     const H = { 'ngrok-skip-browser-warning': 'true' };
 
-    /* ── Функция открытия ссылки внутри TG ── */
-    window.openTelegramLink = (url) => {
-        if (!url || url === '#') return;
-        if (tg && tg.openLink) {
-            tg.openLink(url); // Правильное открытие ссылки в Telegram Mini App
-        } else {
-            window.open(url, '_blank');
-        }
-    };
+    let gifts = [];
+    let selectedModels = new Set();
+    let selectedBackdrops = new Set();
+    let _selectedGift = '';
+    let pollTimer = null;
+    let lastItems = [];
 
-    /* ── Форматирование процентов (1.00% -> 1%) ── */
+    tg?.expand();
+
+    function setStatus(text, type = '') {
+        const el = document.getElementById('statusBar');
+        if (!el) return;
+        el.textContent = text;
+        el.className = 'status-bar' + (type ? ` ${type}` : '');
+    }
+
+    function escapeHtml(str) {
+        return String(str ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
     function formatPct(val) {
         if (val == null || val === '' || val === 0) return null;
-        // parseFloat уберет лишние нули в конце
-        return parseFloat(val).toString() + '%'; 
+        return parseFloat(val).toString() + '%';
     }
+
+    window.openTelegramLink = (url) => {
+        if (!url || url === '#') return;
+        if (tg && tg.openLink) tg.openLink(url);
+        else window.open(url, '_blank');
+    };
 
     async function loadGifts() {
         try {
             const r = await fetch(`${API}/gifts`, { headers: H });
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
             gifts = await r.json();
             document.getElementById('giftSearchInput').placeholder = 'Поиск подарка...';
             renderGiftDropdown(gifts);
             checkInitialStatus();
-        } catch(e) { setStatus('Ошибка связи с сервером', 'error'); }
+        } catch (e) {
+            console.error(e);
+            setStatus('Ошибка связи с сервером', 'error');
+            document.getElementById('giftSearchInput').placeholder = 'Не удалось загрузить подарки';
+            document.getElementById('giftDropdown').innerHTML = '<div class="gift-option" style="color:#666; cursor:default;">Ошибка загрузки</div>';
+        }
     }
 
     function renderGiftDropdown(list) {
-        document.getElementById('giftDropdown').innerHTML = list.map(g => {
-            const iconHtml = g.image_url || g.icon 
-                ? `<img src="${g.image_url || g.icon}" class="dropdown-icon" onerror="this.style.display='none'">` 
-                : `<span>🎁</span>`;
-            return `<div class="gift-option" onclick='selectGift(${JSON.stringify(g.name)})'>
-                        ${iconHtml} <span>${g.name}</span>
-                    </div>`;
-        }).join('') || '<div class="gift-option" style="color:#666;">Ничего не найдено</div>';
+        const dropdown = document.getElementById('giftDropdown');
+        dropdown.innerHTML = '';
+
+        if (!list.length) {
+            dropdown.innerHTML = '<div class="gift-option" style="color:#666; cursor:default;">Ничего не найдено</div>';
+            return;
+        }
+
+        list.forEach(g => {
+            const item = document.createElement('div');
+            item.className = 'gift-option';
+            item.dataset.name = g.name;
+
+            const icon = document.createElement('span');
+            if (g.image_url || g.icon) {
+                const img = document.createElement('img');
+                img.className = 'dropdown-icon';
+                img.src = g.image_url || g.icon;
+                img.alt = '';
+                img.onerror = () => { img.style.display = 'none'; };
+                item.appendChild(img);
+            } else {
+                icon.textContent = '🎁';
+                item.appendChild(icon);
+            }
+
+            const text = document.createElement('span');
+            text.textContent = g.name;
+            item.appendChild(text);
+
+            item.addEventListener('click', () => selectGift(g.name));
+            dropdown.appendChild(item);
+        });
     }
 
     window.selectGift = (name) => {
@@ -369,25 +768,35 @@
         onGiftChange();
     };
 
-    document.getElementById('giftSearchInput').onfocus = () => document.getElementById('giftDropdown').classList.add('open');
-    document.getElementById('giftSearchInput').oninput = (e) => {
-        const q = e.target.value.toLowerCase();
+    document.getElementById('giftSearchInput').addEventListener('focus', () => {
+        document.getElementById('giftDropdown').classList.add('open');
+        renderGiftDropdown(gifts);
+    });
+
+    document.getElementById('giftSearchInput').addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        if (!q) {
+            _selectedGift = '';
+            renderGiftDropdown(gifts);
+            document.getElementById('giftDropdown').classList.add('open');
+            return;
+        }
         renderGiftDropdown(gifts.filter(g => g.name.toLowerCase().includes(q)));
-        if (!e.target.value) _selectedGift = '';
-    };
+        document.getElementById('giftDropdown').classList.add('open');
+    });
 
     function onGiftChange() {
         const gift = gifts.find(g => g.name === _selectedGift);
         if (!gift) return;
+
         selectedModels.clear();
         selectedBackdrops.clear();
-        
-        // Открываем панель моделей с анимацией
-        if(!document.getElementById('modelsBody').classList.contains('open')) toggleCollapsible('models');
 
-        document.getElementById('modelsSearch').value    = '';
+        if (!document.getElementById('modelsBody').classList.contains('open')) toggleCollapsible('models');
+
+        document.getElementById('modelsSearch').value = '';
         document.getElementById('backdropsSearch').value = '';
-        buildChips('modelsGrid',    gift.all_models    || [], selectedModels,    'modelsCount');
+        buildChips('modelsGrid', gift.all_models || [], selectedModels, 'modelsCount');
         buildChips('backdropsGrid', gift.all_backdrops || [], selectedBackdrops, 'backdropsCount');
     }
 
@@ -395,40 +804,46 @@
         const grid = document.getElementById(gridId);
         if (!items.length) {
             grid.innerHTML = '<div style="grid-column:1/-1;padding:12px;text-align:center;color:#666;">Нет данных</div>';
+            document.getElementById(countId).textContent = 0;
             return;
         }
+
         grid.innerHTML = items.map((m, i) => {
             const raw = m.rarity_per_mille ?? m.rarity ?? '';
             const pct = formatPct(raw);
-            const iconHtml = m.image_url || m.icon 
-                ? `<img src="${m.image_url || m.icon}" class="chip-icon" onerror="this.style.display='none'">` 
-                : ``;
-                
-            return `<div class="chip" data-name="${m.name}" data-grid="${gridId}" data-count="${countId}" onclick="toggleChip(this)" style="animation-delay: ${i * 0.02}s">
-                        ${iconHtml}
-                        <div class="chip-info">
-                            <span class="chip-name">${m.name}</span>
-                            ${pct ? `<span class="chip-rarity">${pct}</span>` : ''}
-                        </div>
-                    </div>`;
+            const iconHtml = m.image_url || m.icon
+                ? `<img src="${escapeHtml(m.image_url || m.icon)}" class="chip-icon" onerror="this.style.display='none'">`
+                : '';
+
+            return `
+                <div class="chip"
+                     data-name="${escapeHtml(m.name)}"
+                     data-grid="${gridId}"
+                     data-count="${countId}"
+                     onclick="toggleChip(this)"
+                     style="animation-delay: ${i * 0.02}s">
+                    ${iconHtml}
+                    <div class="chip-info">
+                        <span class="chip-name">${escapeHtml(m.name)}</span>
+                        ${pct ? `<span class="chip-rarity">${escapeHtml(pct)}</span>` : ''}
+                    </div>
+                </div>`;
         }).join('');
+
         document.getElementById(countId).textContent = 0;
-        
-        // Добавляем класс анимации
         grid.style.opacity = '0';
         setTimeout(() => grid.style.opacity = '1', 50);
     }
 
     window.toggleChip = (el) => {
         const set = el.dataset.grid === 'modelsGrid' ? selectedModels : selectedBackdrops;
-        
-        // Небольшая анимация клика
+
         el.style.transform = 'scale(0.9)';
         setTimeout(() => el.style.transform = '', 150);
 
         el.classList.toggle('selected');
         set.has(el.dataset.name) ? set.delete(el.dataset.name) : set.add(el.dataset.name);
-        
+
         const countBadge = document.getElementById(el.dataset.count);
         countBadge.textContent = set.size;
         countBadge.style.transform = 'scale(1.2)';
@@ -443,40 +858,68 @@
     };
 
     function toggleCollapsible(id) {
-        const body  = document.getElementById(id + 'Body');
+        const body = document.getElementById(id + 'Body');
         const arrow = document.getElementById(id + 'Arrow');
-        const open  = body.classList.toggle('open');
+        const open = body.classList.toggle('open');
         arrow.style.transform = open ? 'rotate(180deg)' : '';
     }
 
-    /* ── Мониторинг ── */
+    window.toggleCollapsible = toggleCollapsible;
+
     async function startMonitor() {
         if (!_selectedGift) return setStatus('Выберите подарок!', 'error');
+
         clearInterval(pollTimer);
+
         const payload = {
-            user_id: USERID, gift_name: _selectedGift,
-            models: [...selectedModels], backdrops: [...selectedBackdrops], rarity_max: 100.0
+            user_id: USERID,
+            gift_name: _selectedGift,
+            models: [...selectedModels],
+            backdrops: [...selectedBackdrops],
+            rarity_max: 100.0
         };
+
         try {
             const r = await fetch(`${API}/monitor/start`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json', ...H }, body: JSON.stringify(payload)
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...H },
+                body: JSON.stringify(payload)
             });
-            if (r.ok) {
-                setStatus('✅ Мониторинг запущен', 'active');
-                document.getElementById('btnStart').style.display = 'none';
-                document.getElementById('btnStop').style.display  = 'block';
-                startPolling();
+
+            if (!r.ok) {
+                setStatus('Ошибка старта', 'error');
+                return;
             }
-        } catch(e) { setStatus('Ошибка старта', 'error'); }
+
+            setStatus('✅ Мониторинг запущен', 'active');
+            document.getElementById('btnStart').style.display = 'none';
+            document.getElementById('btnStop').style.display = 'block';
+            startPolling();
+        } catch (e) {
+            console.error(e);
+            setStatus('Ошибка старта', 'error');
+        }
     }
 
     async function stopMonitor() {
         clearInterval(pollTimer);
-        try { await fetch(`${API}/monitor/stop`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...H }, body: JSON.stringify({ user_id: USERID }) }); } catch(e) {}
+        try {
+            await fetch(`${API}/monitor/stop`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...H },
+                body: JSON.stringify({ user_id: USERID })
+            });
+        } catch (e) {
+            console.error(e);
+        }
+
         document.getElementById('btnStart').style.display = 'block';
-        document.getElementById('btnStop').style.display  = 'none';
+        document.getElementById('btnStop').style.display = 'none';
         setStatus('Монитор остановлен');
     }
+
+    window.startMonitor = startMonitor;
+    window.stopMonitor = stopMonitor;
 
     function startPolling() {
         clearInterval(pollTimer);
@@ -491,15 +934,18 @@
             const data = await r.json();
             lastItems = data.found || [];
             renderCards(lastItems);
-        } catch(e) {}
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     const SOURCE_ICON = { Portals: '🏛', Getgems: '💎', Tonnel: '🚇' };
 
     function renderCards(items) {
         const list = document.getElementById('foundList');
+
         if (!items || !items.length) {
-            list.innerHTML = '<div style="text-align:center; padding: 20px; color: #666;">Ожидание лотов...</div>';
+            list.innerHTML = '<div class="empty-state">Ожидание лотов...</div>';
             return;
         }
 
@@ -507,81 +953,92 @@
             <div style="font-size:11px;font-weight:700;color:#888;margin-bottom:10px;">НАЙДЕНО (${items.length})</div>
             <div class="found-grid">
             ${items.map((item, i) => {
-                const icon        = SOURCE_ICON[item.source] || '🏪';
-                const imgHtml     = item.image_url
-                    ? `<img src="${item.image_url}" loading="lazy" onerror="this.style.display='none'">`
+                const icon = SOURCE_ICON[item.source] || '🏪';
+                const imgHtml = item.image_url
+                    ? `<img src="${escapeHtml(item.image_url)}" loading="lazy" onerror="this.style.display='none'">`
                     : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:40px">🎁</div>`;
-                const modelPct    = formatPct(item.model_rarity);
+                const modelPct = formatPct(item.model_rarity);
                 const backdropPct = formatPct(item.backdrop_rarity);
 
                 return `
-                <div class="found-item" onclick="openModal(${i})" style="animation-delay: ${i * 0.05}s">
-                    <div class="item-img-wrap">
-                        ${imgHtml}
-                        <span class="source-tag-img">${icon} ${item.source || ''}</span>
-                    </div>
-                    <div class="item-body">
-                        ${item.gift_name ? `<div class="item-gift-name">${item.gift_name}</div>` : ''}
-                        <div class="item-name-row">
-                            <a href="javascript:void(0)" class="model-link" onclick="event.stopPropagation(); openTelegramLink('${item.url || '#'}')">${item.model || '—'}</a>
-                            ${item.number ? `<span class="item-num">#${item.number}</span>` : ''}
+                    <div class="found-item" onclick="openModal(${i})" style="animation-delay: ${i * 0.05}s">
+                        <div class="item-img-wrap">
+                            ${imgHtml}
+                            <span class="source-tag-img">${icon} ${escapeHtml(item.source || '')}</span>
                         </div>
-                        <div class="item-badges">
-                            ${modelPct ? `<span class="ibadge ibadge-model">${modelPct}</span>` : ''}
-                            ${item.backdrop && item.backdrop !== 'Default'
-                                ? `<span class="ibadge ibadge-backdrop">${item.backdrop}${backdropPct ? ' · ' + backdropPct : ''}</span>`
-                                : ''}
+                        <div class="item-body">
+                            ${item.gift_name ? `<div class="item-gift-name">${escapeHtml(item.gift_name)}</div>` : ''}
+                            <div class="item-name-row">
+                                <a href="javascript:void(0)"
+                                   class="model-link"
+                                   onclick="event.stopPropagation(); openTelegramLink(${JSON.stringify(item.url || '#')})">${escapeHtml(item.model || '—')}</a>
+                                ${item.number ? `<span class="item-num">#${escapeHtml(item.number)}</span>` : ''}
+                            </div>
+                            <div class="item-badges">
+                                ${modelPct ? `<span class="ibadge ibadge-model">${escapeHtml(modelPct)}</span>` : ''}
+                                ${item.backdrop && item.backdrop !== 'Default'
+                                    ? `<span class="ibadge ibadge-backdrop">${escapeHtml(item.backdrop)}${backdropPct ? ' · ' + escapeHtml(backdropPct) : ''}</span>`
+                                    : ''}
+                            </div>
+                            <a href="javascript:void(0)"
+                               class="price-btn"
+                               onclick="event.stopPropagation(); openTelegramLink(${JSON.stringify(item.url || '#')})">
+                                <span>▽</span>
+                                <span>${escapeHtml(item.price_ton ?? '?')} TON</span>
+                            </a>
                         </div>
-                        <a href="javascript:void(0)" class="price-btn" onclick="event.stopPropagation(); openTelegramLink('${item.url || '#'}')">
-                            <span>▽</span>
-                            <span>${item.price_ton ?? '?'} TON</span>
-                        </a>
-                    </div>
-                </div>`;
+                    </div>`;
             }).join('')}
             </div>`;
     }
 
-    /* ── Модал ── */
     window.openModal = (idx) => {
         const item = lastItems[idx];
         if (!item) return;
 
         document.getElementById('modalImg').innerHTML = item.image_url
-            ? `<img src="${item.image_url}" alt="">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:60px">🎁</div>`;
+            ? `<img src="${escapeHtml(item.image_url)}" alt="">`
+            : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:60px">🎁</div>`;
 
         document.getElementById('modalGiftName').textContent = item.gift_name || '';
-        document.getElementById('modalTitle').textContent    = item.model || '—';
-        document.getElementById('modalNum').textContent      = item.number ? `#${item.number}` : '';
+        document.getElementById('modalTitle').textContent = item.model || '—';
+        document.getElementById('modalNum').textContent = item.number ? `#${item.number}` : '';
 
         const rows = [
-            { label: 'Модель',  val: item.model    || '—', rarity: item.model_rarity    },
-            { label: 'Фон',     val: item.backdrop  || '—', rarity: item.backdrop_rarity },
-            { label: 'Символ',  val: item.symbol    || '—', rarity: item.symbol_rarity   },
-            { label: 'Маркет',  val: item.source    || '—', rarity: null                 },
+            { label: 'Модель', val: item.model || '—', rarity: item.model_rarity },
+            { label: 'Фон', val: item.backdrop || '—', rarity: item.backdrop_rarity },
+            { label: 'Символ', val: item.symbol || '—', rarity: item.symbol_rarity },
+            { label: 'Маркет', val: item.source || '—', rarity: null }
         ];
 
         document.getElementById('modalRows').innerHTML = rows.map(r => {
             const pct = formatPct(r.rarity);
-            return `<div class="modal-row">
-                <span class="modal-row-label">${r.label}</span>
-                <div class="modal-row-right">
-                    <span class="modal-row-val">${r.val}</span>
-                    ${pct ? `<span class="modal-row-rarity">${pct}</span>` : ''}
-                </div>
-            </div>`;
+            return `
+                <div class="modal-row">
+                    <span class="modal-row-label">${escapeHtml(r.label)}</span>
+                    <div class="modal-row-right">
+                        <span class="modal-row-val">${escapeHtml(r.val)}</span>
+                        ${pct ? `<span class="modal-row-rarity">${escapeHtml(pct)}</span>` : ''}
+                    </div>
+                </div>`;
         }).join('');
 
         document.getElementById('modalPriceTxt').textContent = `${item.price_ton ?? '?'} TON · Купить`;
         const modalBtn = document.getElementById('modalPriceBtn');
-        modalBtn.onclick = (e) => { e.preventDefault(); openTelegramLink(item.url); };
+        modalBtn.onclick = (e) => {
+            e.preventDefault();
+            openTelegramLink(item.url);
+        };
 
         const overlay = document.getElementById('modalOverlay');
         overlay.classList.add('open');
         document.body.style.overflow = 'hidden';
     };
 
-    window.closeModal = (e) => { if (e.target === document.getElementById('modalOverlay')) closeModalDirect(); };
+    window.closeModal = (e) => {
+        if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+    };
+
     window.closeModalDirect = () => {
         document.getElementById('modalOverlay').classList.remove('open');
         document.body.style.overflow = '';
@@ -594,19 +1051,26 @@
             const data = await r.json();
             if (data.running) {
                 document.getElementById('btnStart').style.display = 'none';
-                document.getElementById('btnStop').style.display  = 'block';
+                document.getElementById('btnStop').style.display = 'block';
                 setStatus('✅ Мониторинг активен', 'active');
                 startPolling();
             }
-            if (data.found && data.found.length) { lastItems = data.found; renderCards(lastItems); }
-        } catch(e) {}
+            if (data.found && data.found.length) {
+                lastItems = data.found;
+                renderCards(lastItems);
+            }
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    loadGifts();
-
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('#giftSearchWrap')) document.getElementById('giftDropdown').classList.remove('open');
+        if (!e.target.closest('#giftSearchWrap')) {
+            document.getElementById('giftDropdown').classList.remove('open');
+        }
     });
+
+    loadGifts();
 </script>
 </body>
 </html>
