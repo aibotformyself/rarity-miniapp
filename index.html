@@ -8,6 +8,13 @@
     <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --card-radius: 18px;
+            --soft-border: rgba(255,255,255,0.10);
+            --soft-border-2: rgba(255,255,255,0.06);
+            --panel-bg: rgba(255,255,255,0.04);
+            --panel-bg-2: rgba(255,255,255,0.06);
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--tg-theme-bg-color, #1a1a2e);
@@ -15,10 +22,10 @@
             padding: 16px;
             min-height: 100vh;
         }
-        h2 { font-size: 20px; margin-bottom: 20px; text-align: center; font-weight: 700; }
+        h2 { font-size: 20px; margin-bottom: 20px; text-align: center; font-weight: 800; }
         .section { margin-bottom: 12px; }
         .field-label {
-            font-size: 11px; font-weight: 700;
+            font-size: 11px; font-weight: 800;
             color: var(--tg-theme-hint-color, #888);
             text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;
         }
@@ -73,19 +80,36 @@
         .collapsible-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 13px 14px; cursor: pointer;
-            user-select: none; touch-action: manipulation;
+            user-select: none; touch-action: manipulation; gap: 10px;
         }
         .collapsible-header .title {
-            font-size: 12px; font-weight: 700;
+            font-size: 12px; font-weight: 800;
             color: var(--tg-theme-hint-color, #aaa);
             text-transform: uppercase; letter-spacing: 0.7px;
         }
+        .header-right {
+            display: flex; align-items: center; gap: 8px; flex: 0 0 auto;
+        }
         .badge-count {
-            font-size: 12px; font-weight: 700; color: #fff;
+            font-size: 12px; font-weight: 800; color: #fff;
             background: var(--tg-theme-button-color, #5b5fcf);
-            border-radius: 8px; padding: 2px 8px; margin-right: 6px;
+            border-radius: 8px; padding: 2px 8px;
             transition: transform 0.2s;
         }
+        .clear-btn {
+            border: none;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            touch-action: manipulation;
+        }
+        .clear-btn.visible { display: inline-flex; }
+        .clear-btn:active { transform: scale(0.97); background: rgba(255,255,255,0.14); }
         .coll-arrow { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); display: inline-block; font-size: 12px; }
         .collapsible-body {
             max-height: 0; overflow: hidden;
@@ -93,7 +117,7 @@
             border-top: 1px solid transparent;
         }
         .collapsible-body.open {
-            max-height: 600px;
+            max-height: 620px;
             border-top: 1px solid rgba(255,255,255,0.05);
             overflow-y: auto;
         }
@@ -111,6 +135,7 @@
             transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
             animation: popIn 0.3s ease-out backwards;
             touch-action: manipulation;
+            min-width: 0;
         }
         .chip:active { transform: scale(0.96); }
         .chip.selected {
@@ -121,12 +146,12 @@
         .chip.hidden-chip { display: none; }
         .chip-icon { width: 30px; height: 30px; border-radius: 6px; object-fit: contain; flex: 0 0 auto; }
         .chip-info { display: flex; flex-direction: column; text-align: left; min-width: 0; }
-        .chip-name { font-size: 13px; font-weight: 600; line-height: 1.2; word-break: break-word; }
+        .chip-name { font-size: 13px; font-weight: 700; line-height: 1.2; word-break: break-word; }
         .chip-rarity { font-size: 11px; opacity: 0.7; margin-top: 2px; }
 
         .btn {
             width: 100%; padding: 15px; border-radius: 14px; border: none;
-            font-size: 16px; font-weight: 700; cursor: pointer;
+            font-size: 16px; font-weight: 800; cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4,0,0.2,1); touch-action: manipulation;
         }
         .btn:active { transform: scale(0.97); }
@@ -147,13 +172,13 @@
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 10px; gap: 10px;
         }
-        .found-count { font-size: 11px; font-weight: 700; color: #888; }
+        .found-count { font-size: 11px; font-weight: 800; color: #888; }
         .sort-btn {
             display: flex; align-items: center; gap: 5px;
             background: rgba(255,255,255,0.07);
             border: 1px solid rgba(255,255,255,0.12);
             border-radius: 8px; padding: 5px 10px;
-            font-size: 12px; font-weight: 600; color: #aaa;
+            font-size: 12px; font-weight: 700; color: #aaa;
             cursor: pointer; touch-action: manipulation;
         }
         .sort-btn:active { background: rgba(255,255,255,0.12); }
@@ -162,52 +187,146 @@
         .found-item {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px; overflow: hidden; cursor: pointer;
-            display: flex; flex-direction: column;
-            transition: all 0.2s; animation: popIn 0.4s ease-out backwards;
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s;
+            animation: popIn 0.4s ease-out backwards;
             touch-action: manipulation;
+            min-width: 0;
         }
         .found-item:active { transform: scale(0.97); border-color: rgba(91,95,207,0.5); }
-        .item-img-wrap {
-            position: relative; width: 100%; padding-top: 100%;
-            background: rgba(255,255,255,0.04); overflow: hidden;
+
+        .card-media {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background: rgba(255,255,255,0.04);
         }
-        .item-img-wrap img, .item-img-wrap lottie-player {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; object-fit: cover;
+        .card-media::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.10) 58%, rgba(0,0,0,0.38) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .card-media img,
+        .card-media lottie-player {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-media .media-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            inset: 0;
+            font-size: 44px;
+        }
+        .card-overlay-top {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 3;
+            pointer-events: none;
         }
         .source-tag-img {
-            position: absolute; top: 6px; left: 6px;
-            font-size: 9px; font-weight: 800; text-transform: uppercase;
-            color: #fff; background: rgba(0,0,0,0.6);
-            padding: 3px 6px; border-radius: 6px; backdrop-filter: blur(4px);
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #fff;
+            background: rgba(0,0,0,0.58);
+            padding: 3px 6px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
         }
-        .item-body { padding: 10px; display: flex; flex-direction: column; flex: 1; }
-        .item-gift-name {
-            font-size: 9px; font-weight: 700; color: #888;
-            text-transform: uppercase; margin-bottom: 2px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        .card-overlay-bottom {
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
-        .item-name-row {
-            display: flex; justify-content: space-between;
-            align-items: baseline; margin-bottom: 6px; gap: 6px;
+        .card-gift-link {
+            display: inline-flex;
+            width: fit-content;
+            max-width: 100%;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 900;
+            line-height: 1.15;
+            padding: 4px 8px;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.44);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            pointer-events: auto;
+        }
+        .card-gift-link:active { opacity: 0.82; }
+        .card-number {
+            display: inline-flex;
+            width: fit-content;
+            font-size: 11px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.88);
+            padding: 2px 7px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(4px);
+        }
+
+        .item-body { padding: 10px; display: flex; flex-direction: column; flex: 1; gap: 6px; }
+        .item-model-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            min-width: 0;
         }
         .item-model-name {
-            font-size: 13px; font-weight: 700; line-height: 1.2;
-            color: #74b9ff; text-decoration: none;
+            flex: 1 1 auto;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #74b9ff;
+            text-decoration: none;
             border-bottom: 1px dashed rgba(116,185,255,0.5);
-            padding-bottom: 1px; min-width: 0;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            padding-bottom: 1px;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .item-model-name:active { opacity: 0.6; }
         .item-num { font-size: 10px; color: #666; white-space: nowrap; flex: 0 0 auto; }
-        .item-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
-        .ibadge { font-size: 10px; padding: 2px 6px; border-radius: 5px; font-weight: 600; }
+        .item-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+        .ibadge { font-size: 10px; padding: 2px 6px; border-radius: 5px; font-weight: 700; }
         .ibadge-model { background: rgba(91,95,207,0.2); color: #a2a5ff; }
         .ibadge-backdrop { background: rgba(52,152,219,0.15); color: #74b9ff; }
         .item-price {
-            font-size: 12px; font-weight: 700; color: #a2a5ff;
-            margin-top: auto; padding-top: 4px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #a2a5ff;
+            margin-top: auto;
+            padding-top: 2px;
         }
 
         .load-sentinel { height: 60px; display: flex; align-items: center; justify-content: center; }
@@ -235,7 +354,7 @@
             border-radius: 2px; margin: 10px auto 16px;
         }
         .sort-title {
-            font-size: 13px; font-weight: 700; color: #888;
+            font-size: 13px; font-weight: 800; color: #888;
             text-transform: uppercase; letter-spacing: 0.7px;
             padding: 0 20px 12px; border-bottom: 1px solid rgba(255,255,255,0.06);
         }
@@ -285,10 +404,10 @@
         }
         .modal-body { padding: 18px 20px 0; }
         .modal-gift-name {
-            font-size: 11px; font-weight: 700; color: #777;
+            font-size: 11px; font-weight: 800; color: #777;
             text-transform: uppercase; margin-bottom: 4px;
         }
-        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
+        .modal-title { font-size: 20px; font-weight: 900; margin-bottom: 2px; }
         .modal-model-link {
             color: #74b9ff; text-decoration: none;
             border-bottom: 1px dashed rgba(116,185,255,0.5);
@@ -302,7 +421,7 @@
         }
         .modal-row-label { font-size: 13px; color: #888; }
         .modal-row-right { display: flex; align-items: center; gap: 8px; min-width: 0; }
-        .modal-row-val { font-size: 14px; font-weight: 700; word-break: break-word; }
+        .modal-row-val { font-size: 14px; font-weight: 800; word-break: break-word; }
         .modal-row-rarity {
             font-size: 11px; color: #a2a5ff;
             background: rgba(91,95,207,0.15);
@@ -312,7 +431,7 @@
             display: flex; align-items: center; justify-content: center; gap: 8px;
             margin: 20px 20px 0; padding: 15px; border-radius: 14px;
             background: var(--tg-theme-button-color, #5b5fcf);
-            color: #fff; font-size: 16px; font-weight: 700;
+            color: #fff; font-size: 16px; font-weight: 800;
             text-decoration: none; touch-action: manipulation;
             cursor: pointer;
         }
@@ -337,7 +456,8 @@
 <div class="collapsible">
     <div class="collapsible-header" onclick="toggleCollapsible('models')">
         <span class="title">Модели</span>
-        <div style="display:flex;align-items:center;">
+        <div class="header-right">
+            <button class="clear-btn" id="clearModelsBtn" onclick="event.stopPropagation(); clearSelection('models')">Очистить</button>
             <span class="badge-count" id="modelsCount">0</span>
             <span class="coll-arrow" id="modelsArrow">▼</span>
         </div>
@@ -351,7 +471,8 @@
 <div class="collapsible">
     <div class="collapsible-header" onclick="toggleCollapsible('backdrops')">
         <span class="title">Фоны</span>
-        <div style="display:flex;align-items:center;">
+        <div class="header-right">
+            <button class="clear-btn" id="clearBackdropsBtn" onclick="event.stopPropagation(); clearSelection('backdrops')">Очистить</button>
             <span class="badge-count" id="backdropsCount">0</span>
             <span class="coll-arrow" id="backdropsArrow">▼</span>
         </div>
@@ -482,6 +603,26 @@
 
     window.openTelegramLink = openTelegramLink;
 
+    function updateClearButtons() {
+        const m = document.getElementById('clearModelsBtn');
+        const b = document.getElementById('clearBackdropsBtn');
+        if (m) m.classList.toggle('visible', selectedModels.size > 0);
+        if (b) b.classList.toggle('visible', selectedBackdrops.size > 0);
+    }
+
+    function clearSelection(kind) {
+        const set = kind === 'models' ? selectedModels : selectedBackdrops;
+        const gridId = kind === 'models' ? 'modelsGrid' : 'backdropsGrid';
+        const countId = kind === 'models' ? 'modelsCount' : 'backdropsCount';
+
+        set.clear();
+        document.getElementById(countId).textContent = '0';
+        document.querySelectorAll(`#${gridId} .chip.selected`).forEach(chip => chip.classList.remove('selected'));
+        updateClearButtons();
+    }
+
+    window.clearSelection = clearSelection;
+
     async function loadGifts() {
         try {
             const r = await fetch(`${API}/gifts`, { headers: H });
@@ -558,22 +699,25 @@
 
         selectedModels.clear();
         selectedBackdrops.clear();
+        updateClearButtons();
 
         if (!document.getElementById('modelsBody').classList.contains('open')) toggleCollapsible('models');
         document.getElementById('modelsSearch').value = '';
         document.getElementById('backdropsSearch').value = '';
 
-        buildChips('modelsGrid', gift.all_models || gift.models || gift.rare_models || [], selectedModels, 'modelsCount');
-        buildChips('backdropsGrid', gift.all_backdrops || gift.backdrops || gift.rare_backdrops || [], selectedBackdrops, 'backdropsCount');
+        buildChips('modelsGrid', gift.all_models || gift.models || gift.rare_models || [], selectedModels, 'modelsCount', 'clearModelsBtn');
+        buildChips('backdropsGrid', gift.all_backdrops || gift.backdrops || gift.rare_backdrops || [], selectedBackdrops, 'backdropsCount', 'clearBackdropsBtn');
     }
 
-    function buildChips(gridId, items, set, countId) {
+    function buildChips(gridId, items, set, countId, clearBtnId) {
         const grid = document.getElementById(gridId);
         const sorted = sortByRarityAsc(items || []);
 
         if (!sorted.length) {
             grid.innerHTML = '<div style="grid-column:1/-1;padding:12px;text-align:center;color:#666;">Нет данных</div>';
             document.getElementById(countId).textContent = 0;
+            const clearBtn = document.getElementById(clearBtnId);
+            if (clearBtn) clearBtn.classList.remove('visible');
             return;
         }
 
@@ -593,10 +737,15 @@
         }).join('');
 
         document.getElementById(countId).textContent = 0;
+        const clearBtn = document.getElementById(clearBtnId);
+        if (clearBtn) clearBtn.classList.remove('visible');
     }
 
     window.toggleChip = (el) => {
         const set = el.dataset.grid === 'modelsGrid' ? selectedModels : selectedBackdrops;
+        const countId = el.dataset.count;
+        const clearBtnId = el.dataset.grid === 'modelsGrid' ? 'clearModelsBtn' : 'clearBackdropsBtn';
+
         el.style.transform = 'scale(0.9)';
         setTimeout(() => { el.style.transform = ''; }, 150);
 
@@ -604,10 +753,13 @@
         if (set.has(el.dataset.name)) set.delete(el.dataset.name);
         else set.add(el.dataset.name);
 
-        const badge = document.getElementById(el.dataset.count);
+        const badge = document.getElementById(countId);
         badge.textContent = set.size;
         badge.style.transform = 'scale(1.2)';
         setTimeout(() => { badge.style.transform = 'scale(1)'; }, 200);
+
+        const clearBtn = document.getElementById(clearBtnId);
+        if (clearBtn) clearBtn.classList.toggle('visible', set.size > 0);
     };
 
     window.filterChips = (section, query) => {
@@ -708,8 +860,8 @@
 
     function sortFn(a, b) {
         switch (currentSort) {
-            case 'price_asc': return (a.price_ton || 0) - (b.price_ton || 0);
-            case 'price_desc': return (b.price_ton || 0) - (a.price_ton || 0);
+            case 'price_asc': return (Number(a.price_ton) || 0) - (Number(b.price_ton) || 0);
+            case 'price_desc': return (Number(b.price_ton) || 0) - (Number(a.price_ton) || 0);
             case 'num_asc': return (Number(a.number) || 0) - (Number(b.number) || 0);
             case 'num_desc': return (Number(b.number) || 0) - (Number(a.number) || 0);
             case 'rarity_asc': return (a.model_rarity ?? 999) - (b.model_rarity ?? 999);
@@ -746,6 +898,46 @@
         applySortAndRedraw(preserveScroll);
     }
 
+    function buildCardHTML(item) {
+        const modelPct = formatPct(item.model_rarity);
+        const backdropPct = formatPct(item.backdrop_rarity);
+        const cardTitle = item.gift_name || item.title || 'Подарок';
+        const cardUrl = item.gift_url || item.url || '#';
+        const imgHtml = item.lottie_url
+            ? `<lottie-player src="${escapeHtml(item.lottie_url)}" background="transparent" speed="1" loop autoplay></lottie-player>`
+            : (item.image_url
+                ? `<img src="${escapeHtml(item.image_url)}" loading="lazy" onerror="this.style.display='none'">`
+                : `<div class="media-fallback">🎁</div>`);
+
+        return `
+            <div class="card-media">
+                ${imgHtml}
+                <div class="card-overlay-top">
+                    <span class="source-tag-img">${escapeHtml(item.source || '')}</span>
+                    ${item.number ? `<span class="source-tag-img">#${escapeHtml(String(item.number))}</span>` : ''}
+                </div>
+                <div class="card-overlay-bottom">
+                    <a class="card-gift-link" href="javascript:void(0)" onclick="event.stopPropagation(); openTelegramLink(${JSON.stringify(cardUrl)})">${escapeHtml(cardTitle)}</a>
+                    ${item.number ? `<span class="card-number">#${escapeHtml(String(item.number))}</span>` : ''}
+                </div>
+            </div>
+            <div class="item-body">
+                <div class="item-model-line">
+                    <a class="item-model-name" href="javascript:void(0)" onclick="event.stopPropagation(); openModalLink(${JSON.stringify(item.gift_url || item.url || '#')})">${escapeHtml(item.model || '—')}</a>
+                    ${item.number ? `<span class="item-num">#${escapeHtml(String(item.number))}</span>` : ''}
+                </div>
+                <div class="item-badges">
+                    ${modelPct ? `<span class="ibadge ibadge-model">${escapeHtml(modelPct)}</span>` : ''}
+                    ${item.backdrop && item.backdrop !== 'Default'
+                        ? `<span class="ibadge ibadge-backdrop">${escapeHtml(item.backdrop)}${backdropPct ? ' · ' + escapeHtml(backdropPct) : ''}</span>`
+                        : ''}
+                </div>
+                <div class="item-price">${escapeHtml(formatPrice(item.price_ton))} TON</div>
+            </div>`;
+    }
+
+    window.openModalLink = openTelegramLink;
+
     function applySortAndRedraw(preserveScroll = false) {
         const scrollY = preserveScroll ? window.scrollY : 0;
         sortedItems = [...allItems].sort(sortFn);
@@ -779,42 +971,12 @@
         }
     }
 
-    function buildCardHTML(item) {
-        const modelPct = formatPct(item.model_rarity);
-        const backdropPct = formatPct(item.backdrop_rarity);
-        const imgHtml = item.lottie_url
-            ? `<lottie-player src="${escapeHtml(item.lottie_url)}" background="transparent" speed="1" loop autoplay></lottie-player>`
-            : (item.image_url
-                ? `<img src="${escapeHtml(item.image_url)}" loading="lazy" onerror="this.style.display='none'">`
-                : `<div style="display:flex;align-items:center;justify-content:center;position:absolute;inset:0;font-size:40px">🎁</div>`);
-        const giftUrlJson = JSON.stringify(item.gift_url || item.url || '#');
-
-        return `
-            <div class="item-img-wrap">
-                ${imgHtml}
-                <span class="source-tag-img">${escapeHtml(item.source || '')}</span>
-            </div>
-            <div class="item-body">
-                ${item.gift_name ? `<div class="item-gift-name">${escapeHtml(item.gift_name)}</div>` : ''}
-                <div class="item-name-row">
-                    <a class="item-model-name" href="javascript:void(0)" onclick="event.stopPropagation(); openTelegramLink(${giftUrlJson})">${escapeHtml(item.model || '—')}</a>
-                    ${item.number ? `<span class="item-num">#${escapeHtml(String(item.number))}</span>` : ''}
-                </div>
-                <div class="item-badges">
-                    ${modelPct ? `<span class="ibadge ibadge-model">${escapeHtml(modelPct)}</span>` : ''}
-                    ${item.backdrop && item.backdrop !== 'Default'
-                        ? `<span class="ibadge ibadge-backdrop">${escapeHtml(item.backdrop)}${backdropPct ? ' · ' + escapeHtml(backdropPct) : ''}</span>`
-                        : ''}
-                </div>
-                <div class="item-price">${escapeHtml(formatPrice(item.price_ton))} TON</div>
-            </div>`;
-    }
-
     function renderNextPage() {
         const grid = document.getElementById('foundGrid');
         if (!grid) return;
         const start = renderedCount;
         const slice = sortedItems.slice(start, start + PAGE_SIZE);
+
         slice.forEach((item, i) => {
             const absIdx = start + i;
             const el = document.createElement('div');
@@ -824,6 +986,7 @@
             el.addEventListener('click', () => openModal(absIdx));
             grid.appendChild(el);
         });
+
         renderedCount += slice.length;
         const sentinel = document.getElementById('loadSentinel');
         if (sentinel) sentinel.style.display = renderedCount < sortedItems.length ? 'flex' : 'none';
@@ -833,11 +996,13 @@
         if (scrollObserver) scrollObserver.disconnect();
         const sentinel = document.getElementById('loadSentinel');
         if (!sentinel || renderedCount >= sortedItems.length) return;
+
         scrollObserver = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting && renderedCount < sortedItems.length) {
                 renderNextPage();
             }
         }, { threshold: 0.1 });
+
         scrollObserver.observe(sentinel);
     }
 
@@ -847,6 +1012,7 @@
 
         const imgWrap = document.getElementById('modalImg');
         imgWrap.innerHTML = '';
+
         if (item.lottie_url) {
             const player = document.createElement('lottie-player');
             player.setAttribute('src', item.lottie_url);
@@ -946,8 +1112,26 @@
         }
     });
 
-    // Init
-   loadGifts();
+    async function init() {
+        try {
+            const r = await fetch(`${API}/auth/check/${USERID}`, { headers: H });
+            if (!r.ok) {
+                document.body.innerHTML = `
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;text-align:center;padding:20px;">
+                        <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+                        <div style="font-size:20px;font-weight:800;margin-bottom:8px;">Нет доступа</div>
+                        <div style="color:#888;font-size:14px;">Ваш ID: ${USERID}<br>Обратитесь к администратору</div>
+                    </div>`;
+                return;
+            }
+            loadGifts();
+        } catch (e) {
+            console.error(e);
+            setStatus('Ошибка подключения', 'error');
+        }
+    }
+
+    init();
 </script>
 </body>
 </html>
