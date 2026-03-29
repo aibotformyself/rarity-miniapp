@@ -9,7 +9,7 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --card-radius: 18px;
+            --card-radius: 20px;
             --soft-border: rgba(255,255,255,0.10);
             --soft-border-2: rgba(255,255,255,0.06);
             --panel-bg: rgba(255,255,255,0.04);
@@ -33,6 +33,7 @@
         @keyframes slideDown { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* ── Gift search ── */
         .gift-search-wrap { position: relative; }
         .gift-search-input {
             width: 100%; padding: 12px 12px 12px 40px;
@@ -71,6 +72,7 @@
         .gift-option:active { background: rgba(91,95,207,0.3); }
         .dropdown-icon { width: 26px; height: 26px; border-radius: 6px; object-fit: cover; flex: 0 0 auto; }
 
+        /* ── Collapsibles ── */
         .collapsible {
             border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
             overflow: hidden; margin-bottom: 12px;
@@ -87,9 +89,7 @@
             color: var(--tg-theme-hint-color, #aaa);
             text-transform: uppercase; letter-spacing: 0.7px;
         }
-        .header-right {
-            display: flex; align-items: center; gap: 8px; flex: 0 0 auto;
-        }
+        .header-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
         .badge-count {
             font-size: 12px; font-weight: 800; color: #fff;
             background: var(--tg-theme-button-color, #5b5fcf);
@@ -97,15 +97,9 @@
             transition: transform 0.2s;
         }
         .clear-btn {
-            border: none;
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 5px 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: none;
+            border: none; background: rgba(255,255,255,0.08); color: #fff;
+            font-size: 11px; font-weight: 700; padding: 5px 8px;
+            border-radius: 8px; cursor: pointer; display: none;
             touch-action: manipulation;
         }
         .clear-btn.visible { display: inline-flex; }
@@ -134,8 +128,7 @@
             background: rgba(255,255,255,0.05); cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
             animation: popIn 0.3s ease-out backwards;
-            touch-action: manipulation;
-            min-width: 0;
+            touch-action: manipulation; min-width: 0;
         }
         .chip:active { transform: scale(0.96); }
         .chip.selected {
@@ -149,6 +142,27 @@
         .chip-name { font-size: 13px; font-weight: 700; line-height: 1.2; word-break: break-word; }
         .chip-rarity { font-size: 11px; opacity: 0.7; margin-top: 2px; }
 
+        /* ── Price filter ── */
+        .price-filter-row {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .price-input {
+            flex: 1; padding: 12px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.07); color: inherit;
+            font-size: 15px; outline: none;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            -moz-appearance: textfield;
+        }
+        .price-input::-webkit-outer-spin-button,
+        .price-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+        .price-input:focus {
+            border-color: var(--tg-theme-button-color, #5b5fcf);
+            box-shadow: 0 0 0 3px rgba(91,95,207,0.2);
+        }
+        .price-separator { color: #888; font-weight: 700; flex: 0 0 auto; font-size: 18px; }
+
+        /* ── Buttons ── */
         .btn {
             width: 100%; padding: 15px; border-radius: 14px; border: none;
             font-size: 16px; font-weight: 800; cursor: pointer;
@@ -158,6 +172,7 @@
         .btn-start { background: var(--tg-theme-button-color, #5b5fcf); color: #fff; }
         .btn-stop { background: #e74c3c; color: #fff; display: none; margin-top: 8px; }
 
+        /* ── Status bar ── */
         .status-bar {
             text-align: center; font-size: 13px; margin-top: 10px;
             padding: 10px; border-radius: 10px;
@@ -167,6 +182,7 @@
         .status-bar.active { color: #2ecc71; background: rgba(46,204,113,0.08); }
         .status-bar.error { color: #e74c3c; background: rgba(231,76,60,0.08); }
 
+        /* ── Found list ── */
         .found-list { margin-top: 20px; }
         .found-header {
             display: flex; align-items: center; justify-content: space-between;
@@ -183,137 +199,89 @@
         }
         .sort-btn:active { background: rgba(255,255,255,0.12); }
 
+        /* ── Cards ── */
         .found-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .found-item {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 18px;
-            overflow: hidden;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.2s;
+            border-radius: var(--card-radius);
+            overflow: hidden; cursor: pointer;
+            display: flex; flex-direction: column;
+            transition: transform 0.18s cubic-bezier(0.4,0,0.2,1),
+                        border-color 0.18s,
+                        box-shadow 0.18s;
             animation: popIn 0.4s ease-out backwards;
-            touch-action: manipulation;
-            min-width: 0;
+            touch-action: manipulation; min-width: 0;
         }
-        .found-item:active { transform: scale(0.97); border-color: rgba(91,95,207,0.5); }
+        .found-item:active {
+            transform: scale(0.96);
+            border-color: rgba(91,95,207,0.5);
+            box-shadow: 0 4px 20px rgba(91,95,207,0.2);
+        }
 
+        /* Card media */
         .card-media {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            overflow: hidden;
-            background: rgba(255,255,255,0.04);
+            position: relative; width: 100%; aspect-ratio: 1 / 1;
+            overflow: hidden; background: rgba(255,255,255,0.04);
         }
         .card-media::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.10) 58%, rgba(0,0,0,0.38) 100%);
-            pointer-events: none;
-            z-index: 2;
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.10) 58%, rgba(0,0,0,0.42) 100%);
+            pointer-events: none; z-index: 2;
         }
         .card-media img,
         .card-media lottie-player {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            position: absolute; inset: 0;
+            width: 100%; height: 100%; object-fit: cover;
         }
         .card-media .media-fallback {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            inset: 0;
-            font-size: 44px;
+            display: flex; align-items: center; justify-content: center;
+            position: absolute; inset: 0; font-size: 44px;
         }
         .card-overlay-top {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            right: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            z-index: 3;
-            pointer-events: none;
+            position: absolute; top: 8px; left: 8px;
+            z-index: 3; pointer-events: none;
         }
         .source-tag-img {
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #fff;
-            background: rgba(0,0,0,0.58);
-            padding: 3px 6px;
-            border-radius: 6px;
-            backdrop-filter: blur(4px);
+            font-size: 9px; font-weight: 800; text-transform: uppercase;
+            color: #fff; background: rgba(0,0,0,0.58);
+            padding: 3px 6px; border-radius: 6px; backdrop-filter: blur(4px);
         }
         .card-overlay-bottom {
-            position: absolute;
-            left: 8px;
-            right: 8px;
-            bottom: 8px;
-            z-index: 3;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            position: absolute; left: 8px; right: 8px; bottom: 8px;
+            z-index: 3; display: flex; flex-direction: column; gap: 4px;
         }
         .card-gift-link {
-            display: inline-flex;
-            width: fit-content;
-            max-width: 100%;
-            color: #fff;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 900;
-            line-height: 1.15;
-            padding: 4px 8px;
-            border-radius: 10px;
-            background: rgba(0,0,0,0.44);
-            backdrop-filter: blur(4px);
+            display: inline-flex; width: fit-content; max-width: 100%;
+            color: #fff; text-decoration: none;
+            font-size: 14px; font-weight: 900; line-height: 1.15;
+            padding: 4px 8px; border-radius: 10px;
+            background: rgba(0,0,0,0.44); backdrop-filter: blur(4px);
             border: 1px solid rgba(255,255,255,0.08);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             pointer-events: auto;
         }
         .card-gift-link:active { opacity: 0.82; }
         .card-number {
-            display: inline-flex;
-            width: fit-content;
-            font-size: 11px;
-            font-weight: 800;
+            display: inline-flex; width: fit-content;
+            font-size: 11px; font-weight: 800;
             color: rgba(255,255,255,0.88);
-            padding: 2px 7px;
-            border-radius: 8px;
-            background: rgba(0,0,0,0.35);
-            backdrop-filter: blur(4px);
+            padding: 2px 7px; border-radius: 8px;
+            background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);
         }
 
+        /* Card body */
         .item-body { padding: 10px; display: flex; flex-direction: column; flex: 1; gap: 6px; }
         .item-model-line {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            min-width: 0;
+            display: flex; align-items: center;
+            justify-content: space-between; gap: 8px; min-width: 0;
         }
         .item-model-name {
-            flex: 1 1 auto;
-            font-size: 13px;
-            font-weight: 800;
-            line-height: 1.2;
-            color: #74b9ff;
-            text-decoration: none;
+            flex: 1 1 auto; font-size: 13px; font-weight: 800;
+            line-height: 1.2; color: #74b9ff; text-decoration: none;
             border-bottom: 1px dashed rgba(116,185,255,0.5);
-            padding-bottom: 1px;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            padding-bottom: 1px; min-width: 0;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
         .item-model-name:active { opacity: 0.6; }
         .item-num { font-size: 10px; color: #666; white-space: nowrap; flex: 0 0 auto; }
@@ -322,20 +290,27 @@
         .ibadge-model { background: rgba(91,95,207,0.2); color: #a2a5ff; }
         .ibadge-backdrop { background: rgba(52,152,219,0.15); color: #74b9ff; }
         .item-price {
-            font-size: 12px;
-            font-weight: 800;
-            color: #a2a5ff;
-            margin-top: auto;
-            padding-top: 2px;
+            font-size: 12px; font-weight: 800; color: #a2a5ff;
+            margin-top: auto; padding-top: 2px;
         }
 
-        .load-sentinel { height: 60px; display: flex; align-items: center; justify-content: center; }
+        /* Infinite scroll sentinel */
+        .load-sentinel {
+            height: 70px; display: flex; align-items: center;
+            justify-content: center; margin-top: 4px;
+        }
         .load-spinner {
             width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.1);
             border-top-color: var(--tg-theme-button-color, #5b5fcf);
             border-radius: 50%; animation: spin 0.8s linear infinite;
         }
+        .load-done-tag {
+            font-size: 12px; color: #555; padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px; background: rgba(255,255,255,0.02);
+        }
 
+        /* ── Sort sheet ── */
         .sort-overlay {
             display: none; position: fixed; inset: 0; z-index: 3000;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
@@ -365,9 +340,11 @@
             touch-action: manipulation; transition: background 0.15s;
         }
         .sort-option:active { background: rgba(255,255,255,0.06); }
-        .sort-option.active { color: var(--tg-theme-button-color, #5b5fcf); }
-        .sort-option .sort-arrow { font-size: 14px; opacity: 0.6; }
+        .sort-option.active { color: var(--tg-theme-button-color, #5b5fcf); font-weight: 700; }
+        .sort-option .sort-check { font-size: 14px; }
+        .sort-option .sort-arrow { font-size: 14px; opacity: 0.5; }
 
+        /* ── Modal ── */
         .modal-overlay {
             display: none; position: fixed; inset: 0; z-index: 2000;
             background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
@@ -377,8 +354,8 @@
         .modal-overlay.open { display: flex; opacity: 1; }
         .modal-sheet {
             position: relative; background: #1e1e35;
-            border-radius: 20px 20px 0 0; width: 100%;
-            max-height: 90vh; overflow-y: auto; padding: 0 0 32px;
+            border-radius: 24px 24px 0 0; width: 100%;
+            max-height: 92vh; overflow-y: auto; padding: 0 0 36px;
             transform: translateY(100%);
             transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
         }
@@ -389,14 +366,17 @@
         }
         .modal-close {
             position: absolute; top: 14px; right: 14px;
-            width: 28px; height: 28px; background: rgba(255,255,255,0.1);
-            border: none; border-radius: 50%; color: #fff; font-size: 14px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            z-index: 10; touch-action: manipulation;
+            width: 30px; height: 30px; background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 50%;
+            color: #fff; font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10; touch-action: manipulation; transition: background 0.15s;
         }
+        .modal-close:active { background: rgba(255,255,255,0.2); }
         .modal-img-wrap {
             width: 100%; padding-top: 80%; position: relative;
             background: rgba(255,255,255,0.04); overflow: hidden;
+            border-radius: 0;
         }
         .modal-img-wrap img, .modal-img-wrap lottie-player {
             position: absolute; top: 0; left: 0;
@@ -415,10 +395,12 @@
         }
         .modal-model-link:active { opacity: 0.6; }
         .modal-num { font-size: 13px; color: #666; margin-bottom: 16px; }
+        .modal-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 0 -20px; }
         .modal-row {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 10px;
+            padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 10px;
         }
+        .modal-row:last-child { border-bottom: none; }
         .modal-row-label { font-size: 13px; color: #888; }
         .modal-row-right { display: flex; align-items: center; gap: 8px; min-width: 0; }
         .modal-row-val { font-size: 14px; font-weight: 800; word-break: break-word; }
@@ -427,17 +409,32 @@
             background: rgba(91,95,207,0.15);
             padding: 2px 7px; border-radius: 6px; flex: 0 0 auto;
         }
+        .modal-actions { padding: 16px 20px 0; display: flex; flex-direction: column; gap: 10px; }
         .modal-price-btn {
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin: 20px 20px 0; padding: 15px; border-radius: 14px;
+            padding: 15px; border-radius: 14px;
             background: var(--tg-theme-button-color, #5b5fcf);
             color: #fff; font-size: 16px; font-weight: 800;
-            text-decoration: none; touch-action: manipulation;
-            cursor: pointer;
+            text-decoration: none; touch-action: manipulation; cursor: pointer;
+            border: none; width: 100%; transition: opacity 0.15s, transform 0.15s;
         }
         .modal-price-btn:active { opacity: 0.85; transform: scale(0.98); }
+        .modal-gift-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 13px; border-radius: 14px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #ccc; font-size: 14px; font-weight: 700;
+            text-decoration: none; touch-action: manipulation; cursor: pointer;
+            width: 100%; transition: background 0.15s, transform 0.15s;
+        }
+        .modal-gift-btn:active { background: rgba(255,255,255,0.12); transform: scale(0.98); }
 
-        .empty-state { text-align: center; padding: 20px; color: #666; }
+        .empty-state {
+            text-align: center; padding: 40px 20px; color: #666;
+            display: flex; flex-direction: column; align-items: center; gap: 14px;
+        }
+        .empty-state .load-spinner { margin: 0 auto; }
     </style>
 </head>
 <body>
@@ -483,25 +480,36 @@
     </div>
 </div>
 
+<div class="section">
+    <div class="field-label">Цена (TON)</div>
+    <div class="price-filter-row">
+        <input class="price-input" id="priceMin" type="number" placeholder="от" min="0" step="0.01">
+        <span class="price-separator">—</span>
+        <input class="price-input" id="priceMax" type="number" placeholder="до" min="0" step="0.01">
+    </div>
+</div>
+
 <button class="btn btn-start" id="btnStart" onclick="startMonitor()">▶ Запустить мониторинг</button>
 <button class="btn btn-stop" id="btnStop" onclick="stopMonitor()">⏹ Остановить</button>
 <div class="status-bar" id="statusBar">Настройте параметры и нажмите Запустить</div>
 
 <div class="found-list" id="foundList"></div>
 
+<!-- Sort sheet -->
 <div class="sort-overlay" id="sortOverlay" onclick="closeSortSheet(event)">
     <div class="sort-sheet">
         <div class="sort-handle"></div>
         <div class="sort-title">Сортировка</div>
-        <div class="sort-option" data-sort="price_asc" onclick="applySort('price_asc')"><span>Цена: от низкой к высокой</span><span class="sort-arrow">↑</span></div>
-        <div class="sort-option" data-sort="price_desc" onclick="applySort('price_desc')"><span>Цена: от высокой к низкой</span><span class="sort-arrow">↓</span></div>
-        <div class="sort-option" data-sort="num_asc" onclick="applySort('num_asc')"><span>ID подарка: по возрастанию</span><span class="sort-arrow">↑</span></div>
-        <div class="sort-option" data-sort="num_desc" onclick="applySort('num_desc')"><span>ID подарка: по убыванию</span><span class="sort-arrow">↓</span></div>
-        <div class="sort-option" data-sort="rarity_asc" onclick="applySort('rarity_asc')"><span>Редкость модели: от низкой к высокой</span><span class="sort-arrow">↑</span></div>
-        <div class="sort-option" data-sort="rarity_desc" onclick="applySort('rarity_desc')"><span>Редкость модели: от высокой к низкой</span><span class="sort-arrow">↓</span></div>
+        <div class="sort-option" data-sort="price_asc"   onclick="applySort('price_asc')">  <span>Цена: от низкой к высокой</span>  <span class="sort-arrow">↑</span></div>
+        <div class="sort-option" data-sort="price_desc"  onclick="applySort('price_desc')"> <span>Цена: от высокой к низкой</span>   <span class="sort-arrow">↓</span></div>
+        <div class="sort-option" data-sort="num_asc"     onclick="applySort('num_asc')">    <span>ID подарка: по возрастанию</span>  <span class="sort-arrow">↑</span></div>
+        <div class="sort-option" data-sort="num_desc"    onclick="applySort('num_desc')">   <span>ID подарка: по убыванию</span>     <span class="sort-arrow">↓</span></div>
+        <div class="sort-option" data-sort="rarity_asc"  onclick="applySort('rarity_asc')"> <span>Редкость модели: от низкой</span>  <span class="sort-arrow">↑</span></div>
+        <div class="sort-option" data-sort="rarity_desc" onclick="applySort('rarity_desc')"><span>Редкость модели: от высокой</span>  <span class="sort-arrow">↓</span></div>
     </div>
 </div>
 
+<!-- Item detail modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
     <div class="modal-sheet" id="modalSheet">
         <div class="modal-handle"></div>
@@ -513,33 +521,50 @@
             <div class="modal-num" id="modalNum"></div>
             <div id="modalRows"></div>
         </div>
-        <div class="modal-price-btn" id="modalPriceBtn">
-            <span id="modalPriceTxt"></span>
+        <div class="modal-actions">
+            <button class="modal-price-btn" id="modalPriceBtn">
+                <span id="modalPriceTxt"></span>
+            </button>
+            <button class="modal-gift-btn" id="modalGiftBtn">
+                🎁 Открыть подарок в Telegram
+            </button>
         </div>
     </div>
 </div>
 
 <script>
     const API = 'https://unperforated-levi-supernumerous.ngrok-free.dev';
-    const tg = window.Telegram?.WebApp;
+    const tg  = window.Telegram?.WebApp;
     const USERID = tg?.initDataUnsafe?.user?.id || 6525022620;
     const H = { 'ngrok-skip-browser-warning': 'true' };
-    const PAGE_SIZE = 50;
+    const DOM_PAGE_SIZE = 30; // items rendered per DOM batch
 
     let gifts = [];
-    let selectedModels = new Set();
+    let selectedModels   = new Set();
     let selectedBackdrops = new Set();
-    let _selectedGift = '';
-    let pollTimer = null;
-    let allItems = [];
-    let sortedItems = [];
-    let renderedCount = 0;
-    let currentSort = 'price_asc';
-    let scrollObserver = null;
-    let lastSignature = '';
+    let _selectedGift    = '';
+    let pollTimer        = null;
+    let allItems         = [];
+    let sortedItems      = [];
+    let renderedCount    = 0;
+    let currentSort      = 'price_asc';
+    let scrollObserver   = null;
+    let lastSignature    = '';
+
+    // ── Search (lazy-load) state ──────────────────────────────
+    let searchPage        = 0;
+    let searchTotalPages  = 1;
+    let searchLoading     = false;
+    let searchDone        = false;
+    let searchGift        = '';
+    let searchModels      = [];
+    let searchBackdrops   = [];
+    let searchPriceMin    = null;
+    let searchPriceMax    = null;
 
     tg?.expand();
 
+    // ── Helpers ───────────────────────────────────────────────
     function setStatus(text, type = '') {
         const el = document.getElementById('statusBar');
         if (!el) return;
@@ -549,10 +574,8 @@
 
     function escapeHtml(str) {
         return String(str ?? '')
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
+            .replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;').replaceAll('"', '&quot;')
             .replaceAll("'", '&#39;');
     }
 
@@ -577,50 +600,38 @@
 
     function sortByRarityAsc(items) {
         return [...items].sort((a, b) => {
-            const ra = normalizeRarityValue(a);
-            const rb = normalizeRarityValue(b);
+            const ra = normalizeRarityValue(a), rb = normalizeRarityValue(b);
             if (ra !== rb) return ra - rb;
             return String(a.name || '').localeCompare(String(b.name || ''), 'ru');
         });
     }
 
-    function snapshot(items) {
-        return items.map(i => i.id).join('|');
-    }
+    function snapshot(items) { return items.map(i => i.id).join('|'); }
 
     function openTelegramLink(url) {
         if (!url || url === '#') return;
-        if (tg?.openTelegramLink) {
-            tg.openTelegramLink(url);
-            return;
-        }
-        if (tg?.openLink) {
-            tg.openLink(url);
-            return;
-        }
+        if (tg?.openTelegramLink) { tg.openTelegramLink(url); return; }
+        if (tg?.openLink)         { tg.openLink(url);         return; }
         window.open(url, '_blank', 'noopener,noreferrer');
     }
-
     window.openTelegramLink = openTelegramLink;
+    window.openModalLink    = openTelegramLink;
 
+    // ── Gift search / chips ───────────────────────────────────
     function updateClearButtons() {
-        const m = document.getElementById('clearModelsBtn');
-        const b = document.getElementById('clearBackdropsBtn');
-        if (m) m.classList.toggle('visible', selectedModels.size > 0);
-        if (b) b.classList.toggle('visible', selectedBackdrops.size > 0);
+        document.getElementById('clearModelsBtn')?.classList.toggle('visible', selectedModels.size > 0);
+        document.getElementById('clearBackdropsBtn')?.classList.toggle('visible', selectedBackdrops.size > 0);
     }
 
     function clearSelection(kind) {
-        const set = kind === 'models' ? selectedModels : selectedBackdrops;
-        const gridId = kind === 'models' ? 'modelsGrid' : 'backdropsGrid';
-        const countId = kind === 'models' ? 'modelsCount' : 'backdropsCount';
-
+        const set    = kind === 'models' ? selectedModels : selectedBackdrops;
+        const gridId = kind === 'models' ? 'modelsGrid'   : 'backdropsGrid';
+        const cntId  = kind === 'models' ? 'modelsCount'  : 'backdropsCount';
         set.clear();
-        document.getElementById(countId).textContent = '0';
-        document.querySelectorAll(`#${gridId} .chip.selected`).forEach(chip => chip.classList.remove('selected'));
+        document.getElementById(cntId).textContent = '0';
+        document.querySelectorAll(`#${gridId} .chip.selected`).forEach(c => c.classList.remove('selected'));
         updateClearButtons();
     }
-
     window.clearSelection = clearSelection;
 
     async function loadGifts() {
@@ -648,7 +659,6 @@
         list.forEach(g => {
             const item = document.createElement('div');
             item.className = 'gift-option';
-
             if (g.image_url || g.icon) {
                 const img = document.createElement('img');
                 img.className = 'dropdown-icon';
@@ -660,11 +670,9 @@
                 icon.textContent = '🎁';
                 item.appendChild(icon);
             }
-
             const text = document.createElement('span');
             text.textContent = g.display_name || g.name;
             item.appendChild(text);
-
             item.addEventListener('click', () => selectGift(g.name));
             dropdown.appendChild(item);
         });
@@ -681,48 +689,36 @@
         document.getElementById('giftDropdown').classList.add('open');
         renderGiftDropdown(gifts);
     });
-
     document.getElementById('giftSearchInput').addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase().trim();
-        if (!q) {
-            _selectedGift = '';
-            renderGiftDropdown(gifts);
-        } else {
-            renderGiftDropdown(gifts.filter(g => (g.name || '').toLowerCase().includes(q)));
-        }
+        if (!q) { _selectedGift = ''; renderGiftDropdown(gifts); }
+        else    { renderGiftDropdown(gifts.filter(g => (g.name || '').toLowerCase().includes(q))); }
         document.getElementById('giftDropdown').classList.add('open');
     });
 
     function onGiftChange() {
         const gift = gifts.find(g => g.name === _selectedGift);
         if (!gift) return;
-
-        selectedModels.clear();
-        selectedBackdrops.clear();
+        selectedModels.clear(); selectedBackdrops.clear();
         updateClearButtons();
-
         if (!document.getElementById('modelsBody').classList.contains('open')) toggleCollapsible('models');
-        document.getElementById('modelsSearch').value = '';
+        document.getElementById('modelsSearch').value   = '';
         document.getElementById('backdropsSearch').value = '';
-
-        buildChips('modelsGrid', gift.all_models || gift.models || gift.rare_models || [], selectedModels, 'modelsCount', 'clearModelsBtn');
+        buildChips('modelsGrid',   gift.all_models    || gift.models    || gift.rare_models    || [], selectedModels,    'modelsCount',    'clearModelsBtn');
         buildChips('backdropsGrid', gift.all_backdrops || gift.backdrops || gift.rare_backdrops || [], selectedBackdrops, 'backdropsCount', 'clearBackdropsBtn');
     }
 
     function buildChips(gridId, items, set, countId, clearBtnId) {
-        const grid = document.getElementById(gridId);
+        const grid   = document.getElementById(gridId);
         const sorted = sortByRarityAsc(items || []);
-
         if (!sorted.length) {
             grid.innerHTML = '<div style="grid-column:1/-1;padding:12px;text-align:center;color:#666;">Нет данных</div>';
             document.getElementById(countId).textContent = 0;
-            const clearBtn = document.getElementById(clearBtnId);
-            if (clearBtn) clearBtn.classList.remove('visible');
+            document.getElementById(clearBtnId)?.classList.remove('visible');
             return;
         }
-
         grid.innerHTML = sorted.map((m, i) => {
-            const pct = formatPct(normalizeRarityValue(m));
+            const pct     = formatPct(normalizeRarityValue(m));
             const iconHtml = (m.image_url || m.icon)
                 ? `<img src="${escapeHtml(m.image_url || m.icon)}" class="chip-icon" onerror="this.style.display='none'">`
                 : '';
@@ -735,31 +731,24 @@
                     </div>
                 </div>`;
         }).join('');
-
         document.getElementById(countId).textContent = 0;
-        const clearBtn = document.getElementById(clearBtnId);
-        if (clearBtn) clearBtn.classList.remove('visible');
+        document.getElementById(clearBtnId)?.classList.remove('visible');
     }
 
     window.toggleChip = (el) => {
-        const set = el.dataset.grid === 'modelsGrid' ? selectedModels : selectedBackdrops;
-        const countId = el.dataset.count;
-        const clearBtnId = el.dataset.grid === 'modelsGrid' ? 'clearModelsBtn' : 'clearBackdropsBtn';
-
+        const set      = el.dataset.grid === 'modelsGrid' ? selectedModels : selectedBackdrops;
+        const countId  = el.dataset.count;
+        const clearId  = el.dataset.grid === 'modelsGrid' ? 'clearModelsBtn' : 'clearBackdropsBtn';
         el.style.transform = 'scale(0.9)';
         setTimeout(() => { el.style.transform = ''; }, 150);
-
         el.classList.toggle('selected');
         if (set.has(el.dataset.name)) set.delete(el.dataset.name);
         else set.add(el.dataset.name);
-
         const badge = document.getElementById(countId);
         badge.textContent = set.size;
         badge.style.transform = 'scale(1.2)';
         setTimeout(() => { badge.style.transform = 'scale(1)'; }, 200);
-
-        const clearBtn = document.getElementById(clearBtnId);
-        if (clearBtn) clearBtn.classList.toggle('visible', set.size > 0);
+        document.getElementById(clearId)?.classList.toggle('visible', set.size > 0);
     };
 
     window.filterChips = (section, query) => {
@@ -770,39 +759,42 @@
     };
 
     function toggleCollapsible(id) {
-        const body = document.getElementById(id + 'Body');
+        const body  = document.getElementById(id + 'Body');
         const arrow = document.getElementById(id + 'Arrow');
-        const open = body.classList.toggle('open');
+        const open  = body.classList.toggle('open');
         arrow.style.transform = open ? 'rotate(180deg)' : '';
     }
     window.toggleCollapsible = toggleCollapsible;
 
+    // ── Monitor start/stop ────────────────────────────────────
     async function startMonitor() {
         if (!_selectedGift) return setStatus('Выберите подарок!', 'error');
         clearInterval(pollTimer);
 
         const payload = {
-            user_id: USERID,
+            user_id:   USERID,
             gift_name: _selectedGift,
-            models: [...selectedModels],
+            models:    [...selectedModels],
             backdrops: [...selectedBackdrops],
-            rarity_max: 100.0
+            rarity_max: 100.0,
         };
 
         try {
             const r = await fetch(`${API}/monitor/start`, {
-                method: 'POST',
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json', ...H },
-                body: JSON.stringify(payload)
+                body:    JSON.stringify(payload),
             });
-            if (!r.ok) {
-                setStatus('Ошибка старта', 'error');
-                return;
-            }
+            if (!r.ok) { setStatus('Ошибка старта', 'error'); return; }
+
             setStatus('✅ Мониторинг запущен', 'active');
             document.getElementById('btnStart').style.display = 'none';
-            document.getElementById('btnStop').style.display = 'block';
-            startPolling();
+            document.getElementById('btnStop').style.display  = 'block';
+
+            // Kick off MiniApp search display (separate from monitor)
+            initSearch();
+            // Poll only monitor status (not items)
+            startStatusPolling();
         } catch (e) {
             console.error(e);
             setStatus('Ошибка старта', 'error');
@@ -811,61 +803,131 @@
 
     async function stopMonitor() {
         clearInterval(pollTimer);
+        searchDone = true; // prevent further API page loads
         try {
             await fetch(`${API}/monitor/stop`, {
-                method: 'POST',
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json', ...H },
-                body: JSON.stringify({ user_id: USERID })
+                body:    JSON.stringify({ user_id: USERID }),
             });
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
         document.getElementById('btnStart').style.display = 'block';
-        document.getElementById('btnStop').style.display = 'none';
+        document.getElementById('btnStop').style.display  = 'none';
         setStatus('Монитор остановлен');
+        // Keep items visible so user can still browse
     }
-
     window.startMonitor = startMonitor;
-    window.stopMonitor = stopMonitor;
+    window.stopMonitor  = stopMonitor;
 
-    function startPolling() {
+    // Poll only running status (not items list)
+    function startStatusPolling() {
         clearInterval(pollTimer);
-        fetchFound(true);
-        pollTimer = setInterval(() => fetchFound(false), 8000);
+        pollTimer = setInterval(async () => {
+            try {
+                const r = await fetch(`${API}/monitors/${USERID}`, { headers: H });
+                if (!r.ok) return;
+                const data = await r.json();
+                if (!data.running) {
+                    clearInterval(pollTimer);
+                    document.getElementById('btnStart').style.display = 'block';
+                    document.getElementById('btnStop').style.display  = 'none';
+                    setStatus('Монитор остановлен');
+                }
+            } catch (e) {}
+        }, 15000);
     }
 
-    async function fetchFound(force = false) {
+    // ── Lazy search from /search/page ────────────────────────
+    function initSearch() {
+        searchPage       = 0;
+        searchTotalPages = 1;
+        searchLoading    = false;
+        searchDone       = false;
+        allItems         = [];
+        sortedItems      = [];
+        renderedCount    = 0;
+        lastSignature    = '';
+
+        searchGift      = _selectedGift;
+        searchModels    = [...selectedModels];
+        searchBackdrops = [...selectedBackdrops];
+
+        const minVal = document.getElementById('priceMin')?.value;
+        const maxVal = document.getElementById('priceMax')?.value;
+        searchPriceMin = minVal ? parseFloat(minVal) : null;
+        searchPriceMax = maxVal ? parseFloat(maxVal) : null;
+
+        document.getElementById('foundList').innerHTML =
+            '<div class="empty-state"><div class="load-spinner"></div></div>';
+
+        loadNextSearchPage();
+    }
+
+    async function loadNextSearchPage() {
+        if (searchLoading || searchDone || !searchGift) return;
+        searchLoading = true;
+
+        const nextPage = searchPage + 1;
+        const payload  = {
+            gift_name:  searchGift,
+            page:       nextPage,
+            per_page:   20,
+            models:     searchModels,
+            backdrops:  searchBackdrops,
+            price_min:  searchPriceMin,
+            price_max:  searchPriceMax,
+        };
+
         try {
-            const r = await fetch(`${API}/monitor/found/${USERID}`, { headers: H });
-            if (!r.ok) return;
+            const r = await fetch(`${API}/search/page`, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json', ...H },
+                body:    JSON.stringify(payload),
+            });
+
+            if (!r.ok) { searchLoading = false; return; }
+
             const data = await r.json();
-            const items = data.found || [];
-            const sig = snapshot(items);
-            if (!force && sig === lastSignature) return;
-            lastSignature = sig;
-            renderCards(items, true);
+            searchPage       = nextPage;
+            searchTotalPages = data.total_pages || 1;
+
+            const newItems = data.items || [];
+            // Deduplicate
+            const existingIds = new Set(allItems.map(i => i.id));
+            const fresh = newItems.filter(i => !existingIds.has(i.id));
+            allItems = [...allItems, ...fresh];
+
+            if (data.stop_loading || nextPage >= searchTotalPages) {
+                searchDone = true;
+            }
+
+            renderCards(allItems, true);
+
         } catch (e) {
             console.error(e);
+        } finally {
+            searchLoading = false;
         }
     }
 
+    // ── Sort ─────────────────────────────────────────────────
     const SORT_LABELS = {
-        price_asc: 'Цена ↑',
-        price_desc: 'Цена ↓',
-        num_asc: 'ID ↑',
-        num_desc: 'ID ↓',
-        rarity_asc: 'Редкость ↑',
-        rarity_desc: 'Редкость ↓'
+        price_asc:   'Цена ↑',
+        price_desc:  'Цена ↓',
+        num_asc:     'ID ↑',
+        num_desc:    'ID ↓',
+        rarity_asc:  'Редкость ↑',
+        rarity_desc: 'Редкость ↓',
     };
 
     function sortFn(a, b) {
         switch (currentSort) {
-            case 'price_asc': return (Number(a.price_ton) || 0) - (Number(b.price_ton) || 0);
-            case 'price_desc': return (Number(b.price_ton) || 0) - (Number(a.price_ton) || 0);
-            case 'num_asc': return (Number(a.number) || 0) - (Number(b.number) || 0);
-            case 'num_desc': return (Number(b.number) || 0) - (Number(a.number) || 0);
-            case 'rarity_asc': return (a.model_rarity ?? 999) - (b.model_rarity ?? 999);
-            case 'rarity_desc': return (b.model_rarity ?? -1) - (a.model_rarity ?? -1);
+            case 'price_asc':   return (Number(a.price_ton) || 0) - (Number(b.price_ton) || 0);
+            case 'price_desc':  return (Number(b.price_ton) || 0) - (Number(a.price_ton) || 0);
+            case 'num_asc':     return (Number(a.number) || 0) - (Number(b.number) || 0);
+            case 'num_desc':    return (Number(b.number) || 0) - (Number(a.number) || 0);
+            case 'rarity_asc':  return (a.model_rarity ?? 999) - (b.model_rarity ?? 999);
+            case 'rarity_desc': return (b.model_rarity ?? -1)  - (a.model_rarity ?? -1);
             default: return 0;
         }
     }
@@ -875,7 +937,6 @@
         document.getElementById('sortOverlay').classList.remove('open');
         applySortAndRedraw(true);
     }
-
     window.applySort = applySort;
 
     function openSortSheet() {
@@ -887,24 +948,26 @@
     window.openSortSheet = openSortSheet;
 
     function closeSortSheet(e) {
-        if (e.target === document.getElementById('sortOverlay')) {
+        if (e.target === document.getElementById('sortOverlay'))
             document.getElementById('sortOverlay').classList.remove('open');
-        }
     }
     window.closeSortSheet = closeSortSheet;
 
+    // ── Render ────────────────────────────────────────────────
     function renderCards(items, preserveScroll = false) {
         allItems = Array.isArray(items) ? items : [];
         applySortAndRedraw(preserveScroll);
     }
 
     function buildCardHTML(item) {
-        const modelPct = formatPct(item.model_rarity);
+        const modelPct    = formatPct(item.model_rarity);
         const backdropPct = formatPct(item.backdrop_rarity);
-        const cardTitle = item.gift_name || item.title || 'Подарок';
-        const cardUrl = item.gift_url || item.url || '#';
+        const cardTitle   = item.gift_name || item.title || 'Подарок';
+        const cardUrl     = item.gift_url  || item.url   || '#';
+
+        // Lottie: autoplay once (no loop attribute)
         const imgHtml = item.lottie_url
-            ? `<lottie-player src="${escapeHtml(item.lottie_url)}" background="transparent" speed="1" loop autoplay></lottie-player>`
+            ? `<lottie-player src="${escapeHtml(item.lottie_url)}" background="transparent" speed="1" autoplay></lottie-player>`
             : (item.image_url
                 ? `<img src="${escapeHtml(item.image_url)}" loading="lazy" onerror="this.style.display='none'">`
                 : `<div class="media-fallback">🎁</div>`);
@@ -914,17 +977,19 @@
                 ${imgHtml}
                 <div class="card-overlay-top">
                     <span class="source-tag-img">${escapeHtml(item.source || '')}</span>
-                    ${item.number ? `<span class="source-tag-img">#${escapeHtml(String(item.number))}</span>` : ''}
                 </div>
                 <div class="card-overlay-bottom">
-                    <a class="card-gift-link" href="javascript:void(0)" onclick="event.stopPropagation(); openTelegramLink(${JSON.stringify(cardUrl)})">${escapeHtml(cardTitle)}</a>
+                    <a class="card-gift-link" href="javascript:void(0)"
+                       onclick="event.stopPropagation(); openTelegramLink(${JSON.stringify(cardUrl)})"
+                    >${escapeHtml(cardTitle)}</a>
                     ${item.number ? `<span class="card-number">#${escapeHtml(String(item.number))}</span>` : ''}
                 </div>
             </div>
             <div class="item-body">
                 <div class="item-model-line">
-                    <a class="item-model-name" href="javascript:void(0)" onclick="event.stopPropagation(); openModalLink(${JSON.stringify(item.gift_url || item.url || '#')})">${escapeHtml(item.model || '—')}</a>
-                    ${item.number ? `<span class="item-num">#${escapeHtml(String(item.number))}</span>` : ''}
+                    <a class="item-model-name" href="javascript:void(0)"
+                       onclick="event.stopPropagation(); openModalLink(${JSON.stringify(item.gift_url || item.url || '#')})"
+                    >${escapeHtml(item.model || '—')}</a>
                 </div>
                 <div class="item-badges">
                     ${modelPct ? `<span class="ibadge ibadge-model">${escapeHtml(modelPct)}</span>` : ''}
@@ -936,50 +1001,48 @@
             </div>`;
     }
 
-    window.openModalLink = openTelegramLink;
-
     function applySortAndRedraw(preserveScroll = false) {
         const scrollY = preserveScroll ? window.scrollY : 0;
-        sortedItems = [...allItems].sort(sortFn);
+        sortedItems   = [...allItems].sort(sortFn);
         renderedCount = 0;
 
         const list = document.getElementById('foundList');
         if (!sortedItems.length) {
-            list.innerHTML = '<div class="empty-state">Ожидание лотов...</div>';
+            if (searchLoading) {
+                list.innerHTML = '<div class="empty-state"><div class="load-spinner"></div></div>';
+            } else {
+                list.innerHTML = '<div class="empty-state">Ожидание лотов...</div>';
+            }
             if (preserveScroll) requestAnimationFrame(() => window.scrollTo(0, scrollY));
             return;
         }
 
         list.innerHTML = `
             <div class="found-header">
-                <span class="found-count">НАЙДЕНО (${sortedItems.length})</span>
+                <span class="found-count">НАЙДЕНО (${sortedItems.length}${searchDone ? '' : '+'})</span>
                 <div class="sort-btn" onclick="openSortSheet()">
                     <span>⇅</span>
                     <span>${escapeHtml(SORT_LABELS[currentSort])}</span>
                 </div>
             </div>
             <div class="found-grid" id="foundGrid"></div>
-            <div class="load-sentinel" id="loadSentinel" style="display:none;">
-                <div class="load-spinner"></div>
-            </div>`;
+            <div class="load-sentinel" id="loadSentinel"></div>`;
 
-        renderNextPage();
+        renderNextDOMPage();
         setupScrollObserver();
 
-        if (preserveScroll) {
-            requestAnimationFrame(() => window.scrollTo(0, scrollY));
-        }
+        if (preserveScroll) requestAnimationFrame(() => window.scrollTo(0, scrollY));
     }
 
-    function renderNextPage() {
+    // Render next DOM_PAGE_SIZE items from sortedItems into the grid
+    function renderNextDOMPage() {
         const grid = document.getElementById('foundGrid');
         if (!grid) return;
-        const start = renderedCount;
-        const slice = sortedItems.slice(start, start + PAGE_SIZE);
+        const slice = sortedItems.slice(renderedCount, renderedCount + DOM_PAGE_SIZE);
 
         slice.forEach((item, i) => {
-            const absIdx = start + i;
-            const el = document.createElement('div');
+            const absIdx = renderedCount + i;
+            const el     = document.createElement('div');
             el.className = 'found-item';
             el.style.animationDelay = `${i * 0.02}s`;
             el.innerHTML = buildCardHTML(item);
@@ -988,24 +1051,46 @@
         });
 
         renderedCount += slice.length;
+        updateSentinel();
+    }
+
+    function updateSentinel() {
         const sentinel = document.getElementById('loadSentinel');
-        if (sentinel) sentinel.style.display = renderedCount < sortedItems.length ? 'flex' : 'none';
+        if (!sentinel) return;
+
+        const hasMoreDOM = renderedCount < sortedItems.length;
+        const hasMoreAPI = !searchDone;
+
+        if (hasMoreDOM || hasMoreAPI) {
+            sentinel.innerHTML = '<div class="load-spinner"></div>';
+            sentinel.style.display = 'flex';
+        } else {
+            sentinel.innerHTML = '<span class="load-done-tag">Всё загружено ✓</span>';
+            sentinel.style.display = 'flex';
+        }
     }
 
     function setupScrollObserver() {
         if (scrollObserver) scrollObserver.disconnect();
         const sentinel = document.getElementById('loadSentinel');
-        if (!sentinel || renderedCount >= sortedItems.length) return;
+        if (!sentinel) return;
 
         scrollObserver = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && renderedCount < sortedItems.length) {
-                renderNextPage();
+            if (!entries[0].isIntersecting) return;
+
+            if (renderedCount < sortedItems.length) {
+                // More items already in memory — just render them into DOM
+                renderNextDOMPage();
+            } else if (!searchDone && !searchLoading) {
+                // Need to fetch next page from API
+                loadNextSearchPage();
             }
         }, { threshold: 0.1 });
 
         scrollObserver.observe(sentinel);
     }
 
+    // ── Modal ─────────────────────────────────────────────────
     window.openModal = (idx) => {
         const item = sortedItems[idx];
         if (!item) return;
@@ -1013,13 +1098,14 @@
         const imgWrap = document.getElementById('modalImg');
         imgWrap.innerHTML = '';
 
+        // Lottie: autoplay once (no loop)
         if (item.lottie_url) {
             const player = document.createElement('lottie-player');
             player.setAttribute('src', item.lottie_url);
             player.setAttribute('background', 'transparent');
             player.setAttribute('speed', '1');
-            player.setAttribute('loop', '');
             player.setAttribute('autoplay', '');
+            // NO loop attribute — plays once
             player.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
             imgWrap.appendChild(player);
         } else if (item.image_url) {
@@ -1029,26 +1115,26 @@
         }
 
         document.getElementById('modalGiftName').textContent = item.gift_name || '';
-        document.getElementById('modalNum').textContent = item.number ? `#${item.number}` : '';
+        document.getElementById('modalNum').textContent       = item.number ? `#${item.number}` : '';
 
         const title = document.getElementById('modalTitle');
         title.innerHTML = '';
         const modelLink = document.createElement('a');
-        modelLink.className = 'modal-model-link';
-        modelLink.href = 'javascript:void(0)';
+        modelLink.className  = 'modal-model-link';
+        modelLink.href       = 'javascript:void(0)';
         modelLink.textContent = item.model || '—';
-        modelLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        modelLink.addEventListener('click', e => {
+            e.preventDefault(); e.stopPropagation();
             openTelegramLink(item.gift_url || item.url || '#');
         });
         title.appendChild(modelLink);
 
         const rows = [
-            { label: 'Модель', val: item.model || '—', rarity: item.model_rarity },
-            { label: 'Фон', val: item.backdrop || '—', rarity: item.backdrop_rarity },
-            { label: 'Символ', val: item.symbol || '—', rarity: item.symbol_rarity },
-            { label: 'Маркет', val: item.source || '—', rarity: null },
+            { label: 'Модель',  val: item.model   || '—', rarity: item.model_rarity },
+            { label: 'Фон',     val: item.backdrop || '—', rarity: item.backdrop_rarity },
+            { label: 'Символ',  val: item.symbol   || '—', rarity: item.symbol_rarity },
+            { label: 'Маркет',  val: item.source   || '—', rarity: null },
+            { label: 'Цена',    val: `${formatPrice(item.price_ton)} TON`, rarity: null },
         ];
 
         document.getElementById('modalRows').innerHTML = rows.map(r => {
@@ -1063,13 +1149,20 @@
                 </div>`;
         }).join('');
 
+        // Buy button
         const priceBtn = document.getElementById('modalPriceBtn');
         const priceTxt = document.getElementById('modalPriceTxt');
         priceTxt.textContent = `${formatPrice(item.price_ton)} TON • Купить`;
-        priceBtn.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        priceBtn.onclick = e => {
+            e.preventDefault(); e.stopPropagation();
             openTelegramLink(item.market_url || item.gift_url || item.url || '#');
+        };
+
+        // Gift link button
+        const giftBtn = document.getElementById('modalGiftBtn');
+        giftBtn.onclick = e => {
+            e.preventDefault(); e.stopPropagation();
+            openTelegramLink(item.gift_url || item.url || '#');
         };
 
         document.getElementById('modalOverlay').classList.add('open');
@@ -1079,39 +1172,60 @@
     window.closeModal = (e) => {
         if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
     };
-
     window.closeModalDirect = () => {
         document.getElementById('modalOverlay').classList.remove('open');
         document.body.style.overflow = '';
+        // Stop lottie to free memory
         const player = document.querySelector('#modalImg lottie-player');
         if (player) player.stop?.();
     };
 
+    // ── Initial status check ──────────────────────────────────
     async function checkInitialStatus() {
         try {
-            const r = await fetch(`${API}/monitor/found/${USERID}`, { headers: H });
+            const r = await fetch(`${API}/monitors/${USERID}`, { headers: H });
             if (!r.ok) return;
             const data = await r.json();
+
             if (data.running) {
                 document.getElementById('btnStart').style.display = 'none';
-                document.getElementById('btnStop').style.display = 'block';
+                document.getElementById('btnStop').style.display  = 'block';
                 setStatus('✅ Мониторинг активен', 'active');
-                startPolling();
+                startStatusPolling();
+
+                // Restore search display from active monitor config
+                const cfg = data.config || {};
+                if (cfg.gift_name || cfg.name) {
+                    const gName = cfg.gift_name || cfg.name;
+                    _selectedGift   = gName;
+                    searchGift      = gName;
+                    searchModels    = cfg.rare_models    || [];
+                    searchBackdrops = cfg.rare_backdrops || [];
+                    searchPriceMin  = null;
+                    searchPriceMax  = null;
+                    document.getElementById('giftSearchInput').value = gName;
+
+                    // Load first search page
+                    searchPage       = 0;
+                    searchTotalPages = 1;
+                    searchLoading    = false;
+                    searchDone       = false;
+                    allItems         = [];
+                    document.getElementById('foundList').innerHTML =
+                        '<div class="empty-state"><div class="load-spinner"></div></div>';
+                    loadNextSearchPage();
+                }
             }
-            if (data.found?.length) {
-                renderCards(data.found, false);
-            }
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
     }
 
+    // ── Close dropdown on outside click ──────────────────────
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('#giftSearchWrap')) {
+        if (!e.target.closest('#giftSearchWrap'))
             document.getElementById('giftDropdown').classList.remove('open');
-        }
     });
 
+    // ── Auth check & init ─────────────────────────────────────
     async function init() {
         try {
             const r = await fetch(`${API}/auth/check/${USERID}`, { headers: H });
