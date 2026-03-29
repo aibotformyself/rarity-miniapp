@@ -944,15 +944,10 @@
                     <span class="item-gift-name">${escapeHtml(giftName)}</span>
                     ${item.number ? `<span class="item-num">#${escapeHtml(String(item.number))}</span>` : ''}
                 </div>
-                <div class="item-badges">
-                    ${modelPct ? `<span class="ibadge ibadge-model">${escapeHtml(modelPct)}</span>` : ''}
-                    ${item.backdrop && item.backdrop !== 'Default'
-                        ? `<span class="ibadge ibadge-backdrop">${escapeHtml(item.backdrop)}${backdropPct ? ' · '+escapeHtml(backdropPct) : ''}</span>`
-                        : ''}
-                </div>
+               
                 <button class="card-buy-btn"
                     onclick="event.stopPropagation(); openTelegramLink(${JSON.stringify(marketUrl)})">
-                    <span class="card-buy-icon">▽</span>${buyLabel}
+                    <span class="card-buy-icon"></span>${buyLabel}
                 </button>
             </div>`;
     }
