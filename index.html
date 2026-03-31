@@ -372,6 +372,7 @@
         .item-body {
             padding: 8px 8px 6px;
             display: flex; flex-direction: column; gap: 5px;
+            min-width: 0; overflow: hidden;
         }
         .item-name-row {
             display: flex; align-items: baseline; justify-content: space-between; gap: 4px;
@@ -385,8 +386,8 @@
             font-size: 10px; font-weight: 600; color: var(--text-muted);
             white-space: nowrap; flex: 0 0 auto;
         }
-        .item-badges { display: flex; flex-wrap: wrap; gap: 3px; }
-        .ibadge { font-size: 9px; padding: 2px 5px; border-radius: 5px; font-weight: 600; }
+        .item-badges { display: flex; flex-wrap: wrap; gap: 3px; min-width: 0; }
+        .ibadge { font-size: 9px; padding: 2px 5px; border-radius: 5px; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .ibadge-model    { background: rgba(91, 95, 207, 0.18); color: #a2a5ff; }
         .ibadge-backdrop { background: rgba(52, 152, 219, 0.12); color: #74b9ff; }
         .card-buy-btn {
@@ -398,6 +399,8 @@
             cursor: pointer; touch-action: manipulation;
             transition: opacity 0.15s, transform 0.15s;
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            min-width: 0; max-width: 100%;
+            box-sizing: border-box;
         }
         .card-buy-btn:active { opacity: 0.8; transform: scale(0.97); }
 
@@ -810,12 +813,7 @@
         <div class="sort-option" data-sort="price_desc"  onclick="applySort('price_desc')"><span>Цена: от высокой к низкой</span><span class="sort-arrow">↓</span></div>
         <div class="sort-option" data-sort="num_asc"     onclick="applySort('num_asc')"><span>ID подарка: по возрастанию</span><span class="sort-arrow">↑</span></div>
         <div class="sort-option" data-sort="num_desc"    onclick="applySort('num_desc')"><span>ID подарка: по убыванию</span><span class="sort-arrow">↓</span></div>
-        <div class="sort-option" data-sort="rarity_asc"  onclick="applySort('rarity_asc')"><span>Редкость модели: ↓稀有</span><span class="sort-arrow">↑</span></div>
-        <div class="sort-option" data-sort="rarity_desc" onclick="applySort('rarity_desc')"><span>Редкость модели: 稀有↑</span><span class="sort-arrow">↓</span></div>
-        <div class="sort-option" data-sort="backdrop_rarity_asc"  onclick="applySort('backdrop_rarity_asc')"><span>Редкость фона: ↓稀有</span><span class="sort-arrow">↑</span></div>
-        <div class="sort-option" data-sort="backdrop_rarity_desc" onclick="applySort('backdrop_rarity_desc')"><span>Редкость фона: 稀有↑</span><span class="sort-arrow">↓</span></div>
-        <div class="sort-option" data-sort="rarity_score_asc"  onclick="applySort('rarity_score_asc')"><span>Рейтинг: по возрастанию</span><span class="sort-arrow">↑</span></div>
-        <div class="sort-option" data-sort="rarity_score_desc" onclick="applySort('rarity_score_desc')"><span>Рейтинг: по убыванию</span><span class="sort-arrow">↓</span></div>
+
     </div>
 </div>
 
@@ -1415,7 +1413,7 @@
                 ${badgesHtml ? `<div class="item-badges">${badgesHtml}</div>` : ''}
                 <button class="card-buy-btn"
                     onclick='event.stopPropagation(); openTelegramLink(${JSON.stringify(marketUrl)})'>
-                    ${buyLabel}
+                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${buyLabel}</span>
                 </button>
             </div>`;
     }
@@ -1466,9 +1464,6 @@
     const SORT_LABELS = {
         price_asc: 'Цена ↑',             price_desc: 'Цена ↓',
         num_asc: 'ID ↑',                 num_desc: 'ID ↓',
-        rarity_asc: 'Ред. модели ↑',    rarity_desc: 'Ред. модели ↓',
-        backdrop_rarity_asc: 'Ред. фона ↑', backdrop_rarity_desc: 'Ред. фона ↓',
-        rarity_score_asc: 'Рейтинг ↑',   rarity_score_desc: 'Рейтинг ↓',
     };
 
     function applySort(key) {
