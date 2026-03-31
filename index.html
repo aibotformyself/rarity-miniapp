@@ -141,6 +141,22 @@
         }
         .form-section { margin-bottom: 14px; }
 
+        /* ── Фильтр цен ── */
+        .price-filter-row { display: flex; align-items: center; gap: 10px; }
+        .price-input {
+            flex: 1; padding: 11px 12px; border-radius: var(--radius-sm);
+            border: 1px solid var(--glass-border);
+            background: var(--glass); backdrop-filter: blur(8px);
+            color: inherit; font-size: 15px; outline: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            -moz-appearance: textfield;
+        }
+        .price-input::-webkit-outer-spin-button,
+        .price-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .price-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: var(--glass-strong); }
+        .price-input::placeholder { color: var(--text-muted); }
+        .price-separator { color: var(--text-muted); font-weight: 700; flex: 0 0 auto; font-size: 18px; }
+
         /* ── Поиск подарка (dropdown) ── */
         .gift-search-wrap { position: relative; }
         .gift-search-input {
@@ -701,6 +717,16 @@
             </div>
         </div>
 
+        <!-- Фильтр цен -->
+        <div class="form-section">
+            <div class="field-label">Стоимость, TON</div>
+            <div class="price-filter-row">
+                <input class="price-input" id="searchPriceMin" type="number" placeholder="От" inputmode="decimal">
+                <span class="price-separator">—</span>
+                <input class="price-input" id="searchPriceMax" type="number" placeholder="До" inputmode="decimal">
+            </div>
+        </div>
+
         <!-- Кнопка поиска -->
         <button class="btn btn-search" onclick="doSearch()">
             🔍 Найти на маркетах
@@ -784,8 +810,12 @@
         <div class="sort-option" data-sort="price_desc"  onclick="applySort('price_desc')"><span>Цена: от высокой к низкой</span><span class="sort-arrow">↓</span></div>
         <div class="sort-option" data-sort="num_asc"     onclick="applySort('num_asc')"><span>ID подарка: по возрастанию</span><span class="sort-arrow">↑</span></div>
         <div class="sort-option" data-sort="num_desc"    onclick="applySort('num_desc')"><span>ID подарка: по убыванию</span><span class="sort-arrow">↓</span></div>
-        <div class="sort-option" data-sort="rarity_asc"  onclick="applySort('rarity_asc')"><span>Редкость: от низкой к высокой</span><span class="sort-arrow">↑</span></div>
-        <div class="sort-option" data-sort="rarity_desc" onclick="applySort('rarity_desc')"><span>Редкость: от высокой к низкой</span><span class="sort-arrow">↓</span></div>
+        <div class="sort-option" data-sort="rarity_asc"  onclick="applySort('rarity_asc')"><span>Редкость модели: ↓稀有</span><span class="sort-arrow">↑</span></div>
+        <div class="sort-option" data-sort="rarity_desc" onclick="applySort('rarity_desc')"><span>Редкость модели: 稀有↑</span><span class="sort-arrow">↓</span></div>
+        <div class="sort-option" data-sort="backdrop_rarity_asc"  onclick="applySort('backdrop_rarity_asc')"><span>Редкость фона: ↓稀有</span><span class="sort-arrow">↑</span></div>
+        <div class="sort-option" data-sort="backdrop_rarity_desc" onclick="applySort('backdrop_rarity_desc')"><span>Редкость фона: 稀有↑</span><span class="sort-arrow">↓</span></div>
+        <div class="sort-option" data-sort="rarity_score_asc"  onclick="applySort('rarity_score_asc')"><span>Рейтинг: по возрастанию</span><span class="sort-arrow">↑</span></div>
+        <div class="sort-option" data-sort="rarity_score_desc" onclick="applySort('rarity_score_desc')"><span>Рейтинг: по убыванию</span><span class="sort-arrow">↓</span></div>
     </div>
 </div>
 
@@ -1219,10 +1249,18 @@
         if (searchLoading || searchDone || !searchGift) return;
         searchLoading = true;
         const nextPage = searchPage + 1;
+        // Фильтр цен
+        const priceMinRaw = document.getElementById('searchPriceMin')?.value;
+        const priceMaxRaw = document.getElementById('searchPriceMax')?.value;
+        const searchPriceMin = priceMinRaw ? parseFloat(priceMinRaw) : null;
+        const searchPriceMax = priceMaxRaw ? parseFloat(priceMaxRaw) : null;
+
         const payload  = {
             gift_name: searchGift, page: nextPage, per_page: 20,
             models: [...searchSelectedModels],
             backdrops: [...searchSelectedBackdrops],
+            price_min: searchPriceMin,
+            price_max: searchPriceMax,
             ordering: currentSort,
         };
         try {
@@ -1292,26 +1330,40 @@
         const list = document.getElementById('foundList');
         list.innerHTML = `
             <div class="found-header">
-                <span class="found-count">НАЙДЕНО (${items.length}${searchDone ? '' : '+'})</span>
+                <span class="found-count">НАЙДЕНО (${allItems.length}${searchDone ? '' : '+'})</span>
                 <div class="sort-btn" onclick="openSortSheet()">
                     <span>⇅</span><span>${escapeHtml(SORT_LABELS[currentSort])}</span>
                 </div>
             </div>
             <div class="found-grid" id="foundGrid"></div>
             <div class="load-sentinel" id="loadSentinel"></div>`;
-        appendSearchResults(items);
+        // Добавляем DOM-элементы (НЕ обновляем allItems — он уже установлен)
+        const grid = document.getElementById('foundGrid');
+        items.forEach((item, i) => {
+            const el = document.createElement('div');
+            el.className = 'found-item';
+            el.style.animationDelay = `${i * 0.03}s`;
+            el.innerHTML = buildCardHTML(item);
+            el.addEventListener('click', () => openModal(i));
+            grid.appendChild(el);
+        });
+        renderedCount = allItems.length;
+        updateSentinel();
+        setupScrollObserver();
     }
 
     /**
      * КРИТИЧЕСКИ ВАЖНО: добавляет ТОЛЬКО новые карточки в существующую сетку.
      * НЕ пересоздаёт существующие карточки — поэтому анимация не повторяется.
+     * allItems уже обновлён в loadNextSearchPage — здесь только DOM + счётчик.
      */
     function appendSearchResults(newItems) {
         const grid = document.getElementById('foundGrid');
         if (!grid) return;
 
+        const startIndex = allItems.length - newItems.length; // индекс, с которого начинаются новые
         newItems.forEach((item, i) => {
-            const absIdx = allItems.length + i;
+            const absIdx = startIndex + i;
             const el = document.createElement('div');
             el.className = 'found-item';
             el.style.animationDelay = `${i * 0.03}s`;
@@ -1320,7 +1372,6 @@
             grid.appendChild(el);
         });
 
-        allItems = [...allItems, ...newItems];
         renderedCount = allItems.length;
 
         // Обновляем счётчик в шапке
@@ -1413,9 +1464,11 @@
 
     // ═══ Сортировка ═══════════════════════════════════════════
     const SORT_LABELS = {
-        price_asc: 'Цена ↑', price_desc: 'Цена ↓',
-        num_asc: 'ID ↑',     num_desc: 'ID ↓',
-        rarity_asc: 'Ред. ↑', rarity_desc: 'Ред. ↓',
+        price_asc: 'Цена ↑',             price_desc: 'Цена ↓',
+        num_asc: 'ID ↑',                 num_desc: 'ID ↓',
+        rarity_asc: 'Ред. модели ↑',    rarity_desc: 'Ред. модели ↓',
+        backdrop_rarity_asc: 'Ред. фона ↑', backdrop_rarity_desc: 'Ред. фона ↓',
+        rarity_score_asc: 'Рейтинг ↑',   rarity_score_desc: 'Рейтинг ↓',
     };
 
     function applySort(key) {
@@ -1481,15 +1534,23 @@
     /** Остановка конкретного монитора */
     async function stopMonitor(monitorId) {
         try {
-            await fetch(`${API}/monitor/stop`, {
+            const r = await fetch(`${API}/monitor/stop`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...H },
-                body: JSON.stringify({ user_id: USERID, monitor_id }),
+                body: JSON.stringify({ user_id: USERID, monitor_id: monitorId }),
             });
+            if (!r.ok) {
+                const err = await r.text().catch(() => '');
+                console.error('Stop monitor error:', r.status, err);
+                showToast('Ошибка остановки: ' + r.status, 'error');
+                return;
+            }
             showToast('Мониторинг остановлен', 'info');
-            refreshMonitorsList();
-        } catch {
-            showToast('Ошибка остановки', 'error');
+            // Даём время asyncio task'у завершиться
+            setTimeout(() => refreshMonitorsList(), 500);
+        } catch (e) {
+            console.error('Stop monitor exception:', e);
+            showToast('Ошибка сети при остановке', 'error');
         }
     }
     window.stopMonitor = stopMonitor;
