@@ -7,581 +7,338 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
     <style>
-        /* ═══════════════════════════════════════════════════════
-           RARITY MONITOR — Redesigned MiniApp
-           Тёмная тема с glass-morphism эффектами
-           ═══════════════════════════════════════════════════════ */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --accent: var(--tg-theme-button-color, #5b5fcf);
-            --accent-glow: rgba(91, 95, 207, 0.25);
-            --bg-deep: #0d0f1a;
-            --bg-mid: #141627;
-            --bg-card: rgba(255, 255, 255, 0.04);
-            --bg-card-hover: rgba(255, 255, 255, 0.07);
-            --glass: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-strong: rgba(255, 255, 255, 0.10);
-            --text-primary: #f0f0f5;
-            --text-secondary: rgba(255, 255, 255, 0.55);
-            --text-muted: rgba(255, 255, 255, 0.35);
-            --green: #2ecc71;
-            --red: #e74c3c;
-            --radius-lg: 20px;
-            --radius-md: 14px;
-            --radius-sm: 10px;
-        }
+        :root { --card-radius: 20px; --accent: var(--tg-theme-button-color, #5b5fcf); }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-deep);
-            background-image:
-                radial-gradient(ellipse at 20% 0%, rgba(91, 95, 207, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 100%, rgba(46, 204, 113, 0.05) 0%, transparent 50%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--tg-theme-bg-color, #1a1a2e);
+            color: var(--tg-theme-text-color, #eee);
+            padding: 16px; min-height: 100vh;
         }
-
-        /* ── Ключевые анимации ── */
-        @keyframes popIn {
-            0%   { opacity: 0; transform: scale(0.95) translateY(6px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        @keyframes slideDown {
-            0%   { opacity: 0; transform: translateY(-8px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideUp {
-            0%   { opacity: 0; transform: translateY(100%); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-4px); }
-            40% { transform: translateX(4px); }
-            60% { transform: translateX(-3px); }
-            80% { transform: translateX(3px); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-
-        /* ── Шапка ── */
-        .app-header {
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(13, 15, 26, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 12px 16px 0;
-        }
-        .app-title {
-            text-align: center; font-size: 17px; font-weight: 800;
-            letter-spacing: -0.3px; margin-bottom: 12px;
-            background: linear-gradient(135deg, #f0f0f5, rgba(255,255,255,0.7));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* ── Таб-переключатель (pill) ── */
-        .tab-bar {
-            display: flex; position: relative;
-            background: var(--glass);
-            border-radius: var(--radius-sm);
-            padding: 3px;
-            margin-bottom: -1px;
-        }
-        .tab-bar::before {
-            content: ''; position: absolute; inset: 0;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--glass-border);
-            pointer-events: none;
-        }
-        .tab-pill {
-            position: absolute; top: 3px; left: 3px;
-            width: calc(50% - 3px); height: calc(100% - 6px);
-            background: var(--accent);
-            border-radius: 8px;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 12px var(--accent-glow);
-        }
-        .tab-pill.right { transform: translateX(100%); }
-        .tab-btn {
-            flex: 1; position: relative; z-index: 1;
-            padding: 10px 0; border: none; background: transparent;
-            font-size: 13px; font-weight: 700; cursor: pointer;
-            color: var(--text-secondary); transition: color 0.25s;
-            touch-action: manipulation;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .tab-btn.active { color: #fff; }
-        .tab-btn:active { opacity: 0.7; }
-
-        /* ── Контент-обёртки ── */
-        .app-content { padding: 16px; }
-        .tab-content { display: none; animation: fadeIn 0.25s ease-out; }
-        .tab-content.active { display: block; }
-
-        /* ── Поля формы ── */
+        h2 { font-size: 20px; margin-bottom: 20px; text-align: center; font-weight: 800; }
+        .section { margin-bottom: 12px; }
         .field-label {
-            font-size: 11px; font-weight: 700;
-            color: var(--text-secondary);
+            font-size: 11px; font-weight: 800;
+            color: var(--tg-theme-hint-color, #888);
             text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;
         }
-        .form-section { margin-bottom: 14px; }
+        @keyframes popIn { 0%{opacity:0;transform:scale(0.95) translateY(5px)}100%{opacity:1;transform:scale(1) translateY(0)} }
+        @keyframes slideDown { 0%{opacity:0;transform:translateY(-10px)}100%{opacity:1;transform:translateY(0)} }
+        @keyframes spin { to{transform:rotate(360deg)} }
 
-        /* ── Фильтр цен ── */
-        .price-filter-row { display: flex; align-items: center; gap: 10px; }
-        .price-input {
-            flex: 1; padding: 11px 12px; border-radius: var(--radius-sm);
-            border: 1px solid var(--glass-border);
-            background: var(--glass); backdrop-filter: blur(8px);
-            color: inherit; font-size: 15px; outline: none;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            -moz-appearance: textfield;
-        }
-        .price-input::-webkit-outer-spin-button,
-        .price-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .price-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: var(--glass-strong); }
-        .price-input::placeholder { color: var(--text-muted); }
-        .price-separator { color: var(--text-muted); font-weight: 700; flex: 0 0 auto; font-size: 18px; }
-
-        /* ── Поиск подарка (dropdown) ── */
+        /* ── Gift search ── */
         .gift-search-wrap { position: relative; }
         .gift-search-input {
-            width: 100%; padding: 12px 14px 12px 42px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--glass-border);
-            background: var(--glass);
-            backdrop-filter: blur(8px);
-            color: inherit; font-size: 15px; outline: none;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%; padding: 12px 12px 12px 40px;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.07); color: inherit;
+            font-size: 16px; outline: none;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
         .gift-search-input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-            background: var(--glass-strong);
+            box-shadow: 0 0 0 3px rgba(91,95,207,0.2);
         }
-        .gift-search-input::placeholder { color: var(--text-muted); }
         .gift-search-icon {
             position: absolute; left: 14px; top: 50%;
-            transform: translateY(-50%); font-size: 15px;
-            opacity: 0.5; pointer-events: none;
+            transform: translateY(-50%); font-size: 16px;
+            opacity: 0.6; pointer-events: none;
         }
         .gift-dropdown {
-            display: none; position: absolute; left: 0; right: 0; top: calc(100% + 6px);
-            z-index: 1000;
-            background: rgba(20, 22, 39, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            max-height: 260px; overflow-y: auto;
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
-            animation: slideDown 0.2s ease-out;
+            display: none; position: absolute; left: 0; right: 0;
+            z-index: 1000; background: #1e1e35;
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
+            max-height: 250px; overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 6px; animation: slideDown 0.2s ease-out;
         }
         .gift-dropdown.open { display: block; }
         .gift-option {
             display: flex; align-items: center; gap: 10px;
-            width: 100%; padding: 11px 16px; font-size: 14px;
+            width: 100%; padding: 10px 16px; font-size: 15px;
             cursor: pointer; border: none; background: transparent;
             color: inherit; text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            transition: background 0.15s; touch-action: manipulation;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s; touch-action: manipulation;
         }
-        .gift-option:last-child { border-bottom: none; }
-        .gift-option:active { background: rgba(91, 95, 207, 0.2); }
-        .dropdown-icon { width: 28px; height: 28px; border-radius: 8px; object-fit: cover; flex: 0 0 auto; }
+        .gift-option:hover  { background: rgba(255,255,255,0.05); }
+        .gift-option:active { background: rgba(91,95,207,0.3); }
+        .dropdown-icon { width: 26px; height: 26px; border-radius: 6px; object-fit: cover; flex: 0 0 auto; }
 
-        /* ── Аккордеоны (collapsibles) ── */
+        /* ── Collapsibles ── */
         .collapsible {
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            overflow: hidden; margin-bottom: 10px;
-            background: var(--bg-card);
-            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            overflow: hidden; margin-bottom: 12px;
+            background: rgba(255,255,255,0.03);
         }
         .collapsible-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 13px 14px; cursor: pointer;
             user-select: none; touch-action: manipulation; gap: 10px;
-            transition: background 0.15s;
         }
-        .collapsible-header:active { background: var(--bg-card-hover); }
         .collapsible-header .title {
-            font-size: 12px; font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase; letter-spacing: 0.6px;
+            font-size: 12px; font-weight: 800;
+            color: var(--tg-theme-hint-color, #aaa);
+            text-transform: uppercase; letter-spacing: 0.7px;
         }
         .header-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
         .badge-count {
-            font-size: 11px; font-weight: 700; color: #fff;
+            font-size: 12px; font-weight: 800; color: #fff;
             background: var(--accent); border-radius: 8px; padding: 2px 8px;
-            transition: transform 0.2s, background 0.3s;
-            min-width: 20px; text-align: center;
-        }
-        .badge-count.warning {
-            background: var(--red);
-            animation: shake 0.4s ease-in-out;
+            transition: transform 0.2s;
         }
         .clear-btn {
-            border: none; background: var(--glass-strong); color: var(--text-secondary);
-            font-size: 11px; font-weight: 600; padding: 5px 8px;
+            border: none; background: rgba(255,255,255,0.08); color: #fff;
+            font-size: 11px; font-weight: 700; padding: 5px 8px;
             border-radius: 8px; cursor: pointer; display: none; touch-action: manipulation;
-            transition: background 0.15s;
         }
         .clear-btn.visible { display: inline-flex; }
-        .clear-btn:active { background: rgba(255, 255, 255, 0.15); }
-        .coll-arrow {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-block; font-size: 11px; opacity: 0.5;
-        }
+        .clear-btn:active  { background: rgba(255,255,255,0.14); }
+        .coll-arrow { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); display: inline-block; font-size: 12px; }
         .collapsible-body {
             max-height: 0; overflow: hidden;
-            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+            border-top: 1px solid transparent;
         }
         .collapsible-body.open {
-            max-height: 560px;
+            max-height: 620px;
+            border-top: 1px solid rgba(255,255,255,0.05);
             overflow-y: auto;
-            border-top: 1px solid var(--glass-border);
         }
         .chips-search {
             width: 100%; padding: 10px 12px; border: none; outline: none;
-            background: rgba(255, 255, 255, 0.03); color: inherit; font-size: 13px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(255,255,255,0.05); color: inherit; font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .chips-search::placeholder { color: var(--text-muted); }
-        .chips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
+        .chips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
         .chip {
-            display: flex; align-items: center; gap: 8px;
-            padding: 8px 10px; border-radius: var(--radius-sm);
-            border: 1px solid var(--glass-border);
-            background: var(--glass); cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 10px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
             animation: popIn 0.3s ease-out backwards;
             touch-action: manipulation; min-width: 0;
         }
         .chip:active { transform: scale(0.96); }
         .chip.selected {
             background: var(--accent); border-color: transparent; color: #fff;
-            box-shadow: 0 4px 16px var(--accent-glow);
-        }
-        .chip.disabled {
-            opacity: 0.35; pointer-events: none;
+            box-shadow: 0 4px 12px rgba(91,95,207,0.3);
         }
         .chip.hidden-chip { display: none; }
-        .chip-icon  { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; flex: 0 0 auto; }
+        .chip-icon  { width: 30px; height: 30px; border-radius: 6px; object-fit: contain; flex: 0 0 auto; }
         .chip-info  { display: flex; flex-direction: column; text-align: left; min-width: 0; }
-        .chip-name  { font-size: 12px; font-weight: 700; line-height: 1.2; word-break: break-word; }
-        .chip-rarity{ font-size: 10px; opacity: 0.6; margin-top: 1px; }
+        .chip-name  { font-size: 13px; font-weight: 700; line-height: 1.2; word-break: break-word; }
+        .chip-rarity{ font-size: 11px; opacity: 0.7; margin-top: 2px; }
 
-        /* ── Кнопки ── */
+        /* ── Price filter ── */
+        .price-filter-row { display: flex; align-items: center; gap: 10px; }
+        .price-input {
+            flex: 1; padding: 12px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.07); color: inherit;
+            font-size: 15px; outline: none;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            -moz-appearance: textfield;
+        }
+        .price-input::-webkit-outer-spin-button,
+        .price-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+        .price-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,95,207,0.2); }
+        .price-separator { color: #888; font-weight: 700; flex: 0 0 auto; font-size: 18px; }
+
+        /* ── Buttons ── */
         .btn {
-            width: 100%; padding: 14px; border-radius: var(--radius-md); border: none;
-            font-size: 15px; font-weight: 700; cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); touch-action: manipulation;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 15px; border-radius: 14px; border: none;
+            font-size: 16px; font-weight: 800; cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4,0,0.2,1); touch-action: manipulation;
         }
-        .btn:active { transform: scale(0.97); opacity: 0.9; }
-        .btn-search {
-            background: var(--accent); color: #fff;
-            box-shadow: 0 4px 20px var(--accent-glow);
-        }
-        .btn-monitor {
-            background: linear-gradient(135deg, var(--accent), #7c5fcf); color: #fff;
-            box-shadow: 0 4px 20px var(--accent-glow);
-        }
+        .btn:active  { transform: scale(0.97); }
+        .btn-start   { background: var(--accent); color: #fff; }
+        .btn-stop    { background: #e74c3c; color: #fff; display: none; margin-top: 8px; }
 
-        /* ── Статус-бар ── */
+        /* ── Status bar ── */
         .status-bar {
-            text-align: center; font-size: 12px; margin-top: 8px;
-            padding: 10px; border-radius: var(--radius-sm);
-            background: var(--bg-card); border: 1px solid var(--glass-border);
-            color: var(--text-secondary); transition: all 0.3s;
+            text-align: center; font-size: 13px; margin-top: 10px;
+            padding: 10px; border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            color: var(--tg-theme-hint-color, #888); transition: all 0.3s;
         }
-        .status-bar.active { color: var(--green); border-color: rgba(46, 204, 113, 0.2); background: rgba(46, 204, 113, 0.06); }
-        .status-bar.error  { color: var(--red); border-color: rgba(231, 76, 60, 0.2); background: rgba(231, 76, 60, 0.06); }
+        .status-bar.active { color: #2ecc71; background: rgba(46,204,113,0.08); }
+        .status-bar.error  { color: #e74c3c; background: rgba(231,76,60,0.08); }
 
-        /* ── Результаты поиска ── */
-        .found-list { margin-top: 16px; }
+        /* ── Found list ── */
+        .found-list { margin-top: 20px; }
         .found-header {
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 10px; gap: 10px;
         }
-        .found-count { font-size: 11px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.5px; }
+        .found-count { font-size: 11px; font-weight: 800; color: #888; }
         .sort-btn {
             display: flex; align-items: center; gap: 5px;
-            background: var(--glass); border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 8px; padding: 5px 10px;
-            font-size: 11px; font-weight: 600; color: var(--text-secondary);
+            font-size: 12px; font-weight: 700; color: #aaa;
             cursor: pointer; touch-action: manipulation;
-            backdrop-filter: blur(4px);
-            transition: background 0.15s;
         }
-        .sort-btn:active { background: var(--glass-strong); }
+        .sort-btn:active { background: rgba(255,255,255,0.12); }
 
-        /* ── Карточки лотов ── */
-        .found-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        /* ── Cards ── */
+        .found-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .found-item {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg); overflow: hidden;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--card-radius); overflow: hidden;
             cursor: pointer; display: flex; flex-direction: column;
-            transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
-                        border-color 0.18s, box-shadow 0.18s;
-            animation: popIn 0.35s ease-out backwards;
-            touch-action: manipulation; min-width: 0;
-            backdrop-filter: blur(4px);
+            transition: transform 0.18s cubic-bezier(0.4,0,0.2,1), border-color 0.18s, box-shadow 0.18s;
+            animation: popIn 0.4s ease-out backwards; touch-action: manipulation; min-width: 0;
         }
         .found-item:active {
             transform: scale(0.96);
-            border-color: rgba(91, 95, 207, 0.4);
-            box-shadow: 0 4px 24px rgba(91, 95, 207, 0.15);
+            border-color: rgba(91,95,207,0.5);
+            box-shadow: 0 4px 20px rgba(91,95,207,0.2);
         }
+        /* Card image */
         .card-media {
             position: relative; width: 100%; aspect-ratio: 1/1;
-            overflow: hidden; background: rgba(255, 255, 255, 0.03);
+            overflow: hidden; background: rgba(255,255,255,0.06);
         }
         .card-media img, .card-media lottie-player {
             position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
         }
         .card-media .media-fallback {
             display: flex; align-items: center; justify-content: center;
-            position: absolute; inset: 0; font-size: 42px;
+            position: absolute; inset: 0; font-size: 44px;
         }
+        /* Market source badge top-left */
         .card-overlay-top {
             position: absolute; top: 7px; left: 7px; z-index: 3; pointer-events: none;
         }
         .source-tag-img {
-            font-size: 9px; font-weight: 700; text-transform: uppercase;
-            color: #fff; background: rgba(0, 0, 0, 0.5);
-            padding: 3px 7px; border-radius: 6px;
-            backdrop-filter: blur(6px);
-            letter-spacing: 0.3px;
+            font-size: 9px; font-weight: 800; text-transform: uppercase;
+            color: #fff; background: rgba(0,0,0,0.55);
+            padding: 3px 7px; border-radius: 6px; backdrop-filter: blur(4px);
         }
+        /* Card bottom info bar — name row + buy button */
         .item-body {
             padding: 8px 8px 6px;
-            display: flex; flex-direction: column; gap: 5px;
-            min-width: 0; overflow: hidden;
+            display: flex; flex-direction: column; gap: 6px;
+            background: rgba(255,255,255,0.03);
         }
         .item-name-row {
             display: flex; align-items: baseline; justify-content: space-between; gap: 4px;
         }
         .item-gift-name {
-            font-size: 11px; font-weight: 700; color: var(--text-primary);
+            font-size: 12px; font-weight: 800; color: #eee;
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             flex: 1 1 auto; min-width: 0;
         }
         .item-num {
-            font-size: 10px; font-weight: 600; color: var(--text-muted);
+            font-size: 10px; font-weight: 700; color: #666;
             white-space: nowrap; flex: 0 0 auto;
         }
-        .item-badges { display: flex; flex-wrap: wrap; gap: 3px; min-width: 0; }
-        .ibadge { font-size: 9px; padding: 2px 5px; border-radius: 5px; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .ibadge-model    { background: rgba(91, 95, 207, 0.18); color: #a2a5ff; }
-        .ibadge-backdrop { background: rgba(52, 152, 219, 0.12); color: #74b9ff; }
+        /* Rarity badges */
+        .item-badges { display: flex; flex-wrap: wrap; gap: 3px; }
+        .ibadge { font-size: 10px; padding: 2px 5px; border-radius: 5px; font-weight: 700; }
+        .ibadge-model    { background: rgba(91,95,207,0.22); color: #a2a5ff; }
+        .ibadge-backdrop { background: rgba(52,152,219,0.15); color: #74b9ff; }
+        /* Buy/price button at bottom of card */
         .card-buy-btn {
             display: flex; align-items: center; justify-content: center; gap: 5px;
-            width: 100%; padding: 8px 6px;
+            width: 100%; padding: 9px 6px;
             background: var(--accent); color: #fff;
-            border-radius: 8px; border: none;
-            font-size: 12px; font-weight: 700;
+            border-radius: 10px; border: none;
+            font-size: 13px; font-weight: 800;
             cursor: pointer; touch-action: manipulation;
             transition: opacity 0.15s, transform 0.15s;
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-            min-width: 0; max-width: 100%;
-            box-sizing: border-box;
         }
-        .card-buy-btn:active { opacity: 0.8; transform: scale(0.97); }
+        .card-buy-btn:active { opacity: 0.82; transform: scale(0.97); }
+        .card-buy-icon { font-size: 11px; opacity: 0.85; }
 
-        /* ── Скролл-загрузка ── */
-        .load-sentinel {
-            height: 70px; display: flex; align-items: center; justify-content: center; margin-top: 4px;
-        }
+        /* ── Scroll sentinel ── */
+        .load-sentinel { height: 70px; display: flex; align-items: center; justify-content: center; margin-top: 4px; }
         .load-spinner {
-            width: 22px; height: 22px;
-            border: 2px solid rgba(255, 255, 255, 0.08);
-            border-top-color: var(--accent);
-            border-radius: 50%; animation: spin 0.8s linear infinite;
+            width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.1);
+            border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite;
         }
         .load-done-tag {
-            font-size: 11px; color: var(--text-muted); padding: 8px 16px;
-            border: 1px solid var(--glass-border); border-radius: 20px;
-            background: var(--bg-card);
+            font-size: 12px; color: #555; padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;
+            background: rgba(255,255,255,0.02);
         }
 
-        /* ═══ Вкладка «Мониторы» ═══ */
-
-        /* ── Разделитель с заголовком ── */
-        .section-divider {
-            display: flex; align-items: center; gap: 12px;
-            margin: 18px 0 12px;
-        }
-        .section-divider::before,
-        .section-divider::after {
-            content: ''; flex: 1; height: 1px;
-            background: var(--glass-border);
-        }
-        .section-divider span {
-            font-size: 11px; font-weight: 700; color: var(--text-secondary);
-            text-transform: uppercase; letter-spacing: 0.7px;
-            white-space: nowrap;
-        }
-
-        /* ── Карточка монитора ── */
-        .monitors-list { display: flex; flex-direction: column; gap: 8px; }
-        .monitor-card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            backdrop-filter: blur(8px);
-            animation: popIn 0.3s ease-out backwards;
-            transition: border-color 0.2s;
-        }
-        .monitor-card:active { border-color: rgba(255, 255, 255, 0.12); }
-        .monitor-card-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        .monitor-gift-name {
-            font-size: 14px; font-weight: 700; color: var(--text-primary);
-            display: flex; align-items: center; gap: 6px;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-            flex: 1; min-width: 0;
-        }
-        .monitor-stop-btn {
-            flex: 0 0 auto;
-            padding: 6px 12px; border: none;
-            background: rgba(231, 76, 60, 0.12);
-            color: var(--red); border-radius: 8px;
-            font-size: 11px; font-weight: 700;
-            cursor: pointer; touch-action: manipulation;
-            transition: all 0.15s;
-        }
-        .monitor-stop-btn:active {
-            background: rgba(231, 76, 60, 0.25); transform: scale(0.95);
-        }
-        .monitor-detail {
-            font-size: 12px; color: var(--text-secondary);
-            display: flex; align-items: center; gap: 6px;
-            margin-bottom: 4px;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .monitor-detail-icon { font-size: 13px; flex: 0 0 auto; }
-        .monitor-detail-text {
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .monitor-status {
-            display: inline-flex; align-items: center; gap: 5px;
-            font-size: 11px; font-weight: 700;
-            padding: 3px 8px; border-radius: 6px;
-            margin-top: 6px;
-        }
-        .monitor-status.running {
-            color: var(--green); background: rgba(46, 204, 113, 0.08);
-        }
-        .monitor-status.running::before {
-            content: ''; width: 6px; height: 6px;
-            border-radius: 50%; background: var(--green);
-            animation: pulse 1.5s infinite;
-        }
-        .monitor-status.stopped {
-            color: var(--text-muted); background: var(--bg-card);
-        }
-
-        /* ── Пустое состояние ── */
-        .empty-state {
-            text-align: center; padding: 36px 20px; color: var(--text-muted);
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
-        }
-        .empty-icon { font-size: 40px; opacity: 0.5; }
-        .empty-text { font-size: 13px; }
-
-        /* ═══ Sort sheet (bottom sheet) ═══ */
+        /* ── Sort sheet ── */
         .sort-overlay {
             display: none; position: fixed; inset: 0; z-index: 3000;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
             opacity: 0; transition: opacity 0.25s;
         }
         .sort-overlay.open { display: flex; align-items: flex-end; justify-content: center; opacity: 1; }
         .sort-sheet {
-            background: rgba(20, 22, 39, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            border-top: 1px solid var(--glass-border);
+            background: #1e1e35; border-radius: 20px 20px 0 0;
             width: 100%; padding: 8px 0 32px;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
         }
         .sort-overlay.open .sort-sheet { transform: translateY(0); }
-        .sort-handle { width: 36px; height: 4px; background: rgba(255, 255, 255, 0.15); border-radius: 2px; margin: 10px auto 16px; }
+        .sort-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 10px auto 16px; }
         .sort-title {
-            font-size: 12px; font-weight: 700; color: var(--text-secondary);
-            text-transform: uppercase; letter-spacing: 0.7px;
-            padding: 0 20px 12px;
-            border-bottom: 1px solid var(--glass-border);
+            font-size: 13px; font-weight: 800; color: #888; text-transform: uppercase;
+            letter-spacing: 0.7px; padding: 0 20px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .sort-option {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 20px; font-size: 14px; cursor: pointer;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 14px 20px; font-size: 15px; cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
             touch-action: manipulation; transition: background 0.15s;
         }
-        .sort-option:last-child { border-bottom: none; }
-        .sort-option:active { background: rgba(255, 255, 255, 0.05); }
+        .sort-option:active { background: rgba(255,255,255,0.06); }
         .sort-option.active { color: var(--accent); font-weight: 700; }
-        .sort-option .sort-arrow { font-size: 14px; opacity: 0.4; }
+        .sort-option .sort-arrow { font-size: 14px; opacity: 0.5; }
 
-        /* ═══ Модальное окно лота ═══ */
+        /* ── Modal — new compact design ── */
         .modal-overlay {
             display: none; position: fixed; inset: 0; z-index: 2000;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
             align-items: flex-end; justify-content: center;
-            opacity: 0; transition: opacity 0.25s;
+            opacity: 0; transition: opacity 0.3s;
         }
         .modal-overlay.open { display: flex; opacity: 1; }
         .modal-sheet {
-            position: relative;
-            background: rgba(20, 22, 39, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            border-top: 1px solid var(--glass-border);
-            width: 100%; max-height: 92vh;
-            overflow-y: auto; padding: 0 0 32px;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; background: #1e1e35;
+            border-radius: 24px 24px 0 0; width: 100%;
+            max-height: 92vh; overflow-y: auto; padding: 0 0 32px;
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
         }
         .modal-overlay.open .modal-sheet { transform: translateY(0); }
-        .modal-handle { width: 36px; height: 4px; background: rgba(255, 255, 255, 0.15); border-radius: 2px; margin: 12px auto 18px; }
+        .modal-handle {
+            width: 36px; height: 4px; background: rgba(255,255,255,0.2);
+            border-radius: 2px; margin: 12px auto 18px;
+        }
         .modal-close {
             position: absolute; top: 14px; right: 14px;
-            width: 28px; height: 28px; background: var(--glass-strong);
-            border: 1px solid var(--glass-border); border-radius: 50%;
-            color: #fff; font-size: 12px; cursor: pointer;
+            width: 28px; height: 28px; background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 50%;
+            color: #fff; font-size: 13px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             z-index: 10; touch-action: manipulation; transition: background 0.15s;
         }
-        .modal-close:active { background: rgba(255, 255, 255, 0.15); }
+        .modal-close:active { background: rgba(255,255,255,0.2); }
+
+        /* Compact top section */
         .modal-top {
             display: flex; align-items: center; gap: 14px;
             padding: 0 20px 16px;
         }
+        /* Square gift image */
         .modal-thumb-wrap {
-            position: relative; width: 80px; height: 80px; flex: 0 0 80px;
+            position: relative;
+            width: 80px; height: 80px; flex: 0 0 80px;
             border-radius: 16px; overflow: hidden;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
             cursor: pointer;
         }
         .modal-thumb-wrap img,
@@ -589,252 +346,147 @@
             width: 100%; height: 100%; object-fit: cover;
             position: absolute; inset: 0;
         }
+        /* Small TG badge bottom-left of thumb */
         .modal-tg-badge {
             position: absolute; bottom: 5px; left: 5px; z-index: 4;
             width: 22px; height: 22px; border-radius: 50%;
             background: #2ca5e0; display: flex; align-items: center; justify-content: center;
-            font-size: 10px; cursor: pointer; border: 1.5px solid rgba(255, 255, 255, 0.2);
-            text-decoration: none; color: #fff;
+            font-size: 11px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.25);
+            text-decoration: none;
         }
         .modal-thumb-fallback {
             display: flex; align-items: center; justify-content: center;
             position: absolute; inset: 0; font-size: 34px;
         }
         .modal-info { flex: 1; min-width: 0; }
-        .modal-gift-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px; }
+        .modal-gift-label {
+            font-size: 10px; font-weight: 800; color: #666;
+            text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px;
+        }
         .modal-model-name {
-            font-size: 18px; font-weight: 800; line-height: 1.15;
+            font-size: 18px; font-weight: 900; line-height: 1.15;
             color: #fff; margin-bottom: 3px;
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
-        .modal-number { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+        .modal-number { font-size: 13px; color: #555; margin-bottom: 8px; }
         .modal-source-badge {
-            display: inline-block; font-size: 10px; font-weight: 700;
-            background: var(--glass-strong); border-radius: 6px;
-            padding: 2px 7px; color: var(--text-secondary);
+            display: inline-block; font-size: 10px; font-weight: 800;
+            background: rgba(255,255,255,0.1); border-radius: 6px;
+            padding: 2px 7px; color: #aaa;
         }
-        .modal-divider { height: 1px; background: var(--glass-border); margin: 0 20px; }
+
+        /* Attribute table */
+        .modal-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 0 20px; }
         .modal-rows { padding: 4px 20px 0; }
         .modal-row {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 11px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); gap: 10px;
+            padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px;
         }
         .modal-row:last-child { border-bottom: none; }
-        .modal-row-label { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+        .modal-row-label { font-size: 13px; color: #777; white-space: nowrap; }
         .modal-row-right { display: flex; align-items: center; gap: 7px; min-width: 0; justify-content: flex-end; }
-        .modal-row-val { font-size: 13px; font-weight: 700; word-break: break-word; text-align: right; color: var(--text-primary); }
+        .modal-row-val { font-size: 13px; font-weight: 800; word-break: break-word; text-align: right; }
         .modal-row-rarity {
             font-size: 10px; color: #a2a5ff;
-            background: rgba(91, 95, 207, 0.15); padding: 2px 6px; border-radius: 5px; flex: 0 0 auto;
+            background: rgba(91,95,207,0.18); padding: 2px 6px; border-radius: 5px; flex: 0 0 auto;
         }
+
+        /* Buy button row */
         .modal-actions { padding: 16px 20px 0; }
         .modal-buy-btn {
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 15px; border-radius: var(--radius-md);
+            padding: 16px; border-radius: 14px;
             background: var(--accent); color: #fff;
-            font-size: 15px; font-weight: 700;
+            font-size: 16px; font-weight: 800;
             border: none; width: 100%; cursor: pointer;
             touch-action: manipulation; transition: opacity 0.15s, transform 0.15s;
+            /* prevent overflow */
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-            box-shadow: 0 4px 20px var(--accent-glow);
+            box-sizing: border-box;
         }
         .modal-buy-btn:active { opacity: 0.85; transform: scale(0.98); }
 
-        /* ── Toast уведомления ── */
-        .toast {
-            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
-            z-index: 5000;
-            padding: 10px 18px; border-radius: 10px;
-            font-size: 13px; font-weight: 600;
-            backdrop-filter: blur(12px);
-            animation: slideDown 0.25s ease-out, fadeIn 0.25s;
-            pointer-events: none;
-            max-width: 90%;
+        .empty-state {
+            text-align: center; padding: 40px 20px; color: #666;
+            display: flex; flex-direction: column; align-items: center; gap: 14px;
         }
-        .toast.success { background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.25); }
-        .toast.error   { background: rgba(231, 76, 60, 0.15); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.25); }
-        .toast.info    { background: rgba(91, 95, 207, 0.15); color: #a2a5ff; border: 1px solid rgba(91, 95, 207, 0.25); }
     </style>
 </head>
 <body>
 
-<!-- ═══ Шапка с табами ═══ -->
-<header class="app-header">
-    <div class="app-title">🔍 Rarity Monitor</div>
-    <div class="tab-bar">
-        <div class="tab-pill" id="tabPill"></div>
-        <button class="tab-btn active" id="tabSearch" onclick="switchTab('search')">
-            <span>🔍</span> Поиск
-        </button>
-        <button class="tab-btn" id="tabMonitors" onclick="switchTab('monitors')">
-            <span>📡</span> Мониторы
-        </button>
+<h2>🔍 Rarity Monitor</h2>
+
+<div class="section">
+    <div class="field-label">Подарок</div>
+    <div class="gift-search-wrap" id="giftSearchWrap">
+        <span class="gift-search-icon">🎁</span>
+        <input class="gift-search-input" id="giftSearchInput" type="text" placeholder="Загрузка..." autocomplete="off">
+        <div class="gift-dropdown" id="giftDropdown"></div>
     </div>
-</header>
+</div>
 
-<!-- ═══ Контент ═══ -->
-<main class="app-content">
-
-    <!-- ─── ВКЛАДКА «ПОИСК» ─── -->
-    <div class="tab-content active" id="searchTab">
-
-        <!-- Поиск подарка -->
-        <div class="form-section">
-            <div class="field-label">Подарок</div>
-            <div class="gift-search-wrap" id="giftSearchWrap">
-                <span class="gift-search-icon">🎁</span>
-                <input class="gift-search-input" id="giftSearchInput" type="text" placeholder="Загрузка..." autocomplete="off">
-                <div class="gift-dropdown" id="giftDropdown"></div>
-            </div>
-        </div>
-
-        <!-- Модели (без лимита для поиска) -->
-        <div class="collapsible">
-            <div class="collapsible-header" onclick="toggleCollapsible('searchModels')">
-                <span class="title">🎨 Модели</span>
-                <div class="header-right">
-                    <button class="clear-btn" id="clearSearchModelsBtn" onclick="event.stopPropagation(); clearSearchSelection('searchModels')">Очистить</button>
-                    <span class="badge-count" id="searchModelsCount">0</span>
-                    <span class="coll-arrow" id="searchModelsArrow">▼</span>
-                </div>
-            </div>
-            <div class="collapsible-body" id="searchModelsBody">
-                <input class="chips-search" id="searchModelsSearch" placeholder="Поиск модели..." oninput="filterChips('searchModels', this.value)">
-                <div class="chips-grid" id="searchModelsGrid"></div>
-            </div>
-        </div>
-
-        <!-- Фоны (без лимита для поиска) -->
-        <div class="collapsible">
-            <div class="collapsible-header" onclick="toggleCollapsible('searchBackdrops')">
-                <span class="title">🖼 Фоны</span>
-                <div class="header-right">
-                    <button class="clear-btn" id="clearSearchBackdropsBtn" onclick="event.stopPropagation(); clearSearchSelection('searchBackdrops')">Очистить</button>
-                    <span class="badge-count" id="searchBackdropsCount">0</span>
-                    <span class="coll-arrow" id="searchBackdropsArrow">▼</span>
-                </div>
-            </div>
-            <div class="collapsible-body" id="searchBackdropsBody">
-                <input class="chips-search" id="searchBackdropsSearch" placeholder="Поиск фона..." oninput="filterChips('searchBackdrops', this.value)">
-                <div class="chips-grid" id="searchBackdropsGrid"></div>
-            </div>
-        </div>
-
-        <!-- Стоимость (аккордеон) -->
-        <div class="collapsible">
-            <div class="collapsible-header" onclick="toggleCollapsible('searchPrice')">
-                <span class="title">💰 Стоимость, TON</span>
-                <div class="header-right">
-                    <button class="clear-btn" id="clearSearchPriceBtn" onclick="event.stopPropagation(); clearPriceFilter()">Очистить</button>
-                    <span class="badge-count" id="searchPriceCount">—</span>
-                    <span class="coll-arrow" id="searchPriceArrow">▼</span>
-                </div>
-            </div>
-            <div class="collapsible-body" id="searchPriceBody">
-                <div style="padding: 12px;">
-                    <div class="price-filter-row">
-                        <input class="price-input" id="searchPriceMin" type="number" placeholder="От" inputmode="decimal" oninput="updatePriceBadge()">
-                        <span class="price-separator">—</span>
-                        <input class="price-input" id="searchPriceMax" type="number" placeholder="До" inputmode="decimal" oninput="updatePriceBadge()">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Кнопка поиска -->
-        <button class="btn btn-search" onclick="doSearch()">
-            🔍 Найти на маркетах
-        </button>
-        <div class="status-bar" id="searchStatusBar">Выберите подарок и нажмите Найти</div>
-
-        <!-- Результаты поиска -->
-        <div class="found-list" id="foundList"></div>
-    </div>
-
-    <!-- ─── ВКЛАДКА «МОНИТОРЫ» ─── -->
-    <div class="tab-content" id="monitorsTab">
-
-        <!-- Поиск подарка (монитор) -->
-        <div class="form-section">
-            <div class="field-label">Подарок</div>
-            <div class="gift-search-wrap" id="monGiftSearchWrap">
-                <span class="gift-search-icon">🎁</span>
-                <input class="gift-search-input" id="monGiftSearchInput" type="text" placeholder="Загрузка..." autocomplete="off">
-                <div class="gift-dropdown" id="monGiftDropdown"></div>
-            </div>
-        </div>
-
-        <!-- Модели (МАКС 2 для мониторинга) -->
-        <div class="collapsible">
-            <div class="collapsible-header" onclick="toggleCollapsible('monModels')">
-                <span class="title">🎨 Модели <span style="opacity:0.5;font-weight:400;text-transform:none;letter-spacing:0">(макс. 2)</span></span>
-                <div class="header-right">
-                    <button class="clear-btn" id="clearMonModelsBtn" onclick="event.stopPropagation(); clearMonSelection('monModels')">Очистить</button>
-                    <span class="badge-count" id="monModelsCount">0</span>
-                    <span class="coll-arrow" id="monModelsArrow">▼</span>
-                </div>
-            </div>
-            <div class="collapsible-body" id="monModelsBody">
-                <input class="chips-search" id="monModelsSearch" placeholder="Поиск модели..." oninput="filterChips('monModels', this.value)">
-                <div class="chips-grid" id="monModelsGrid"></div>
-            </div>
-        </div>
-
-        <!-- Фоны (опционально для мониторинга) -->
-        <div class="collapsible">
-            <div class="collapsible-header" onclick="toggleCollapsible('monBackdrops')">
-                <span class="title">🖼 Фоны <span style="opacity:0.5;font-weight:400;text-transform:none;letter-spacing:0">(необязательно)</span></span>
-                <div class="header-right">
-                    <button class="clear-btn" id="clearMonBackdropsBtn" onclick="event.stopPropagation(); clearMonSelection('monBackdrops')">Очистить</button>
-                    <span class="badge-count" id="monBackdropsCount">0</span>
-                    <span class="coll-arrow" id="monBackdropsArrow">▼</span>
-                </div>
-            </div>
-            <div class="collapsible-body" id="monBackdropsBody">
-                <input class="chips-search" id="monBackdropsSearch" placeholder="Поиск фона..." oninput="filterChips('monBackdrops', this.value)">
-                <div class="chips-grid" id="monBackdropsGrid"></div>
-            </div>
-        </div>
-
-        <!-- Кнопка запуска мониторинга -->
-        <button class="btn btn-monitor" onclick="startMonitor()">
-            ▶ Запустить мониторинг
-        </button>
-        <div class="status-bar" id="monStatusBar">Настройте параметры и нажмите Запустить</div>
-
-        <!-- Список активных мониторов -->
-        <div class="section-divider">
-            <span>Активные мониторинги</span>
-        </div>
-        <div class="monitors-list" id="monitorsList">
-            <div class="empty-state" id="monitorsEmpty">
-                <div class="empty-icon">📡</div>
-                <div class="empty-text">Нет активных мониторингов</div>
-            </div>
+<div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible('models')">
+        <span class="title">Модели</span>
+        <div class="header-right">
+            <button class="clear-btn" id="clearModelsBtn" onclick="event.stopPropagation(); clearSelection('models')">Очистить</button>
+            <span class="badge-count" id="modelsCount">0</span>
+            <span class="coll-arrow" id="modelsArrow">▼</span>
         </div>
     </div>
-</main>
+    <div class="collapsible-body" id="modelsBody">
+        <input class="chips-search" id="modelsSearch" placeholder="Поиск модели..." oninput="filterChips('models', this.value)">
+        <div class="chips-grid" id="modelsGrid"></div>
+    </div>
+</div>
 
-<!-- ═══ Sort sheet (bottom sheet) ═══ -->
+<div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible('backdrops')">
+        <span class="title">Фоны</span>
+        <div class="header-right">
+            <button class="clear-btn" id="clearBackdropsBtn" onclick="event.stopPropagation(); clearSelection('backdrops')">Очистить</button>
+            <span class="badge-count" id="backdropsCount">0</span>
+            <span class="coll-arrow" id="backdropsArrow">▼</span>
+        </div>
+    </div>
+    <div class="collapsible-body" id="backdropsBody">
+        <input class="chips-search" id="backdropsSearch" placeholder="Поиск фона..." oninput="filterChips('backdrops', this.value)">
+        <div class="chips-grid" id="backdropsGrid"></div>
+    </div>
+</div>
+
+
+<button class="btn btn-start" id="btnStart" onclick="startMonitor()">▶ Запустить мониторинг</button>
+<button class="btn btn-stop"  id="btnStop"  onclick="stopMonitor()">⏹ Остановить</button>
+<div class="status-bar" id="statusBar">Настройте параметры и нажмите Запустить</div>
+
+<div class="found-list" id="foundList"></div>
+
+<!-- Sort sheet -->
 <div class="sort-overlay" id="sortOverlay" onclick="closeSortSheet(event)">
     <div class="sort-sheet">
         <div class="sort-handle"></div>
         <div class="sort-title">Сортировка</div>
-        <div class="sort-option" data-sort="price_asc"   onclick="applySort('price_asc')"><span>Цена: от низкой к высокой</span><span class="sort-arrow">↑</span></div>
-        <div class="sort-option" data-sort="price_desc"  onclick="applySort('price_desc')"><span>Цена: от высокой к низкой</span><span class="sort-arrow">↓</span></div>
-        <div class="sort-option" data-sort="num_asc"     onclick="applySort('num_asc')"><span>ID подарка: по возрастанию</span><span class="sort-arrow">↑</span></div>
-        <div class="sort-option" data-sort="num_desc"    onclick="applySort('num_desc')"><span>ID подарка: по убыванию</span><span class="sort-arrow">↓</span></div>
-
+        <div class="sort-option" data-sort="price_asc"    onclick="applySort('price_asc')">   <span>Цена: от низкой к высокой</span>    <span class="sort-arrow">↑</span></div>
+        <div class="sort-option" data-sort="price_desc"   onclick="applySort('price_desc')">  <span>Цена: от высокой к низкой</span>   <span class="sort-arrow">↓</span></div>
+        <div class="sort-option" data-sort="num_asc"      onclick="applySort('num_asc')">     <span>ID подарка: по возрастанию</span>   <span class="sort-arrow">↑</span></div>
+        <div class="sort-option" data-sort="num_desc"     onclick="applySort('num_desc')">    <span>ID подарка: по убыванию</span>     <span class="sort-arrow">↓</span></div>
+        <div class="sort-option" data-sort="rarity_asc"   onclick="applySort('rarity_asc')">  <span>Редкость: от низкой к высокой</span><span class="sort-arrow">↑</span></div>
+        <div class="sort-option" data-sort="rarity_desc"  onclick="applySort('rarity_desc')"> <span>Редкость: от высокой к низкой</span><span class="sort-arrow">↓</span></div>
     </div>
 </div>
 
-<!-- ═══ Модальное окно лота ═══ -->
+<!-- Item modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
     <div class="modal-sheet" id="modalSheet">
         <div class="modal-handle"></div>
         <button class="modal-close" onclick="closeModalDirect()">✕</button>
+
+        <!-- Compact header -->
         <div class="modal-top">
-            <div class="modal-thumb-wrap" id="modalThumb" onclick="_modalOpenGift()"></div>
+            <div class="modal-thumb-wrap" id="modalThumb" onclick="_modalOpenGift()">
+                <!-- filled by JS -->
+            </div>
             <div class="modal-info">
                 <div class="modal-gift-label"  id="modalGiftLabel"></div>
                 <div class="modal-model-name"  id="modalModelName"></div>
@@ -842,8 +494,13 @@
                 <span class="modal-source-badge" id="modalSource"></span>
             </div>
         </div>
+
         <div class="modal-divider"></div>
+
+        <!-- Attribute rows -->
         <div class="modal-rows" id="modalRows"></div>
+
+        <!-- Buy button -->
         <div class="modal-actions">
             <button class="modal-buy-btn" id="modalBuyBtn"></button>
         </div>
@@ -851,72 +508,48 @@
 </div>
 
 <script>
-    /* ═══════════════════════════════════════════════════════
-       RARITY MONITOR — JavaScript
-       ═══════════════════════════════════════════════════════ */
-
-    // ── Глобальные переменные ──
     const API    = 'https://unperforated-levi-supernumerous.ngrok-free.dev';
     const tg     = window.Telegram?.WebApp;
     const USERID = tg?.initDataUnsafe?.user?.id || 6525022620;
     const H      = { 'ngrok-skip-browser-warning': 'true' };
     const DOM_PAGE_SIZE = 30;
 
-    // Список подарков с сервера
-    let gifts = [];
+    let gifts           = [];
+    let selectedModels  = new Set();
+    let selectedBackdrops = new Set();
+    let _selectedGift   = '';
+    let pollTimer       = null;
+    let allItems        = [];
+    let sortedItems     = [];
+    let renderedCount   = 0;
+    let currentSort     = 'price_asc';
+    let scrollObserver  = null;
 
-    // ── Состояние вкладки «Поиск» ──
-    let searchSelectedModels    = new Set();
-    let searchSelectedBackdrops = new Set();
-    let searchGift              = '';
-    let searchPage              = 0;
-    let searchTotalPages        = 1;
-    let searchLoading           = false;
-    let searchDone              = false;
-    let allItems                = [];
-    let renderedCount           = 0;
-    let currentSort             = 'price_asc';
-    let scrollObserver          = null;
+    // Search state
+    let searchPage       = 0;
+    let searchTotalPages = 1;
+    let searchLoading    = false;
+    let searchDone       = false;
+    let searchGift       = '';
+    let searchModels     = [];
+    let searchBackdrops  = [];
+    let searchPriceMin   = null;
+    let searchPriceMax   = null;
 
-    // ── Состояние вкладки «Мониторы» ──
-    let monSelectedModels     = new Set();
-    let monSelectedBackdrops  = new Set();
-    let monSelectedGift       = '';
-    let monPollTimer          = null;
-
-    // ── Состояние модального окна ──
+    // Modal state
     let _modalGiftUrl   = '';
     let _modalMarketUrl = '';
 
     tg?.expand();
 
-    // ═══ Табы ═════════════════════════════════════════════════
-    function switchTab(tab) {
-        const pill = document.getElementById('tabPill');
-        const sBtn = document.getElementById('tabSearch');
-        const mBtn = document.getElementById('tabMonitors');
-        const sTab = document.getElementById('searchTab');
-        const mTab = document.getElementById('monitorsTab');
-
-        if (tab === 'search') {
-            pill.classList.remove('right');
-            sBtn.classList.add('active');
-            mBtn.classList.remove('active');
-            sTab.classList.add('active');
-            mTab.classList.remove('active');
-        } else {
-            pill.classList.add('right');
-            mBtn.classList.add('active');
-            sBtn.classList.remove('active');
-            mTab.classList.add('active');
-            sTab.classList.remove('active');
-            // Обновить список мониторов при переключении
-            refreshMonitorsList();
-        }
+    // ── Helpers ───────────────────────────────────────────────
+    function setStatus(text, type = '') {
+        const el = document.getElementById('statusBar');
+        if (!el) return;
+        el.textContent = text;
+        el.className = 'status-bar' + (type ? ` ${type}` : '');
     }
-    window.switchTab = switchTab;
 
-    // ═══ Утилиты ═══════════════════════════════════════════════
     function escapeHtml(s) {
         return String(s ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;')
             .replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
@@ -941,7 +574,7 @@
     }
 
     function sortByRarityAsc(items) {
-        return [...items].sort((a, b) => {
+        return [...items].sort((a,b) => {
             const ra = normalizeRarityValue(a), rb = normalizeRarityValue(b);
             if (ra !== rb) return ra - rb;
             return String(a.name||'').localeCompare(String(b.name||''), 'ru');
@@ -955,28 +588,46 @@
         window.open(url, '_blank', 'noopener,noreferrer');
     }
     window.openTelegramLink = openTelegramLink;
+
     window._modalOpenGift   = () => openTelegramLink(_modalGiftUrl);
     window._modalOpenMarket = () => openTelegramLink(_modalMarketUrl || _modalGiftUrl);
 
-    /** Показать toast-уведомление */
-    function showToast(message, type = 'info', duration = 2500) {
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transition = 'opacity 0.3s';
-            setTimeout(() => toast.remove(), 300);
-        }, duration);
+    // ── Chips ─────────────────────────────────────────────────
+    function updateClearButtons() {
+        document.getElementById('clearModelsBtn')?.classList.toggle('visible', selectedModels.size > 0);
+        document.getElementById('clearBackdropsBtn')?.classList.toggle('visible', selectedBackdrops.size > 0);
     }
 
-    // ═══ Dropdown подарков ════════════════════════════════════
-    function renderGiftDropdown(ddId, list, onSelect) {
-        const dd = document.getElementById(ddId);
+    function clearSelection(kind) {
+        const set    = kind === 'models' ? selectedModels    : selectedBackdrops;
+        const gridId = kind === 'models' ? 'modelsGrid'      : 'backdropsGrid';
+        const cntId  = kind === 'models' ? 'modelsCount'     : 'backdropsCount';
+        set.clear();
+        document.getElementById(cntId).textContent = '0';
+        document.querySelectorAll(`#${gridId} .chip.selected`).forEach(c => c.classList.remove('selected'));
+        updateClearButtons();
+    }
+    window.clearSelection = clearSelection;
+
+    async function loadGifts() {
+        try {
+            const r = await fetch(`${API}/gifts`, { headers: H });
+            if (!r.ok) throw new Error();
+            gifts = await r.json();
+            document.getElementById('giftSearchInput').placeholder = 'Поиск подарка...';
+            renderGiftDropdown(gifts);
+            checkInitialStatus();
+        } catch {
+            setStatus('Ошибка связи с сервером', 'error');
+            document.getElementById('giftSearchInput').placeholder = 'Не удалось загрузить';
+        }
+    }
+
+    function renderGiftDropdown(list) {
+        const dd = document.getElementById('giftDropdown');
         dd.innerHTML = '';
         if (!list.length) {
-            dd.innerHTML = '<div class="gift-option" style="color:var(--text-muted);cursor:default;">Ничего не найдено</div>';
+            dd.innerHTML = '<div class="gift-option" style="color:#666;cursor:default;">Ничего не найдено</div>';
             return;
         }
         list.forEach(g => {
@@ -994,91 +645,46 @@
             const tx = document.createElement('span');
             tx.textContent = g.display_name || g.name;
             item.appendChild(tx);
-            item.addEventListener('click', () => onSelect(g.name, ddId));
+            item.addEventListener('click', () => selectGift(g.name));
             dd.appendChild(item);
         });
     }
 
-    // ── Поиск: выбор подарка ──
-    function selectSearchGift(name, ddId) {
-        searchGift = name;
+    window.selectGift = name => {
+        _selectedGift = name;
         document.getElementById('giftSearchInput').value = name;
         document.getElementById('giftDropdown').classList.remove('open');
-        onSearchGiftChange();
-    }
+        onGiftChange();
+    };
 
     document.getElementById('giftSearchInput').addEventListener('focus', () => {
         document.getElementById('giftDropdown').classList.add('open');
-        renderGiftDropdown('giftDropdown', gifts, selectSearchGift);
+        renderGiftDropdown(gifts);
     });
     document.getElementById('giftSearchInput').addEventListener('input', e => {
         const q = e.target.value.toLowerCase().trim();
-        if (!q) { searchGift = ''; renderGiftDropdown('giftDropdown', gifts, selectSearchGift); }
-        else { renderGiftDropdown('giftDropdown', gifts.filter(g => (g.name||'').toLowerCase().includes(q)), selectSearchGift); }
+        if (!q) { _selectedGift = ''; renderGiftDropdown(gifts); }
+        else    { renderGiftDropdown(gifts.filter(g => (g.name||'').toLowerCase().includes(q))); }
         document.getElementById('giftDropdown').classList.add('open');
     });
 
-    // ── Монитор: выбор подарка ──
-    function selectMonGift(name, ddId) {
-        monSelectedGift = name;
-        document.getElementById('monGiftSearchInput').value = name;
-        document.getElementById('monGiftDropdown').classList.remove('open');
-        onMonGiftChange();
-    }
-
-    document.getElementById('monGiftSearchInput').addEventListener('focus', () => {
-        document.getElementById('monGiftDropdown').classList.add('open');
-        renderGiftDropdown('monGiftDropdown', gifts, selectMonGift);
-    });
-    document.getElementById('monGiftSearchInput').addEventListener('input', e => {
-        const q = e.target.value.toLowerCase().trim();
-        if (!q) { monSelectedGift = ''; renderGiftDropdown('monGiftDropdown', gifts, selectMonGift); }
-        else { renderGiftDropdown('monGiftDropdown', gifts.filter(g => (g.name||'').toLowerCase().includes(q)), selectMonGift); }
-        document.getElementById('monGiftDropdown').classList.add('open');
-    });
-
-    // Закрытие dropdown при клике вне
-    document.addEventListener('click', e => {
-        if (!e.target.closest('#giftSearchWrap'))   document.getElementById('giftDropdown').classList.remove('open');
-        if (!e.target.closest('#monGiftSearchWrap')) document.getElementById('monGiftDropdown').classList.remove('open');
-    });
-
-    // ── При выборе подарка — загрузить модели/фоны ──
-    function onSearchGiftChange() {
-        const gift = gifts.find(g => g.name === searchGift);
+    function onGiftChange() {
+        const gift = gifts.find(g => g.name === _selectedGift);
         if (!gift) return;
-        searchSelectedModels.clear();
-        searchSelectedBackdrops.clear();
-        updateSearchClearButtons();
-        document.getElementById('searchModelsSearch').value = '';
-        document.getElementById('searchBackdropsSearch').value = '';
-        buildChips('searchModelsGrid',    gift.all_models    || gift.models    || gift.rare_models    || [], searchSelectedModels,    'searchModelsCount',    'clearSearchModelsBtn');
-        buildChips('searchBackdropsGrid', gift.all_backdrops || gift.backdrops || gift.rare_backdrops || [], searchSelectedBackdrops, 'searchBackdropsCount', 'clearSearchBackdropsBtn');
-        if (!document.getElementById('searchModelsBody').classList.contains('open'))
-            toggleCollapsible('searchModels');
+        selectedModels.clear(); selectedBackdrops.clear(); updateClearButtons();
+        if (!document.getElementById('modelsBody').classList.contains('open')) toggleCollapsible('models');
+        document.getElementById('modelsSearch').value = '';
+        document.getElementById('backdropsSearch').value = '';
+        buildChips('modelsGrid',    gift.all_models    || gift.models    || gift.rare_models    || [], selectedModels,    'modelsCount',    'clearModelsBtn');
+        buildChips('backdropsGrid', gift.all_backdrops || gift.backdrops || gift.rare_backdrops || [], selectedBackdrops, 'backdropsCount', 'clearBackdropsBtn');
     }
 
-    function onMonGiftChange() {
-        const gift = gifts.find(g => g.name === monSelectedGift);
-        if (!gift) return;
-        monSelectedModels.clear();
-        monSelectedBackdrops.clear();
-        updateMonClearButtons();
-        document.getElementById('monModelsSearch').value = '';
-        document.getElementById('monBackdropsSearch').value = '';
-        buildChips('monModelsGrid',    gift.all_models    || gift.models    || gift.rare_models    || [], monSelectedModels,    'monModelsCount',    'clearMonModelsBtn');
-        buildChips('monBackdropsGrid', gift.all_backdrops || gift.backdrops || gift.rare_backdrops || [], monSelectedBackdrops, 'monBackdropsCount', 'clearMonBackdropsBtn');
-        if (!document.getElementById('monModelsBody').classList.contains('open'))
-            toggleCollapsible('monModels');
-    }
-
-    // ═══ Чипсы (модели / фоны) ════════════════════════════════
     function buildChips(gridId, items, set, countId, clearBtnId) {
         const grid   = document.getElementById(gridId);
         const sorted = sortByRarityAsc(items || []);
         if (!sorted.length) {
-            grid.innerHTML = '<div style="grid-column:1/-1;padding:12px;text-align:center;color:var(--text-muted);font-size:12px;">Нет данных</div>';
-            document.getElementById(countId).textContent = '0';
+            grid.innerHTML = '<div style="grid-column:1/-1;padding:12px;text-align:center;color:#666;">Нет данных</div>';
+            document.getElementById(countId).textContent = 0;
             document.getElementById(clearBtnId)?.classList.remove('visible');
             return;
         }
@@ -1088,7 +694,7 @@
                 ? `<img src="${escapeHtml(m.image_url||m.icon)}" class="chip-icon" onerror="this.style.display='none'">`
                 : '';
             return `<div class="chip" data-name="${escapeHtml(m.name)}" data-grid="${gridId}" data-count="${countId}"
-                onclick="toggleChip(this)" style="animation-delay:${i * 0.02}s">
+                onclick="toggleChip(this)" style="animation-delay:${i*0.02}s">
                 ${icon}
                 <div class="chip-info">
                     <span class="chip-name">${escapeHtml(m.name)}</span>
@@ -1096,347 +702,235 @@
                 </div>
             </div>`;
         }).join('');
-        document.getElementById(countId).textContent = '0';
+        document.getElementById(countId).textContent = 0;
         document.getElementById(clearBtnId)?.classList.remove('visible');
     }
 
-    /**
-     * Общий обработчик клика по чипсу.
-     * Для мониторинга моделей — ограничение макс. 2.
-     */
     window.toggleChip = el => {
-        const gridId = el.dataset.grid;
+        const set     = el.dataset.grid === 'modelsGrid' ? selectedModels : selectedBackdrops;
         const countId = el.dataset.count;
-        const name = el.dataset.name;
-        const isMonModel = gridId === 'monModelsGrid';
-
-        // Определяем множество
-        let set, clearBtnId;
-        if (gridId === 'searchModelsGrid' || gridId === 'searchModelsGrid') {
-            set = searchSelectedModels; clearBtnId = 'clearSearchModelsBtn';
-        }
-        if (gridId === 'searchBackdropsGrid') {
-            set = searchSelectedBackdrops; clearBtnId = 'clearSearchBackdropsBtn';
-        }
-        if (gridId === 'monModelsGrid') {
-            set = monSelectedModels; clearBtnId = 'clearMonModelsBtn';
-        }
-        if (gridId === 'monBackdropsGrid') {
-            set = monSelectedBackdrops; clearBtnId = 'clearMonBackdropsBtn';
-        }
-        if (!set) return;
-
-        // Проверяем — добавление или удаление
-        const wasSelected = set.has(name);
-        if (!wasSelected) {
-            // Проверяем лимит 2 для мониторинга моделей
-            if (isMonModel && set.size >= 2) {
-                el.style.animation = 'shake 0.4s ease-in-out';
-                setTimeout(() => { el.style.animation = ''; }, 400);
-                const badge = document.getElementById(countId);
-                badge.textContent = 'Макс 2!';
-                badge.classList.add('warning');
-                setTimeout(() => {
-                    badge.textContent = String(set.size);
-                    badge.classList.remove('warning');
-                }, 1500);
-                return;
-            }
-            set.add(name);
-        } else {
-            set.delete(name);
-        }
-
-        // Визуальная обратная связь
+        const clearId = el.dataset.grid === 'modelsGrid' ? 'clearModelsBtn' : 'clearBackdropsBtn';
         el.style.transform = 'scale(0.9)';
         setTimeout(() => { el.style.transform = ''; }, 150);
-        el.classList.toggle('selected', set.has(name));
-
-        // Обновляем badge
+        el.classList.toggle('selected');
+        set.has(el.dataset.name) ? set.delete(el.dataset.name) : set.add(el.dataset.name);
         const badge = document.getElementById(countId);
-        badge.textContent = String(set.size);
+        badge.textContent = set.size;
         badge.style.transform = 'scale(1.2)';
         setTimeout(() => { badge.style.transform = 'scale(1)'; }, 200);
-
-        // Обновляем кнопку «Очистить»
-        document.getElementById(clearBtnId)?.classList.toggle('visible', set.size > 0);
-
-        // Для мониторинга — подсветить лимит, если 2 модели выбраны
-        if (isMonModel) {
-            updateMonModelLimitVisual();
-        }
+        document.getElementById(clearId)?.classList.toggle('visible', set.size > 0);
     };
 
-    /** Подсветка чипсов моделей при достижении лимита */
-    function updateMonModelLimitVisual() {
-        const atLimit = monSelectedModels.size >= 2;
-        document.querySelectorAll('#monModelsGrid .chip').forEach(c => {
-            if (atLimit && !monSelectedModels.has(c.dataset.name)) {
-                c.classList.add('disabled');
-            } else {
-                c.classList.remove('disabled');
-            }
-        });
-    }
-
-    // ── Фильтрация чипсов ──
     window.filterChips = (section, query) => {
-        const gridId = section + 'Grid';
         const q = query.toLowerCase();
-        document.querySelectorAll(`#${gridId} .chip`).forEach(c => {
+        document.querySelectorAll(`#${section}Grid .chip`).forEach(c => {
             c.classList.toggle('hidden-chip', !c.dataset.name.toLowerCase().includes(q));
         });
     };
 
-    // ── Очистка выбранных ──
-    function updateSearchClearButtons() {
-        document.getElementById('clearSearchModelsBtn')?.classList.toggle('visible', searchSelectedModels.size > 0);
-        document.getElementById('clearSearchBackdropsBtn')?.classList.toggle('visible', searchSelectedBackdrops.size > 0);
-    }
-    function updateMonClearButtons() {
-        document.getElementById('clearMonModelsBtn')?.classList.toggle('visible', monSelectedModels.size > 0);
-        document.getElementById('clearMonBackdropsBtn')?.classList.toggle('visible', monSelectedBackdrops.size > 0);
-    }
-
-    window.clearSearchSelection = kind => {
-        const set    = kind === 'searchModels' ? searchSelectedModels : searchSelectedBackdrops;
-        const gridId = kind + 'Grid';
-        const cntId  = kind + 'Count';
-        const clrId  = 'clear' + kind.charAt(0).toUpperCase() + kind.slice(1) + 'Btn';
-        set.clear();
-        document.getElementById(cntId).textContent = '0';
-        document.querySelectorAll(`#${gridId} .chip.selected`).forEach(c => c.classList.remove('selected'));
-        updateSearchClearButtons();
-    };
-
-    window.clearMonSelection = kind => {
-        const set    = kind === 'monModels' ? monSelectedModels : monSelectedBackdrops;
-        const gridId = kind + 'Grid';
-        const cntId  = kind + 'Count';
-        set.clear();
-        document.getElementById(cntId).textContent = '0';
-        document.querySelectorAll(`#${gridId} .chip.selected`).forEach(c => c.classList.remove('selected'));
-        updateMonClearButtons();
-        if (kind === 'monModels') updateMonModelLimitVisual();
-    };
-
-    // ── Фильтр цен (аккордеон) ──
-    function updatePriceBadge() {
-        const min = document.getElementById('searchPriceMin')?.value;
-        const max = document.getElementById('searchPriceMax')?.value;
-        const badge = document.getElementById('searchPriceCount');
-        const clearBtn = document.getElementById('clearSearchPriceBtn');
-        if (min || max) {
-            const parts = [];
-            if (min) parts.push('от ' + min);
-            if (max) parts.push('до ' + max);
-            badge.textContent = parts.join(' ');
-            badge.classList.add('warning');
-            clearBtn.classList.add('visible');
-        } else {
-            badge.textContent = '—';
-            badge.classList.remove('warning');
-            clearBtn.classList.remove('visible');
-        }
-    }
-    window.updatePriceBadge = updatePriceBadge;
-
-    window.clearPriceFilter = () => {
-        const minEl = document.getElementById('searchPriceMin');
-        const maxEl = document.getElementById('searchPriceMax');
-        if (minEl) minEl.value = '';
-        if (maxEl) maxEl.value = '';
-        updatePriceBadge();
-    };
-
-    // ═══ Аккордеоны ═══════════════════════════════════════════
-    window.toggleCollapsible = id => {
+    function toggleCollapsible(id) {
         const body  = document.getElementById(id + 'Body');
         const arrow = document.getElementById(id + 'Arrow');
-        if (!body || !arrow) return;
         const open  = body.classList.toggle('open');
         arrow.style.transform = open ? 'rotate(180deg)' : '';
-    };
+    }
+    window.toggleCollapsible = toggleCollapsible;
 
-    // ═══ ВКЛАДКА «ПОИСК» ═════════════════════════════════════
+    // ── Monitor start/stop ────────────────────────────────────
+    async function startMonitor() {
+        if (!_selectedGift) return setStatus('Выберите подарок!', 'error');
+        clearInterval(pollTimer);
 
-    /** Основной поиск — вызывается кнопкой «Найти на маркетах» */
-    async function doSearch() {
-        if (!searchGift) {
-            document.getElementById('searchStatusBar').textContent = 'Выберите подарок!';
-            document.getElementById('searchStatusBar').className = 'status-bar error';
-            return;
-        }
+        const minRaw = document.getElementById('priceMin')?.value;
+        const maxRaw = document.getElementById('priceMax')?.value;
+        const pMin = minRaw ? parseFloat(minRaw) : null;
+        const pMax = maxRaw ? parseFloat(maxRaw) : null;
 
-        // Перезапуск поиска
+        const payload = {
+            user_id:    USERID,
+            gift_name:  _selectedGift,
+            models:     [...selectedModels],
+            backdrops:  [...selectedBackdrops],
+            rarity_max: 100.0,
+            price_min:  pMin,
+            price_max:  pMax,
+        };
+        try {
+            const r = await fetch(`${API}/monitor/start`, {
+                method: 'POST', headers: { 'Content-Type':'application/json', ...H }, body: JSON.stringify(payload),
+            });
+            if (!r.ok) { setStatus('Ошибка старта', 'error'); return; }
+            setStatus('✅ Мониторинг запущен', 'active');
+            document.getElementById('btnStart').style.display = 'none';
+            document.getElementById('btnStop').style.display  = 'block';
+            initSearch();
+            startStatusPolling();
+        } catch { setStatus('Ошибка старта', 'error'); }
+    }
+
+    async function stopMonitor() {
+        clearInterval(pollTimer); searchDone = true;
+        try {
+            await fetch(`${API}/monitor/stop`, {
+                method: 'POST', headers: { 'Content-Type':'application/json', ...H },
+                body: JSON.stringify({ user_id: USERID }),
+            });
+        } catch {}
+        document.getElementById('btnStart').style.display = 'block';
+        document.getElementById('btnStop').style.display  = 'none';
+        setStatus('Монитор остановлен');
+    }
+    window.startMonitor = startMonitor;
+    window.stopMonitor  = stopMonitor;
+
+    function startStatusPolling() {
+        clearInterval(pollTimer);
+        pollTimer = setInterval(async () => {
+            try {
+                const r = await fetch(`${API}/monitors/${USERID}`, { headers: H });
+                if (!r.ok) return;
+                const data = await r.json();
+                if (!data.running) {
+                    clearInterval(pollTimer);
+                    document.getElementById('btnStart').style.display = 'block';
+                    document.getElementById('btnStop').style.display  = 'none';
+                    setStatus('Монитор остановлен');
+                }
+            } catch {}
+        }, 15000);
+    }
+
+    // ── Search (lazy-load) ────────────────────────────────────
+    function initSearch() {
         searchPage = 0; searchTotalPages = 1;
         searchLoading = false; searchDone = false;
-        allItems = []; renderedCount = 0;
+        allItems = []; sortedItems = []; renderedCount = 0;
 
-        const list = document.getElementById('foundList');
-        list.innerHTML = '<div class="empty-state"><div class="load-spinner"></div></div>';
+        searchGift      = _selectedGift;
+        searchModels    = [...selectedModels];
+        searchBackdrops = [...selectedBackdrops];
 
-        document.getElementById('searchStatusBar').textContent = 'Ищем...';
-        document.getElementById('searchStatusBar').className = 'status-bar';
+        const minVal = document.getElementById('priceMin')?.value;
+        const maxVal = document.getElementById('priceMax')?.value;
+        searchPriceMin = minVal ? parseFloat(minVal) : null;
+        searchPriceMax = maxVal ? parseFloat(maxVal) : null;
 
-        await loadNextSearchPage();
+        document.getElementById('foundList').innerHTML =
+            '<div class="empty-state"><div class="load-spinner"></div></div>';
+        loadNextSearchPage();
     }
-    window.doSearch = doSearch;
 
     async function loadNextSearchPage() {
         if (searchLoading || searchDone || !searchGift) return;
         searchLoading = true;
         const nextPage = searchPage + 1;
-        // Фильтр цен
-        const priceMinRaw = document.getElementById('searchPriceMin')?.value;
-        const priceMaxRaw = document.getElementById('searchPriceMax')?.value;
-        const searchPriceMin = priceMinRaw ? parseFloat(priceMinRaw) : null;
-        const searchPriceMax = priceMaxRaw ? parseFloat(priceMaxRaw) : null;
-
         const payload  = {
             gift_name: searchGift, page: nextPage, per_page: 20,
-            models: [...searchSelectedModels],
-            backdrops: [...searchSelectedBackdrops],
-            price_min: searchPriceMin,
-            price_max: searchPriceMax,
-            ordering: currentSort,
+            models: searchModels, backdrops: searchBackdrops,
+            price_min: searchPriceMin, price_max: searchPriceMax,
+            ordering: currentSort,   // server-side ordering
         };
         try {
             const r = await fetch(`${API}/search/page`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', ...H },
-                body: JSON.stringify(payload),
+                method: 'POST', headers: { 'Content-Type':'application/json', ...H }, body: JSON.stringify(payload),
             });
-            if (!r.ok) {
-                const list = document.getElementById('foundList');
-                list.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Ошибка загрузки</div></div>';
-                searchLoading = false;
-                return;
-            }
+            if (!r.ok) { searchLoading = false; return; }
             const data = await r.json();
-
-            if (data.error) {
-                document.getElementById('searchStatusBar').textContent = data.error;
-                document.getElementById('searchStatusBar').className = 'status-bar error';
-                searchLoading = false;
-                return;
-            }
-
-            searchPage = nextPage;
+            searchPage       = nextPage;
             searchTotalPages = data.total_pages || 1;
 
-            // Убираем дубликаты
             const existingIds = new Set(allItems.map(i => i.id));
             const fresh = (data.items || []).filter(i => !existingIds.has(i.id));
+            allItems = [...allItems, ...fresh];
 
             if (data.stop_loading || nextPage >= searchTotalPages) searchDone = true;
-
-            // ПРИНЦИПИАЛЬНО: добавляем ТОЛЬКО новые карточки, не пересоздаём все
-            if (allItems.length === 0 && fresh.length > 0) {
-                // Первый batch — создаём структуру и все карточки
-                allItems = fresh;
-                createSearchResultsUI(fresh);
-            } else if (fresh.length > 0) {
-                // Последующие batches — только ДОБАВЛЯЕМ новые карточки
-                appendSearchResults(fresh);
-            } else if (allItems.length === 0) {
-                document.getElementById('foundList').innerHTML =
-                    '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">Ничего не найдено</div></div>';
-            }
-
-            // Обновляем статус
-            if (allItems.length > 0) {
-                document.getElementById('searchStatusBar').textContent =
-                    `Найдено: ${allItems.length}${searchDone ? '' : '+'}`;
-                document.getElementById('searchStatusBar').className = 'status-bar';
-            }
-        } catch (err) {
-            console.error('Search page error:', err);
-            document.getElementById('searchStatusBar').textContent = 'Ошибка сети';
-            document.getElementById('searchStatusBar').className = 'status-bar error';
-        } finally {
-            searchLoading = false;
-        }
+            renderCards(allItems, true);
+        } catch { console.error('Search page error'); }
+        finally  { searchLoading = false; }
     }
 
-    /**
-     * Создаёт UI результатов поиска (первый batch).
-     * Создаёт заголовок, сетку и все карточки.
-     */
-    function createSearchResultsUI(items) {
+    // ── Sort (server-side — resets and re-fetches from page 1) ──
+    const SORT_LABELS = {
+        price_asc:'Цена ↑', price_desc:'Цена ↓',
+        num_asc:'ID ↑',     num_desc:'ID ↓',
+        rarity_asc:'Ред. ↑',rarity_desc:'Ред. ↓',
+    };
+
+    function applySort(key) {
+        currentSort = key;
+        document.getElementById('sortOverlay').classList.remove('open');
+        // Reset and re-fetch from page 1 with new ordering
+        if (searchGift) {
+            searchPage = 0; searchTotalPages = 1;
+            searchLoading = false; searchDone = false;
+            allItems = []; sortedItems = []; renderedCount = 0;
+            document.getElementById('foundList').innerHTML =
+                '<div class="empty-state"><div class="load-spinner"></div></div>';
+            loadNextSearchPage();
+        }
+    }
+    window.applySort = applySort;
+
+    function openSortSheet() {
+        document.querySelectorAll('.sort-option').forEach(el => {
+            el.classList.toggle('active', el.dataset.sort === currentSort);
+        });
+        document.getElementById('sortOverlay').classList.add('open');
+    }
+    window.openSortSheet = openSortSheet;
+
+    function closeSortSheet(e) {
+        if (e.target === document.getElementById('sortOverlay'))
+            document.getElementById('sortOverlay').classList.remove('open');
+    }
+    window.closeSortSheet = closeSortSheet;
+
+    // ── Render ────────────────────────────────────────────────
+    function renderCards(items, preserveScroll = false) {
+        allItems = Array.isArray(items) ? items : [];
+        const scrollY = preserveScroll ? window.scrollY : 0;
+        sortedItems   = [...allItems]; // order comes from server
         renderedCount = 0;
+
         const list = document.getElementById('foundList');
+        if (!sortedItems.length) {
+            list.innerHTML = searchLoading
+                ? '<div class="empty-state"><div class="load-spinner"></div></div>'
+                : '<div class="empty-state">Ожидание лотов...</div>';
+            if (preserveScroll) requestAnimationFrame(() => window.scrollTo(0, scrollY));
+            return;
+        }
+
         list.innerHTML = `
             <div class="found-header">
-                <span class="found-count">НАЙДЕНО (${allItems.length}${searchDone ? '' : '+'})</span>
+                <span class="found-count">НАЙДЕНО (${sortedItems.length}${searchDone ? '' : '+'})</span>
                 <div class="sort-btn" onclick="openSortSheet()">
                     <span>⇅</span><span>${escapeHtml(SORT_LABELS[currentSort])}</span>
                 </div>
             </div>
             <div class="found-grid" id="foundGrid"></div>
             <div class="load-sentinel" id="loadSentinel"></div>`;
-        // Добавляем DOM-элементы (НЕ обновляем allItems — он уже установлен)
-        const grid = document.getElementById('foundGrid');
-        items.forEach((item, i) => {
-            const el = document.createElement('div');
-            el.className = 'found-item';
-            el.style.animationDelay = `${i * 0.03}s`;
-            el.innerHTML = buildCardHTML(item);
-            el.addEventListener('click', () => openModal(i));
-            grid.appendChild(el);
-        });
-        renderedCount = allItems.length;
-        updateSentinel();
+
+        renderNextDOMPage();
         setupScrollObserver();
+        if (preserveScroll) requestAnimationFrame(() => window.scrollTo(0, scrollY));
     }
 
-    /**
-     * КРИТИЧЕСКИ ВАЖНО: добавляет ТОЛЬКО новые карточки в существующую сетку.
-     * НЕ пересоздаёт существующие карточки — поэтому анимация не повторяется.
-     * allItems уже обновлён в loadNextSearchPage — здесь только DOM + счётчик.
-     */
-    function appendSearchResults(newItems) {
-        const grid = document.getElementById('foundGrid');
-        if (!grid) return;
-
-        const startIndex = allItems.length - newItems.length; // индекс, с которого начинаются новые
-        newItems.forEach((item, i) => {
-            const absIdx = startIndex + i;
-            const el = document.createElement('div');
-            el.className = 'found-item';
-            el.style.animationDelay = `${i * 0.03}s`;
-            el.innerHTML = buildCardHTML(item);
-            el.addEventListener('click', () => openModal(absIdx));
-            grid.appendChild(el);
-        });
-
-        renderedCount = allItems.length;
-
-        // Обновляем счётчик в шапке
-        const countEl = document.querySelector('.found-count');
-        if (countEl) countEl.textContent = `НАЙДЕНО (${allItems.length}${searchDone ? '' : '+'})`;
-
-        updateSentinel();
-        setupScrollObserver();
-    }
-
-    // ── Построение HTML карточки ──
     function buildCardHTML(item) {
-        const giftName  = item.gift_name || 'Подарок';
-        const marketUrl = item.market_url || item.gift_url || item.url || '#';
+        const modelPct    = formatPct(item.model_rarity);
+        const backdropPct = formatPct(item.backdrop_rarity);
+        const giftName    = item.gift_name || 'Подарок';
+        const marketUrl   = item.market_url || item.gift_url || item.url || '#';
+
+        // no loop attr = plays once
         const imgHtml = item.lottie_url
             ? `<lottie-player src="${escapeHtml(item.lottie_url)}" background="transparent" speed="1" autoplay></lottie-player>`
             : (item.image_url
                 ? `<img src="${escapeHtml(item.image_url)}" loading="lazy" onerror="this.style.display='none'">`
                 : `<div class="media-fallback">🎁</div>`);
+
         const priceLabel = `${escapeHtml(formatPrice(item.price_ton))} TON`;
         const buyLabel   = item.source ? `${priceLabel} · ${escapeHtml(item.source)}` : priceLabel;
-        const modelPct    = formatPct(item.model_rarity);
-        const backdropPct = formatPct(item.backdrop_rarity);
-
-        let badgesHtml = '';
-        if (item.model)    badgesHtml += `<span class="ibadge ibadge-model">${escapeHtml(item.model)}${modelPct ? ' '+escapeHtml(modelPct) : ''}</span>`;
-        if (item.backdrop) badgesHtml += `<span class="ibadge ibadge-backdrop">${escapeHtml(item.backdrop)}${backdropPct ? ' '+escapeHtml(backdropPct) : ''}</span>`;
 
         return `
             <div class="card-media">
@@ -1450,19 +944,35 @@
                     <span class="item-gift-name">${escapeHtml(giftName)}</span>
                     ${item.number ? `<span class="item-num">#${escapeHtml(String(item.number))}</span>` : ''}
                 </div>
-                ${badgesHtml ? `<div class="item-badges">${badgesHtml}</div>` : ''}
+               
                 <button class="card-buy-btn"
-                    onclick='event.stopPropagation(); openTelegramLink(${JSON.stringify(marketUrl)})'>
-                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${buyLabel}</span>
+                    onclick="event.stopPropagation(); openTelegramLink(${JSON.stringify(marketUrl)})">
+                    <span class="card-buy-icon"></span>${buyLabel}
                 </button>
             </div>`;
     }
 
-    // ── Sentinel / IntersectionObserver ──
+    function renderNextDOMPage() {
+        const grid  = document.getElementById('foundGrid');
+        if (!grid) return;
+        const slice = sortedItems.slice(renderedCount, renderedCount + DOM_PAGE_SIZE);
+        slice.forEach((item, i) => {
+            const absIdx = renderedCount + i;
+            const el = document.createElement('div');
+            el.className = 'found-item';
+            el.style.animationDelay = `${i * 0.02}s`;
+            el.innerHTML = buildCardHTML(item);
+            el.addEventListener('click', () => openModal(absIdx));
+            grid.appendChild(el);
+        });
+        renderedCount += slice.length;
+        updateSentinel();
+    }
+
     function updateSentinel() {
         const s = document.getElementById('loadSentinel');
         if (!s) return;
-        if (renderedCount < allItems.length || !searchDone) {
+        if (renderedCount < sortedItems.length || !searchDone) {
             s.innerHTML = '<div class="load-spinner"></div>';
             s.style.display = 'flex';
         } else {
@@ -1477,22 +987,8 @@
         if (!sentinel) return;
         scrollObserver = new IntersectionObserver(entries => {
             if (!entries[0].isIntersecting) return;
-            if (renderedCount < allItems.length) {
-                // Рендерим следующие DOM_PAGE_SIZE из уже загруженных
-                const grid = document.getElementById('foundGrid');
-                if (!grid) return;
-                const slice = allItems.slice(renderedCount, renderedCount + DOM_PAGE_SIZE);
-                slice.forEach((item, i) => {
-                    const absIdx = renderedCount + i;
-                    const el = document.createElement('div');
-                    el.className = 'found-item';
-                    el.style.animationDelay = `${i * 0.03}s`;
-                    el.innerHTML = buildCardHTML(item);
-                    el.addEventListener('click', () => openModal(absIdx));
-                    grid.appendChild(el);
-                });
-                renderedCount += slice.length;
-                updateSentinel();
+            if (renderedCount < sortedItems.length) {
+                renderNextDOMPage();
             } else if (!searchDone && !searchLoading) {
                 loadNextSearchPage();
             }
@@ -1500,158 +996,9 @@
         scrollObserver.observe(sentinel);
     }
 
-    // ═══ Сортировка ═══════════════════════════════════════════
-    const SORT_LABELS = {
-        price_asc: 'Цена ↑',             price_desc: 'Цена ↓',
-        num_asc: 'ID ↑',                 num_desc: 'ID ↓',
-    };
-
-    function applySort(key) {
-        currentSort = key;
-        document.getElementById('sortOverlay').classList.remove('open');
-        if (searchGift) doSearch();
-    }
-    window.applySort = applySort;
-
-    window.openSortSheet = () => {
-        document.querySelectorAll('.sort-option').forEach(el => {
-            el.classList.toggle('active', el.dataset.sort === currentSort);
-        });
-        document.getElementById('sortOverlay').classList.add('open');
-    };
-
-    window.closeSortSheet = e => {
-        if (e.target === document.getElementById('sortOverlay'))
-            document.getElementById('sortOverlay').classList.remove('open');
-    };
-
-    // ═══ ВКЛАДКА «МОНИТОРЫ» ═══════════════════════════════════
-
-    /** Запуск мониторинга */
-    async function startMonitor() {
-        if (!monSelectedGift) {
-            document.getElementById('monStatusBar').textContent = 'Выберите подарок!';
-            document.getElementById('monStatusBar').className = 'status-bar error';
-            return;
-        }
-
-        const payload = {
-            user_id:    USERID,
-            gift_name:  monSelectedGift,
-            models:     [...monSelectedModels],
-            backdrops:  [...monSelectedBackdrops],
-            rarity_max: 100.0,
-        };
-
-        try {
-            const r = await fetch(`${API}/monitor/start`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', ...H },
-                body: JSON.stringify(payload),
-            });
-            if (!r.ok) {
-                document.getElementById('monStatusBar').textContent = 'Ошибка старта мониторинга';
-                document.getElementById('monStatusBar').className = 'status-bar error';
-                return;
-            }
-            const data = await r.json();
-            showToast(`Мониторинг запущен: ${monSelectedGift}`, 'success');
-            document.getElementById('monStatusBar').textContent = 'Мониторинг запущен ✓';
-            document.getElementById('monStatusBar').className = 'status-bar active';
-            refreshMonitorsList();
-        } catch {
-            document.getElementById('monStatusBar').textContent = 'Ошибка сети';
-            document.getElementById('monStatusBar').className = 'status-bar error';
-        }
-    }
-    window.startMonitor = startMonitor;
-
-    /** Остановка конкретного монитора */
-    async function stopMonitor(monitorId) {
-        try {
-            const r = await fetch(`${API}/monitor/stop`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', ...H },
-                body: JSON.stringify({ user_id: USERID, monitor_id: monitorId }),
-            });
-            if (!r.ok) {
-                const err = await r.text().catch(() => '');
-                console.error('Stop monitor error:', r.status, err);
-                showToast('Ошибка остановки: ' + r.status, 'error');
-                return;
-            }
-            showToast('Мониторинг остановлен', 'info');
-            // Даём время asyncio task'у завершиться
-            setTimeout(() => refreshMonitorsList(), 500);
-        } catch (e) {
-            console.error('Stop monitor exception:', e);
-            showToast('Ошибка сети при остановке', 'error');
-        }
-    }
-    window.stopMonitor = stopMonitor;
-
-    /** Обновить список мониторов с сервера */
-    async function refreshMonitorsList() {
-        try {
-            const r = await fetch(`${API}/monitors/list/${USERID}`, { headers: H });
-            if (!r.ok) return;
-            const data = await r.json();
-            renderMonitorsList(data.monitors || []);
-        } catch {
-            console.error('Failed to fetch monitors list');
-        }
-    }
-
-    /** Отрендерить список мониторов */
-    function renderMonitorsList(monitors) {
-        const container = document.getElementById('monitorsList');
-        const empty     = document.getElementById('monitorsEmpty');
-
-        if (!monitors.length) {
-            container.innerHTML = '';
-            container.appendChild(empty);
-            empty.style.display = 'flex';
-            return;
-        }
-
-        container.innerHTML = monitors.map((m, idx) => {
-            const cfg = m.config || {};
-            const giftName = cfg.gift_name || cfg.name || '—';
-            const models = (cfg.rare_models || []).join(', ') || 'Любые';
-            const backdrops = (cfg.rare_backdrops || []).join(', ') || 'Любые';
-            const running = m.running;
-
-            return `<div class="monitor-card" style="animation-delay:${idx * 0.05}s">
-                <div class="monitor-card-header">
-                    <span class="monitor-gift-name">🎁 ${escapeHtml(giftName)}</span>
-                    ${running ? `<button class="monitor-stop-btn" onclick="stopMonitor('${escapeHtml(m.monitor_id)}')">⏹ Стоп</button>` : ''}
-                </div>
-                <div class="monitor-detail">
-                    <span class="monitor-detail-icon">🎨</span>
-                    <span class="monitor-detail-text">${escapeHtml(models)}</span>
-                </div>
-                <div class="monitor-detail">
-                    <span class="monitor-detail-icon">🖼</span>
-                    <span class="monitor-detail-text">${escapeHtml(backdrops)}</span>
-                </div>
-                <span class="monitor-status ${running ? 'running' : 'stopped'}">
-                    ${running ? 'Активен' : 'Остановлен'}
-                </span>
-            </div>`;
-        }).join('');
-    }
-
-    /** Периодический опрос списка мониторов (каждые 10 сек) */
-    function startMonitorPolling() {
-        clearInterval(monPollTimer);
-        monPollTimer = setInterval(() => {
-            refreshMonitorsList();
-        }, 10000);
-    }
-
-    // ═══ Модальное окно лота ═══════════════════════════════════
+    // ── Modal ─────────────────────────────────────────────────
     window.openModal = idx => {
-        const item = allItems[idx];
+        const item = sortedItems[idx];
         if (!item) return;
 
         _modalGiftUrl   = item.gift_url   || item.url || '';
@@ -1667,6 +1014,7 @@
             player.setAttribute('background', 'transparent');
             player.setAttribute('speed', '1');
             player.setAttribute('autoplay', '');
+            // no loop — plays once
             player.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
             thumb.appendChild(player);
         } else if (item.image_url) {
@@ -1678,7 +1026,7 @@
             thumb.innerHTML = '<div class="modal-thumb-fallback">🎁</div>';
         }
 
-        // TG badge
+        // TG badge on thumb
         const badge = document.createElement('a');
         badge.className = 'modal-tg-badge';
         badge.href = 'javascript:void(0)';
@@ -1688,16 +1036,16 @@
         thumb.appendChild(badge);
 
         // Header info
-        document.getElementById('modalGiftLabel').textContent  = item.gift_name || '';
-        document.getElementById('modalModelName').textContent  = item.model     || '—';
-        document.getElementById('modalNumber').textContent     = item.number    ? `#${item.number}` : '';
-        document.getElementById('modalSource').textContent     = item.source    || '';
+        document.getElementById('modalGiftLabel').textContent = item.gift_name || '';
+        document.getElementById('modalModelName').textContent = item.model     || '—';
+        document.getElementById('modalNumber').textContent    = item.number    ? `#${item.number}` : '';
+        document.getElementById('modalSource').textContent    = item.source    || '';
 
-        // Attribute rows
+        // Rows
         const rows = [
-            { label: 'Модель',  val: item.model    || '—', rarity: item.model_rarity },
-            { label: 'Фон',     val: item.backdrop  || '—', rarity: item.backdrop_rarity },
-            { label: 'Символ',  val: item.symbol    || '—', rarity: item.symbol_rarity },
+            { label: 'Модель',  val: item.model   || '—', rarity: item.model_rarity },
+            { label: 'Фон',     val: item.backdrop || '—', rarity: item.backdrop_rarity },
+            { label: 'Символ',  val: item.symbol   || '—', rarity: item.symbol_rarity },
             { label: 'Цена',    val: `${formatPrice(item.price_ton)} TON`, rarity: null },
         ];
         document.getElementById('modalRows').innerHTML = rows.map(r => {
@@ -1729,26 +1077,43 @@
         document.querySelector('#modalThumb lottie-player')?.stop?.();
     };
 
-    // ═══ Инициализация ═════════════════════════════════════════
-    async function loadGifts() {
+    // ── Initial status ────────────────────────────────────────
+    async function checkInitialStatus() {
         try {
-            const r = await fetch(`${API}/gifts`, { headers: H });
-            if (!r.ok) throw new Error();
-            gifts = await r.json();
-            // Обновляем placeholder обоих инпутов
-            document.getElementById('giftSearchInput').placeholder   = 'Поиск подарка...';
-            document.getElementById('monGiftSearchInput').placeholder = 'Поиск подарка...';
-            // Рендерим dropdowns
-            renderGiftDropdown('giftDropdown', gifts, selectSearchGift);
-            renderGiftDropdown('monGiftDropdown', gifts, selectMonGift);
-        } catch {
-            document.getElementById('giftSearchInput').placeholder   = 'Не удалось загрузить';
-            document.getElementById('monGiftSearchInput').placeholder = 'Не удалось загрузить';
-        }
+            const r = await fetch(`${API}/monitors/${USERID}`, { headers: H });
+            if (!r.ok) return;
+            const data = await r.json();
+            if (data.running) {
+                document.getElementById('btnStart').style.display = 'none';
+                document.getElementById('btnStop').style.display  = 'block';
+                setStatus('✅ Мониторинг активен', 'active');
+                startStatusPolling();
+                const cfg = data.config || {};
+                const gName = cfg.gift_name || cfg.name;
+                if (gName) {
+                    _selectedGift   = gName;
+                    searchGift      = gName;
+                    searchModels    = cfg.rare_models    || [];
+                    searchBackdrops = cfg.rare_backdrops || [];
+                    searchPriceMin  = null; searchPriceMax = null;
+                    document.getElementById('giftSearchInput').value = gName;
+                    searchPage = 0; searchTotalPages = 1;
+                    searchLoading = false; searchDone = false; allItems = [];
+                    document.getElementById('foundList').innerHTML =
+                        '<div class="empty-state"><div class="load-spinner"></div></div>';
+                    loadNextSearchPage();
+                }
+            }
+        } catch {}
     }
 
+    document.addEventListener('click', e => {
+        if (!e.target.closest('#giftSearchWrap'))
+            document.getElementById('giftDropdown').classList.remove('open');
+    });
+
+    // ── Init ──────────────────────────────────────────────────
     async function init() {
-        // Проверка доступа
         try {
             const r = await fetch(`${API}/auth/check/${USERID}`, { headers: H });
             if (!r.ok) {
@@ -1756,22 +1121,12 @@
                     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;text-align:center;padding:20px;">
                         <div style="font-size:48px;margin-bottom:16px;">🔒</div>
                         <div style="font-size:20px;font-weight:800;margin-bottom:8px;">Нет доступа</div>
-                        <div style="color:var(--text-secondary);font-size:14px;">Ваш ID: ${USERID}<br>Обратитесь к администратору</div>
+                        <div style="color:#888;font-size:14px;">Ваш ID: ${USERID}<br>Обратитесь к администратору</div>
                     </div>`;
                 return;
             }
-        } catch {
-            // Если auth/check недоступен — всё равно продолжаем
-        }
-
-        // Загружаем список подарков
-        await loadGifts();
-
-        // Запускаем периодический опрос мониторов
-        startMonitorPolling();
-
-        // Первичная загрузка списка мониторов
-        refreshMonitorsList();
+            loadGifts();
+        } catch { setStatus('Ошибка подключения', 'error'); }
     }
 
     init();
