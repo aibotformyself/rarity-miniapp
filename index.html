@@ -720,13 +720,24 @@
             </div>
         </div>
 
-        <!-- Фильтр цен -->
-        <div class="form-section">
-            <div class="field-label">Стоимость, TON</div>
-            <div class="price-filter-row">
-                <input class="price-input" id="searchPriceMin" type="number" placeholder="От" inputmode="decimal">
-                <span class="price-separator">—</span>
-                <input class="price-input" id="searchPriceMax" type="number" placeholder="До" inputmode="decimal">
+        <!-- Стоимость (аккордеон) -->
+        <div class="collapsible">
+            <div class="collapsible-header" onclick="toggleCollapsible('searchPrice')">
+                <span class="title">💰 Стоимость, TON</span>
+                <div class="header-right">
+                    <button class="clear-btn" id="clearSearchPriceBtn" onclick="event.stopPropagation(); clearPriceFilter()">Очистить</button>
+                    <span class="badge-count" id="searchPriceCount">—</span>
+                    <span class="coll-arrow" id="searchPriceArrow">▼</span>
+                </div>
+            </div>
+            <div class="collapsible-body" id="searchPriceBody">
+                <div style="padding: 12px;">
+                    <div class="price-filter-row">
+                        <input class="price-input" id="searchPriceMin" type="number" placeholder="От" inputmode="decimal" oninput="updatePriceBadge()">
+                        <span class="price-separator">—</span>
+                        <input class="price-input" id="searchPriceMax" type="number" placeholder="До" inputmode="decimal" oninput="updatePriceBadge()">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1207,6 +1218,35 @@
         document.querySelectorAll(`#${gridId} .chip.selected`).forEach(c => c.classList.remove('selected'));
         updateMonClearButtons();
         if (kind === 'monModels') updateMonModelLimitVisual();
+    };
+
+    // ── Фильтр цен (аккордеон) ──
+    function updatePriceBadge() {
+        const min = document.getElementById('searchPriceMin')?.value;
+        const max = document.getElementById('searchPriceMax')?.value;
+        const badge = document.getElementById('searchPriceCount');
+        const clearBtn = document.getElementById('clearSearchPriceBtn');
+        if (min || max) {
+            const parts = [];
+            if (min) parts.push('от ' + min);
+            if (max) parts.push('до ' + max);
+            badge.textContent = parts.join(' ');
+            badge.classList.add('warning');
+            clearBtn.classList.add('visible');
+        } else {
+            badge.textContent = '—';
+            badge.classList.remove('warning');
+            clearBtn.classList.remove('visible');
+        }
+    }
+    window.updatePriceBadge = updatePriceBadge;
+
+    window.clearPriceFilter = () => {
+        const minEl = document.getElementById('searchPriceMin');
+        const maxEl = document.getElementById('searchPriceMax');
+        if (minEl) minEl.value = '';
+        if (maxEl) maxEl.value = '';
+        updatePriceBadge();
     };
 
     // ═══ Аккордеоны ═══════════════════════════════════════════
