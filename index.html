@@ -694,7 +694,7 @@
         <!-- Модели (без лимита для поиска) -->
         <div class="collapsible">
             <div class="collapsible-header" onclick="toggleCollapsible('searchModels')">
-                <span class="title">🎨 Модели</span>
+                <span class="title">Модели</span>
                 <div class="header-right">
                     <button class="clear-btn" id="clearSearchModelsBtn" onclick="event.stopPropagation(); clearSearchSelection('searchModels')">Очистить</button>
                     <span class="badge-count" id="searchModelsCount">0</span>
@@ -710,7 +710,7 @@
         <!-- Фоны (без лимита для поиска) -->
         <div class="collapsible">
             <div class="collapsible-header" onclick="toggleCollapsible('searchBackdrops')">
-                <span class="title">🖼 Фоны</span>
+                <span class="title">Фоны</span>
                 <div class="header-right">
                     <button class="clear-btn" id="clearSearchBackdropsBtn" onclick="event.stopPropagation(); clearSearchSelection('searchBackdrops')">Очистить</button>
                     <span class="badge-count" id="searchBackdropsCount">0</span>
@@ -726,7 +726,7 @@
         <!-- Стоимость (аккордеон) -->
         <div class="collapsible">
             <div class="collapsible-header" onclick="toggleCollapsible('searchPrice')">
-                <span class="title">💰 Стоимость, TON</span>
+                <span class="title">Стоимость, TON</span>
                 <div class="header-right">
                     <button class="clear-btn" id="clearSearchPriceBtn" onclick="event.stopPropagation(); clearPriceFilter()">Очистить</button>
                     <span class="badge-count" id="searchPriceCount">—</span>
@@ -770,7 +770,7 @@
         <!-- Модели (МАКС 2 для мониторинга) -->
         <div class="collapsible">
             <div class="collapsible-header" onclick="toggleCollapsible('monModels')">
-                <span class="title">🎨 Модели <span style="opacity:0.5;font-weight:400;text-transform:none;letter-spacing:0">(макс. 2)</span></span>
+                <span class="title">Модели <span style="opacity:0.5;font-weight:400;text-transform:none;letter-spacing:0">(макс. 2)</span></span>
                 <div class="header-right">
                     <button class="clear-btn" id="clearMonModelsBtn" onclick="event.stopPropagation(); clearMonSelection('monModels')">Очистить</button>
                     <span class="badge-count" id="monModelsCount">0</span>
@@ -786,7 +786,7 @@
         <!-- Фоны (опционально для мониторинга) -->
         <div class="collapsible">
             <div class="collapsible-header" onclick="toggleCollapsible('monBackdrops')">
-                <span class="title">🖼 Фоны <span style="opacity:0.5;font-weight:400;text-transform:none;letter-spacing:0">(необязательно)</span></span>
+                <span class="title">Фоны <span style="opacity:0.5;font-weight:400;text-transform:none;letter-spacing:0">(необязательно)</span></span>
                 <div class="header-right">
                     <button class="clear-btn" id="clearMonBackdropsBtn" onclick="event.stopPropagation(); clearMonSelection('monBackdrops')">Очистить</button>
                     <span class="badge-count" id="monBackdropsCount">0</span>
@@ -1342,7 +1342,9 @@
                 allItems = fresh;
                 createSearchResultsUI(fresh);
             } else if (fresh.length > 0) {
-                // Последующие batches — только ДОБАВЛЯЕМ новые карточки
+                // Последующие batches — сначала обновляем allItems, потом DOM
+                // (иначе startIndex в appendSearchResults будет 0 вместо правильного)
+                allItems = allItems.concat(fresh);
                 appendSearchResults(fresh);
             } else if (allItems.length === 0) {
                 document.getElementById('foundList').innerHTML =
@@ -1434,14 +1436,8 @@
             : (item.image_url
                 ? `<img src="${escapeHtml(item.image_url)}" loading="lazy" onerror="this.style.display='none'">`
                 : `<div class="media-fallback">🎁</div>`);
-        const priceLabel = `${escapeHtml(formatPrice(item.price_ton))} TON`;
-        const buyLabel   = item.source ? `${priceLabel} · ${escapeHtml(item.source)}` : priceLabel;
-        const modelPct    = formatPct(item.model_rarity);
-        const backdropPct = formatPct(item.backdrop_rarity);
-
-        let badgesHtml = '';
-        if (item.model)    badgesHtml += `<span class="ibadge ibadge-model">${escapeHtml(item.model)}${modelPct ? ' '+escapeHtml(modelPct) : ''}</span>`;
-        if (item.backdrop) badgesHtml += `<span class="ibadge ibadge-backdrop">${escapeHtml(item.backdrop)}${backdropPct ? ' '+escapeHtml(backdropPct) : ''}</span>`;
+        const priceLabel  = `${escapeHtml(formatPrice(item.price_ton))} TON`;
+        const marketLabel = item.source ? escapeHtml(item.source) : 'Маркет';
 
         return `
             <div class="card-media">
@@ -1455,10 +1451,9 @@
                     <span class="item-gift-name">${escapeHtml(giftName)}</span>
                     ${item.number ? `<span class="item-num">#${escapeHtml(String(item.number))}</span>` : ''}
                 </div>
-                ${badgesHtml ? `<div class="item-badges">${badgesHtml}</div>` : ''}
                 <button class="card-buy-btn"
                     onclick='event.stopPropagation(); openTelegramLink(${JSON.stringify(marketUrl)})'>
-                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${buyLabel}</span>
+                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${priceLabel} · ${marketLabel}</span>
                 </button>
             </div>`;
     }
@@ -1540,6 +1535,55 @@
             return;
         }
 
+        const statusBar = document.getElementById('monStatusBar');
+        const btn = document.querySelector('.btn-monitor');
+
+        // ── Предварительная проверка количества страниц ──────────────────
+        statusBar.textContent = 'Проверяю фильтры...';
+        statusBar.className = 'status-bar';
+        if (btn) btn.disabled = true;
+
+        let totalPages = 1;
+        try {
+            const checkPayload = {
+                gift_name: monSelectedGift, page: 1, per_page: 20,
+                models:    [...monSelectedModels],
+                backdrops: [...monSelectedBackdrops],
+                price_min: null, price_max: null, ordering: 'price_asc',
+            };
+            const rc = await fetch(`${API}/search/page`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...H },
+                body: JSON.stringify(checkPayload),
+            });
+            if (rc.ok) {
+                const cd = await rc.json();
+                totalPages = cd.total_pages || 1;
+            }
+        } catch { /* сеть — продолжаем без проверки */ }
+
+        if (btn) btn.disabled = false;
+
+        // > 20 страниц — блокируем старт
+        if (totalPages > 20) {
+            statusBar.innerHTML =
+                `⛔ Слишком широкие фильтры: ~${totalPages} стр. результатов.<br>` +
+                `Уточни фильтры: выбери конкретный фон или сократи список моделей.`;
+            statusBar.className = 'status-bar error';
+            showToast(`Фильтры слишком широкие (${totalPages} стр.) — уточни`, 'error');
+            return;
+        }
+
+        // > 10 страниц — предупреждаем, но разрешаем
+        if (totalPages > 10) {
+            const delaySec = totalPages * 5 + 30; // примерная задержка
+            showToast(
+                `⚠️ Широкие фильтры (~${totalPages} стр.) — задержка до ~${delaySec}с. Добавь фон чтобы ускорить.`,
+                'info'
+            );
+        }
+
+        // ── Запускаем мониторинг ─────────────────────────────────────────
         const payload = {
             user_id:    USERID,
             gift_name:  monSelectedGift,
@@ -1555,18 +1599,20 @@
                 body: JSON.stringify(payload),
             });
             if (!r.ok) {
-                document.getElementById('monStatusBar').textContent = 'Ошибка старта мониторинга';
-                document.getElementById('monStatusBar').className = 'status-bar error';
+                statusBar.textContent = 'Ошибка старта мониторинга';
+                statusBar.className = 'status-bar error';
                 return;
             }
             const data = await r.json();
             showToast(`Мониторинг запущен: ${monSelectedGift}`, 'success');
-            document.getElementById('monStatusBar').textContent = 'Мониторинг запущен ✓';
-            document.getElementById('monStatusBar').className = 'status-bar active';
+            statusBar.textContent = totalPages > 10
+                ? `Мониторинг запущен ✓ (задержка ~${totalPages * 5 + 30}с)`
+                : 'Мониторинг запущен ✓';
+            statusBar.className = 'status-bar active';
             refreshMonitorsList();
         } catch {
-            document.getElementById('monStatusBar').textContent = 'Ошибка сети';
-            document.getElementById('monStatusBar').className = 'status-bar error';
+            statusBar.textContent = 'Ошибка сети';
+            statusBar.className = 'status-bar error';
         }
     }
     window.startMonitor = startMonitor;
