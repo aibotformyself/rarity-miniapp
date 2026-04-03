@@ -1678,11 +1678,11 @@
                     ${running ? `<button class="monitor-stop-btn" onclick="stopMonitor('${escapeHtml(m.monitor_id)}')">⏹ Стоп</button>` : ''}
                 </div>
                 <div class="monitor-detail">
-                    <span class="monitor-detail-icon">🎨</span>
+                    <span class="monitor-detail-icon">Model:</span>
                     <span class="monitor-detail-text">${escapeHtml(models)}</span>
                 </div>
                 <div class="monitor-detail">
-                    <span class="monitor-detail-icon">🖼</span>
+                    <span class="monitor-detail-icon">Background:</span>
                     <span class="monitor-detail-text">${escapeHtml(backdrops)}</span>
                 </div>
                 <span class="monitor-status ${running ? 'running' : 'stopped'}">
